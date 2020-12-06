@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="goToSleepCell" customModule="Wakey" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="401" height="678"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="401" height="678"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="57j-wD-8VW">
+                        <rect key="frame" x="20" y="89" width="361" height="80"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="80" id="0nJ-d6-SI2"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="68"/>
+                        <color key="textColor" red="1" green="0.33333333329999998" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lSX-Hk-6hB">
+                        <rect key="frame" x="20" y="174" width="361" height="30"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="30" id="XfO-zE-LJv"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="25"/>
+                        <color key="textColor" red="1" green="0.33333333329999998" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="alarm" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="6J0-ZT-rz4">
+                        <rect key="frame" x="180.5" y="502.5" width="40" height="39.5"/>
+                        <color key="tintColor" red="1" green="0.33333333329999998" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="40" id="Y3k-pN-X7P"/>
+                            <constraint firstAttribute="width" constant="40" id="fAL-AK-3dS"/>
+                        </constraints>
+                    </imageView>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iR2-WK-l3Q" customClass="setAlarmButton" customModule="Wakey" customModuleProvider="target">
+                        <rect key="frame" x="120.5" y="558" width="160" height="40"/>
+                        <color key="backgroundColor" red="1" green="0.33333333329999998" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="40" id="Jcy-WT-AzI"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="25"/>
+                        <state key="normal" title="Set alarm">
+                            <color key="titleColor" name="goToSleepBackgroundColor"/>
+                        </state>
+                        <connections>
+                            <action selector="setAlarmPressed:" destination="gTV-IL-0wX" eventType="touchUpInside" id="w1f-1J-CIM"/>
+                        </connections>
+                    </button>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XwC-SP-1Oc" customClass="lockScreenButton" customModule="Wakey" customModuleProvider="target">
+                        <rect key="frame" x="120.5" y="259" width="160" height="160"/>
+                        <color key="backgroundColor" red="1" green="0.33333333329999998" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="width" secondItem="XwC-SP-1Oc" secondAttribute="height" id="sCO-e7-dfu"/>
+                        </constraints>
+                        <color key="tintColor" name="goToSleepBackgroundColor"/>
+                        <connections>
+                            <action selector="lockScreenPressed:" destination="gTV-IL-0wX" eventType="touchUpInside" id="OpG-fd-DgN"/>
+                        </connections>
+                    </button>
+                    <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="eRn-vJ-XG9">
+                        <rect key="frame" x="0.0" y="508.5" width="408" height="169.5"/>
+                        <connections>
+                            <action selector="timeOnPickerChanged:" destination="gTV-IL-0wX" eventType="valueChanged" id="Kuv-Hz-AcG"/>
+                        </connections>
+                    </datePicker>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CA5-dh-naQ">
+                        <rect key="frame" x="20" y="460.5" width="70" height="43"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="70" id="Li0-Cc-Gil"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="22"/>
+                        <state key="normal" title="cancel">
+                            <color key="titleColor" red="1" green="0.33333333329999998" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        </state>
+                        <connections>
+                            <action selector="cancelPressed:" destination="gTV-IL-0wX" eventType="touchUpInside" id="mVq-yb-r3v"/>
+                        </connections>
+                    </button>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="trailing" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="D6w-ub-00W">
+                        <rect key="frame" x="331" y="460.5" width="50" height="43"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="50" id="vMf-vL-QEP"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="22"/>
+                        <state key="normal" title="save">
+                            <color key="titleColor" red="1" green="0.33333333329999998" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        </state>
+                        <connections>
+                            <action selector="savePressed:" destination="gTV-IL-0wX" eventType="touchUpInside" id="34T-QK-Xmh"/>
+                        </connections>
+                    </button>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3EE-6E-dar" customClass="exitSleepModeButton" customModule="Wakey" customModuleProvider="target">
+                        <rect key="frame" x="120.5" y="20" width="160" height="29"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="29" id="ior-z1-1lX"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="15"/>
+                        <state key="normal" title="Exit sleep mode">
+                            <color key="titleColor" red="1" green="0.33333333329999998" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        </state>
+                        <connections>
+                            <action selector="exitSleepModePressed:" destination="gTV-IL-0wX" eventType="touchUpInside" id="6Xk-tf-4Aq"/>
+                        </connections>
+                    </button>
+                </subviews>
+            </view>
+            <constraints>
+                <constraint firstItem="3EE-6E-dar" firstAttribute="centerX" secondItem="gTV-IL-0wX" secondAttribute="centerX" id="5jV-sf-lXU"/>
+                <constraint firstAttribute="trailing" secondItem="eRn-vJ-XG9" secondAttribute="trailing" constant="-7" id="6RI-7a-VXj"/>
+                <constraint firstItem="57j-wD-8VW" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="20" id="8M1-V1-9JE"/>
+                <constraint firstItem="iR2-WK-l3Q" firstAttribute="centerX" secondItem="gTV-IL-0wX" secondAttribute="centerX" id="AFz-bh-jo5"/>
+                <constraint firstItem="3EE-6E-dar" firstAttribute="bottom" secondItem="57j-wD-8VW" secondAttribute="top" constant="-40" id="Auo-KD-Nnf"/>
+                <constraint firstAttribute="bottom" secondItem="eRn-vJ-XG9" secondAttribute="bottom" id="DNq-Wm-gOb"/>
+                <constraint firstItem="eRn-vJ-XG9" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="F2V-KO-kTH"/>
+                <constraint firstItem="6J0-ZT-rz4" firstAttribute="centerX" secondItem="gTV-IL-0wX" secondAttribute="centerX" id="ID9-a5-CfS"/>
+                <constraint firstItem="eRn-vJ-XG9" firstAttribute="top" secondItem="D6w-ub-00W" secondAttribute="bottom" constant="5" id="NlF-Il-LPe"/>
+                <constraint firstItem="3EE-6E-dar" firstAttribute="width" secondItem="gTV-IL-0wX" secondAttribute="width" multiplier="0.4" id="Q70-h7-sFo"/>
+                <constraint firstAttribute="trailing" secondItem="57j-wD-8VW" secondAttribute="trailing" constant="20" id="U6I-yd-H0n"/>
+                <constraint firstItem="XwC-SP-1Oc" firstAttribute="centerY" secondItem="gTV-IL-0wX" secondAttribute="centerY" id="Uy3-hz-rYw"/>
+                <constraint firstAttribute="trailing" secondItem="lSX-Hk-6hB" secondAttribute="trailing" constant="20" id="X8S-wa-vbC"/>
+                <constraint firstItem="XwC-SP-1Oc" firstAttribute="width" secondItem="gTV-IL-0wX" secondAttribute="width" multiplier="0.4" id="YHO-kv-7pJ"/>
+                <constraint firstItem="3EE-6E-dar" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="20" id="Zm9-Jj-VzM"/>
+                <constraint firstAttribute="trailing" secondItem="D6w-ub-00W" secondAttribute="trailing" constant="20" id="bu3-4h-lT7"/>
+                <constraint firstItem="CA5-dh-naQ" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="20" id="ez5-UM-Agq"/>
+                <constraint firstItem="XwC-SP-1Oc" firstAttribute="centerX" secondItem="gTV-IL-0wX" secondAttribute="centerX" id="gY1-0j-sAr"/>
+                <constraint firstItem="lSX-Hk-6hB" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="20" id="gjO-LI-7NO"/>
+                <constraint firstAttribute="bottom" secondItem="iR2-WK-l3Q" secondAttribute="bottom" constant="80" id="mpN-aZ-reS"/>
+                <constraint firstItem="iR2-WK-l3Q" firstAttribute="width" secondItem="gTV-IL-0wX" secondAttribute="width" multiplier="0.4" id="myt-Kx-yJk"/>
+                <constraint firstItem="lSX-Hk-6hB" firstAttribute="top" secondItem="57j-wD-8VW" secondAttribute="bottom" constant="5" id="p6y-8D-331"/>
+                <constraint firstItem="iR2-WK-l3Q" firstAttribute="top" secondItem="6J0-ZT-rz4" secondAttribute="bottom" constant="15" id="tNW-UM-C3c"/>
+                <constraint firstItem="eRn-vJ-XG9" firstAttribute="top" secondItem="CA5-dh-naQ" secondAttribute="bottom" constant="5" id="vrG-p1-VFd"/>
+                <constraint firstItem="eRn-vJ-XG9" firstAttribute="height" secondItem="gTV-IL-0wX" secondAttribute="height" multiplier="0.25" id="wEf-Gz-PqH"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
+            <size key="customSize" width="401" height="678"/>
+            <connections>
+                <outlet property="alarmImage" destination="6J0-ZT-rz4" id="TlC-mw-cz3"/>
+                <outlet property="cancelButton" destination="CA5-dh-naQ" id="7we-aC-BrB"/>
+                <outlet property="currentDateLabel" destination="lSX-Hk-6hB" id="62e-lh-Z79"/>
+                <outlet property="currentTimeLabel" destination="57j-wD-8VW" id="Sog-At-G2j"/>
+                <outlet property="exitSleepModeButton" destination="3EE-6E-dar" id="CeU-lV-Qw5"/>
+                <outlet property="lockScreenButton" destination="XwC-SP-1Oc" id="Bqq-bW-OyL"/>
+                <outlet property="saveButton" destination="D6w-ub-00W" id="6d4-UC-soe"/>
+                <outlet property="setAlarmButton" destination="iR2-WK-l3Q" id="bdF-7E-uZt"/>
+                <outlet property="timePicker" destination="eRn-vJ-XG9" id="rwN-ga-VJL"/>
+            </connections>
+            <point key="canvasLocation" x="154.34782608695653" y="121.20535714285714"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="alarm" catalog="system" width="62" height="64"/>
+        <namedColor name="goToSleepBackgroundColor">
+            <color red="0.14900000393390656" green="0.14499999582767487" blue="0.14900000393390656" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>

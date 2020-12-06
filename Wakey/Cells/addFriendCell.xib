@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="kvg-WE-EYF" customClass="addFriendCell" customModule="Wakey" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="454" height="106"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="454" height="106"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WbU-VH-vJr">
+                        <rect key="frame" x="10" y="10" width="434" height="86"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="muh-Hy-c5N">
+                                <rect key="frame" x="0.0" y="0.0" width="434" height="86"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="qCE-vV-NzV" customClass="RoundedProfilePic" customModule="Wakey" customModuleProvider="target">
+                                        <rect key="frame" x="10" y="10" width="66" height="66"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="qCE-vV-NzV" secondAttribute="height" id="JtV-o7-OV1"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w78-hm-uQd">
+                                        <rect key="frame" x="91" y="25.5" width="233" height="35"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="35" id="O2A-v5-X2B"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="22"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="fJn-Av-HPd">
+                                        <rect key="frame" x="334" y="30.5" width="90" height="25"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iaZ-hp-hpt">
+                                                <rect key="frame" x="0.0" y="0.0" width="42.5" height="25"/>
+                                                <color key="backgroundColor" name="AppRedColor"/>
+                                                <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="8"/>
+                                                <state key="normal" title="Decline"/>
+                                                <connections>
+                                                    <action selector="leftButtonPressed:" destination="kvg-WE-EYF" eventType="touchUpInside" id="lrm-uz-xpg"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fzI-Hv-ro7">
+                                                <rect key="frame" x="47.5" y="0.0" width="42.5" height="25"/>
+                                                <color key="backgroundColor" name="AppRedColor"/>
+                                                <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="8"/>
+                                                <state key="normal" title="Accept"/>
+                                                <connections>
+                                                    <action selector="rightButtonPressed:" destination="kvg-WE-EYF" eventType="touchUpInside" id="KVc-yL-DwZ"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="90" id="VvM-3U-f8W"/>
+                                            <constraint firstAttribute="height" constant="25" id="yGL-eH-0Qh"/>
+                                        </constraints>
+                                    </stackView>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nk0-u1-vUM" customClass="NVActivityIndicatorView" customModule="NVActivityIndicatorView">
+                                        <rect key="frame" x="369" y="30.5" width="20" height="25"/>
+                                        <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="25" id="8D2-Lb-Fi1"/>
+                                            <constraint firstAttribute="width" constant="20" id="oIc-gB-PHF"/>
+                                        </constraints>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="color" keyPath="color">
+                                                <color key="value" name="AppRedColor"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="typeName" value="lineScale"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <constraints>
+                                    <constraint firstItem="w78-hm-uQd" firstAttribute="centerY" secondItem="muh-Hy-c5N" secondAttribute="centerY" id="100-8N-eic"/>
+                                    <constraint firstItem="w78-hm-uQd" firstAttribute="leading" secondItem="qCE-vV-NzV" secondAttribute="trailing" constant="15" id="8Db-hL-KSh"/>
+                                    <constraint firstItem="qCE-vV-NzV" firstAttribute="top" secondItem="muh-Hy-c5N" secondAttribute="top" constant="10" id="9nU-ET-aZt"/>
+                                    <constraint firstItem="fJn-Av-HPd" firstAttribute="centerY" secondItem="muh-Hy-c5N" secondAttribute="centerY" id="U86-le-pPL"/>
+                                    <constraint firstItem="qCE-vV-NzV" firstAttribute="leading" secondItem="muh-Hy-c5N" secondAttribute="leading" constant="10" id="abs-x2-Dg4"/>
+                                    <constraint firstItem="fJn-Av-HPd" firstAttribute="leading" secondItem="w78-hm-uQd" secondAttribute="trailing" constant="10" id="fxZ-lP-3ei"/>
+                                    <constraint firstAttribute="bottom" secondItem="qCE-vV-NzV" secondAttribute="bottom" constant="10" id="vUH-3R-y2K"/>
+                                    <constraint firstAttribute="trailing" secondItem="nk0-u1-vUM" secondAttribute="trailing" constant="45" id="xRX-IV-oDb"/>
+                                    <constraint firstAttribute="trailing" secondItem="fJn-Av-HPd" secondAttribute="trailing" constant="10" id="z7z-u4-NLi"/>
+                                    <constraint firstItem="nk0-u1-vUM" firstAttribute="centerY" secondItem="muh-Hy-c5N" secondAttribute="centerY" id="zcz-7W-Qkn"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="muh-Hy-c5N" firstAttribute="leading" secondItem="WbU-VH-vJr" secondAttribute="leading" id="Kbh-Lf-jJM"/>
+                            <constraint firstAttribute="trailing" secondItem="muh-Hy-c5N" secondAttribute="trailing" id="MEd-Fg-PZa"/>
+                            <constraint firstItem="muh-Hy-c5N" firstAttribute="top" secondItem="WbU-VH-vJr" secondAttribute="top" id="YWb-YI-Loc"/>
+                            <constraint firstAttribute="bottom" secondItem="muh-Hy-c5N" secondAttribute="bottom" id="wLD-dC-xZR"/>
+                        </constraints>
+                    </view>
+                </subviews>
+            </view>
+            <constraints>
+                <constraint firstItem="WbU-VH-vJr" firstAttribute="leading" secondItem="kvg-WE-EYF" secondAttribute="leading" constant="10" id="8pC-7g-TIE"/>
+                <constraint firstItem="WbU-VH-vJr" firstAttribute="top" secondItem="kvg-WE-EYF" secondAttribute="top" constant="10" id="Rhj-gL-r3C"/>
+                <constraint firstAttribute="bottom" secondItem="WbU-VH-vJr" secondAttribute="bottom" constant="10" id="c3A-Ic-JRQ"/>
+                <constraint firstAttribute="trailing" secondItem="WbU-VH-vJr" secondAttribute="trailing" constant="10" id="o9M-mW-rEq"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="pOg-5s-n1L"/>
+            <size key="customSize" width="454" height="106"/>
+            <connections>
+                <outlet property="cellBackgroundView" destination="muh-Hy-c5N" id="JIJ-Xi-flL"/>
+                <outlet property="leftButton" destination="iaZ-hp-hpt" id="QEd-PC-1U9"/>
+                <outlet property="messageActivityIndicator" destination="nk0-u1-vUM" id="IRi-bP-xzG"/>
+                <outlet property="nameLabel" destination="w78-hm-uQd" id="Ust-Au-zA4"/>
+                <outlet property="profilePic" destination="qCE-vV-NzV" id="9cO-0h-NM6"/>
+                <outlet property="rightButton" destination="fzI-Hv-ro7" id="v0n-En-1kT"/>
+                <outlet property="shadowView" destination="WbU-VH-vJr" id="2gb-6X-W64"/>
+            </connections>
+            <point key="canvasLocation" x="444.92753623188412" y="156.69642857142856"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <namedColor name="AppRedColor">
+            <color red="1" green="0.33300000429153442" blue="0.33300000429153442" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>

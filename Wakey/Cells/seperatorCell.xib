@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="seperatorCell" customModule="Wakey" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="391" height="74"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="391" height="74"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A5t-Da-yuF">
+                        <rect key="frame" x="20" y="0.0" width="351" height="74"/>
+                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="35"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+            </view>
+            <constraints>
+                <constraint firstItem="A5t-Da-yuF" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="38S-TO-hEG"/>
+                <constraint firstAttribute="trailing" secondItem="A5t-Da-yuF" secondAttribute="trailing" constant="20" id="Az5-Se-Esw"/>
+                <constraint firstItem="A5t-Da-yuF" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="20" id="IQn-Xx-OTg"/>
+                <constraint firstAttribute="bottom" secondItem="A5t-Da-yuF" secondAttribute="bottom" id="rhl-W0-g3v"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
+            <size key="customSize" width="391" height="74"/>
+            <connections>
+                <outlet property="seperatorLabel" destination="A5t-Da-yuF" id="lLS-Ee-g59"/>
+            </connections>
+            <point key="canvasLocation" x="384.78260869565219" y="152.67857142857142"/>
+        </collectionViewCell>
+    </objects>
+</document>
