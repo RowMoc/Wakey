@@ -28,6 +28,9 @@ class playAlarmCell: UICollectionViewCell, UIGestureRecognizerDelegate{
     
     @IBOutlet weak var timeSentLabel: UILabel!
     
+    
+    @IBOutlet weak var likeButton: UIButton!
+    
     @IBOutlet weak var usernameLabel: UILabel!
     @IBOutlet weak var swipeForReactView: UIView!
     
@@ -118,5 +121,11 @@ class playAlarmCell: UICollectionViewCell, UIGestureRecognizerDelegate{
     @IBAction func exitButtonPressed(_ sender: Any) {
         sectionController.userDidPressExit()
     }
+    
+    
+    @IBAction func likeButtonPressed(_ sender: Any) {
+        sectionController.didPressLikeButton(cell: self)
+    }
+    
     
 }

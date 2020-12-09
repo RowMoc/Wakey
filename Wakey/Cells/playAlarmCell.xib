@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -58,7 +60,7 @@
                         </constraints>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="color" keyPath="trackColor">
-                                <color key="value" systemColor="opaqueSeparatorColor" red="0.77647058820000003" green="0.77647058820000003" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="value" systemColor="opaqueSeparatorColor"/>
                             </userDefinedRuntimeAttribute>
                             <userDefinedRuntimeAttribute type="color" keyPath="barColor">
                                 <color key="value" red="0.12941176469999999" green="0.80784313730000001" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
@@ -93,9 +95,10 @@
                         </connections>
                     </button>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hQA-xf-AYX">
-                        <rect key="frame" x="20" y="508.5" width="318" height="23"/>
+                        <rect key="frame" x="80" y="511.5" width="198" height="20"/>
+                        <color key="tintColor" name="AppRedColor"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="23" id="4AJ-gm-bN6"/>
+                            <constraint firstAttribute="height" constant="20" id="4AJ-gm-bN6"/>
                         </constraints>
                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="21"/>
                         <color key="textColor" name="AppRedColor"/>
@@ -138,16 +141,30 @@
                             <action selector="exitButtonPressed:" destination="gTV-IL-0wX" eventType="touchUpInside" id="ppK-B0-wTc"/>
                         </connections>
                     </button>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7PW-QL-y9x">
+                        <rect key="frame" x="278" y="496.5" width="50" height="50"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="50" id="Zg3-66-y7H"/>
+                            <constraint firstAttribute="width" constant="50" id="iVj-7J-5vc"/>
+                        </constraints>
+                        <color key="tintColor" name="AppRedColor"/>
+                        <inset key="contentEdgeInsets" minX="10" minY="13" maxX="10" maxY="13"/>
+                        <state key="normal" image="heart" catalog="system"/>
+                        <connections>
+                            <action selector="likeButtonPressed:" destination="gTV-IL-0wX" eventType="touchUpInside" id="vFN-yn-QVO"/>
+                        </connections>
+                    </button>
                 </subviews>
             </view>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
             <constraints>
                 <constraint firstItem="qGc-bA-Tyu" firstAttribute="top" secondItem="oni-cA-9QU" secondAttribute="top" id="0nq-wC-84F"/>
                 <constraint firstItem="fAr-m6-28D" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="20" id="1vU-Lc-AB0"/>
                 <constraint firstItem="ct0-Dj-hmz" firstAttribute="top" secondItem="haE-jt-Ybw" secondAttribute="bottom" constant="40" id="3Yg-s7-gCW"/>
                 <constraint firstAttribute="bottom" secondItem="qGc-bA-Tyu" secondAttribute="bottom" id="4gR-pY-XDi"/>
                 <constraint firstItem="pVj-qA-uEZ" firstAttribute="top" secondItem="ZTg-uK-7eu" secondAttribute="top" constant="20" id="6rX-Ij-QdX"/>
-                <constraint firstItem="hQA-xf-AYX" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="20" id="8Ka-0C-QGY"/>
-                <constraint firstAttribute="trailing" secondItem="hQA-xf-AYX" secondAttribute="trailing" constant="20" id="A9i-fG-6p7"/>
+                <constraint firstItem="hQA-xf-AYX" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="80" id="8Ka-0C-QGY"/>
+                <constraint firstAttribute="trailing" secondItem="hQA-xf-AYX" secondAttribute="trailing" constant="80" id="A9i-fG-6p7"/>
                 <constraint firstItem="hkD-np-GiN" firstAttribute="width" secondItem="u4d-qZ-7kc" secondAttribute="width" constant="7" id="BpS-Nl-Vfe"/>
                 <constraint firstAttribute="trailing" secondItem="fAr-m6-28D" secondAttribute="trailing" constant="20" id="CDh-rx-fJX"/>
                 <constraint firstItem="haE-jt-Ybw" firstAttribute="centerX" secondItem="gTV-IL-0wX" secondAttribute="centerX" id="CXB-Ge-Pso"/>
@@ -157,6 +174,7 @@
                 <constraint firstItem="yed-0r-bPj" firstAttribute="centerY" secondItem="haE-jt-Ybw" secondAttribute="centerY" id="NgV-QE-Hvp"/>
                 <constraint firstItem="yed-0r-bPj" firstAttribute="leading" secondItem="haE-jt-Ybw" secondAttribute="trailing" constant="45" id="Tj7-Nf-fjW"/>
                 <constraint firstAttribute="trailing" secondItem="pVj-qA-uEZ" secondAttribute="trailing" id="VPb-JN-dub"/>
+                <constraint firstItem="7PW-QL-y9x" firstAttribute="leading" secondItem="hQA-xf-AYX" secondAttribute="trailing" id="VSF-BD-dWj"/>
                 <constraint firstItem="qGc-bA-Tyu" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="WOk-Fu-oWJ"/>
                 <constraint firstItem="haE-jt-Ybw" firstAttribute="leading" secondItem="q3P-AQ-e5k" secondAttribute="trailing" constant="45" id="YaQ-7h-l6O"/>
                 <constraint firstItem="hQA-xf-AYX" firstAttribute="centerX" secondItem="gTV-IL-0wX" secondAttribute="centerX" id="b18-OI-tGl"/>
@@ -175,14 +193,15 @@
                 <constraint firstItem="ct0-Dj-hmz" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="20" id="qlT-Wk-4td"/>
                 <constraint firstItem="q3P-AQ-e5k" firstAttribute="centerY" secondItem="haE-jt-Ybw" secondAttribute="centerY" id="qw4-Jh-zjy"/>
                 <constraint firstAttribute="trailing" secondItem="Df5-0O-Jku" secondAttribute="trailing" constant="20" id="rgC-WO-meW"/>
+                <constraint firstItem="7PW-QL-y9x" firstAttribute="centerY" secondItem="hQA-xf-AYX" secondAttribute="centerY" id="uLM-Zh-g82"/>
                 <constraint firstItem="u4d-qZ-7kc" firstAttribute="top" secondItem="pVj-qA-uEZ" secondAttribute="bottom" constant="20" id="zFW-Hh-eGd"/>
             </constraints>
-            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
             <size key="customSize" width="358" height="768"/>
             <connections>
                 <outlet property="activityIndicator" destination="hkD-np-GiN" id="lAx-d8-m0x"/>
                 <outlet property="exitButton" destination="pVj-qA-uEZ" id="1qY-BI-rmQ"/>
                 <outlet property="fastForwardButton" destination="yed-0r-bPj" id="cnv-KB-Tkg"/>
+                <outlet property="likeButton" destination="7PW-QL-y9x" id="K0W-RD-mf6"/>
                 <outlet property="pausePlayButton" destination="haE-jt-Ybw" id="qJ3-7M-7Jm"/>
                 <outlet property="profilePicImage" destination="u4d-qZ-7kc" id="Hfy-qf-O8v"/>
                 <outlet property="progressBar" destination="oni-cA-9QU" id="XT4-a5-Ldo"/>
@@ -200,11 +219,15 @@
         <image name="backward.fill" catalog="system" width="128" height="79"/>
         <image name="downButton" width="82" height="51"/>
         <image name="forward.fill" catalog="system" width="128" height="79"/>
+        <image name="heart" catalog="system" width="128" height="109"/>
         <namedColor name="AppRedColor">
-            <color red="1" green="0.33300000429153442" blue="0.33300000429153442" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.32941176470588235" blue="0.32941176470588235" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="collectionViewBackground">
             <color red="0.94300001859664917" green="0.93800002336502075" blue="0.94800001382827759" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
         </namedColor>
+        <systemColor name="opaqueSeparatorColor">
+            <color red="0.77647058823529413" green="0.77647058823529413" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
     </resources>
 </document>

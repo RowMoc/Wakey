@@ -23,6 +23,9 @@ class SelectRecipientsVC: UIViewController, AVAudioPlayerDelegate {
     @IBOutlet weak var recipientsListButton: UIButton!
     
     var audioURL: URL!
+    //privacy toggle of the message
+    
+    var recipientsCanFavorite = true
     
     lazy var adapter: ListAdapter = {
         return ListAdapter(updater: ListAdapterUpdater(), viewController: self, workingRangeSize: 0)
@@ -41,6 +44,7 @@ class SelectRecipientsVC: UIViewController, AVAudioPlayerDelegate {
     let theRest = "Everyone"
     let youHaveNoFriendsCell = "You don't yet have any friends on Wakey to send this to. Add friends from the people tab!"
     var searchBar = "searchBar"
+    var togglePrivacyCell = "togglePrivacyCell"
     var asleepSeperator = "Asleep"
     var asleepSeperatorDescription = "These folks have already set their alarms for the night, so - if you send them this message - they'll only receive it the next time they set their Wakey alarms after waking up."
     var awakeSeperator = "Awake"
@@ -60,6 +64,7 @@ class SelectRecipientsVC: UIViewController, AVAudioPlayerDelegate {
         let statusBarHeight = UIApplication.shared.statusBarFrame.height
         self.collectionView.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         self.recipientsListButton.titleLabel?.adjustsFontSizeToFitWidth = true
+        
         //navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         prepareButtonAudio()
         fetchData()
@@ -176,8 +181,12 @@ class SelectRecipientsVC: UIViewController, AVAudioPlayerDelegate {
     
     @IBAction func sendPressed(_ sender: Any) {
         sendButtonAudio.play()
+        
+        //determine length of audio of alarm
+        let asset = AVURLAsset(url: self.audioURL, options: nil)
+        let audioDuration = asset.duration.seconds
         DispatchQueue.main.async {
-            FirebaseManager.shared.sendWakeyMessage(audioFileUrl: self.audioURL, recipients: self.mapUserToReceiver(receivers: self.selectedRecipients)) { (error) in
+            FirebaseManager.shared.sendWakeyMessage(audioFileUrl: self.audioURL, audioLength: audioDuration, recipientsCanFavorite: self.recipientsCanFavorite, recipients: self.mapUserToReceiver(receivers: self.selectedRecipients)) { (error) in
                 if let error = error {
                     //didn't work
                     print(error)
@@ -273,8 +282,6 @@ class SelectRecipientsVC: UIViewController, AVAudioPlayerDelegate {
             self.loadingView.frame = self.view.frame
             self.uploadVN()
         }
-        
-       
     }
     
     func uploadVN() {
@@ -342,7 +349,7 @@ extension SelectRecipientsVC: ListAdapterDataSource{
     func objects(for listAdapter: ListAdapter) -> [ListDiffable] {
         var screenItems: [ListDiffable] = []
         if isSearching {
-            screenItems = [self.friendsLabelCell, self.searchBar] as [ListDiffable]
+            screenItems = [self.friendsLabelCell, self.searchBar, self.togglePrivacyCell] as [ListDiffable]
             screenItems += filteredAllArray as! [ListDiffable]
         } else {
             if (allArray.count == 0) {
@@ -352,7 +359,7 @@ extension SelectRecipientsVC: ListAdapterDataSource{
                     screenItems = [self.friendsLabelCell, youHaveNoFriendsCell] as [ListDiffable]
                 }
             } else {
-                screenItems = [self.friendsLabelCell, self.searchBar] as [ListDiffable]
+                screenItems = [self.friendsLabelCell, self.searchBar, self.togglePrivacyCell] as [ListDiffable]
                 if !awakeArray.isEmpty {
                     screenItems += [self.awakeSeperator,self.awakeSeperatorDescription] as [ListDiffable]
                     screenItems += self.awakeArray as! [ListDiffable]
@@ -383,6 +390,14 @@ extension SelectRecipientsVC: ListAdapterDataSource{
             let sc = loadingViewCellSC()
             return sc
         }
+        
+        if (object is String && object as! String == togglePrivacyCell) {
+            let sc = toggleMessagePrivacySC()
+            sc.canFavorite = recipientsCanFavorite
+            return sc
+        }
+        
+        
         if (object is String && object as! String == searchBar) {
             let sc = searchBarSC()
             sc.placeholderText = "Send to..."

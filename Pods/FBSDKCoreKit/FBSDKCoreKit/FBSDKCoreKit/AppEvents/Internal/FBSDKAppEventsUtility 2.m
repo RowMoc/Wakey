@@ -31,6 +31,7 @@
 #import "FBSDKInternalUtility.h"
 #import "FBSDKLogger.h"
 #import "FBSDKSettings.h"
+#import "FBSDKSettings+Internal.h"
 #import "FBSDKTimeSpentData.h"
 
 #define FBSDK_APPEVENTSUTILITY_ANONYMOUSIDFILENAME @"com-facebook-sdk-PersistedAnonymousID.json"
@@ -74,6 +75,23 @@
   NSString *userID = [FBSDKAppEvents userID];
   if (userID) {
     [FBSDKTypeUtility dictionary:parameters setObject:userID forKey:@"app_user_id"];
+  }
+
+  NSDictionary<NSString *, id> *dataProcessingOptions = [FBSDKSettings dataProcessingOptions];
+  if (dataProcessingOptions) {
+    NSArray<NSString *> *options = (NSArray<NSString *> *)dataProcessingOptions[DATA_PROCESSING_OPTIONS];
+    if (options && [options isKindOfClass:NSArray.class]) {
+      NSString *optionsString = [FBSDKBasicUtility JSONStringForObject:options error:nil invalidObjectHandler:nil];
+      [FBSDKTypeUtility dictionary:parameters
+                         setObject:optionsString
+                            forKey:DATA_PROCESSING_OPTIONS];
+    }
+    [FBSDKTypeUtility dictionary:parameters
+                       setObject:dataProcessingOptions[DATA_PROCESSING_OPTIONS_COUNTRY]
+                          forKey:DATA_PROCESSING_OPTIONS_COUNTRY];
+    [FBSDKTypeUtility dictionary:parameters
+                       setObject:dataProcessingOptions[DATA_PROCESSING_OPTIONS_STATE]
+                          forKey:DATA_PROCESSING_OPTIONS_STATE];
   }
 
   [FBSDKAppEventsDeviceInfo extendDictionaryWithDeviceInfo:parameters];

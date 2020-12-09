@@ -29,7 +29,7 @@ class playAlarmVC: UIViewController, AVAudioPlayerDelegate {
     var alarmToPlay: receivedAlarm!
     var previousAlarmBGTint: UIColor? = nil
     
-    var audioWasPausedBeforeReaction = false
+    var audioWasPausedBeforeViewPresented = false
     var currAlarmIndex = 0
 
     var meterTimer:Timer!
@@ -43,6 +43,12 @@ class playAlarmVC: UIViewController, AVAudioPlayerDelegate {
         //print("THE ALARMS ARE HERE:")
         //print(alarms)
         setupSpeakers()
+        print("IN PLAY ALARM VC, here are the alarms bool value:")
+        
+        for al in alarms {
+            print(al.canBeLiked)
+        }
+        
         alarmToPlay = alarms[currAlarmIndex]
         adapter.collectionView = collectionView
         adapter.dataSource = self
@@ -169,9 +175,11 @@ class playAlarmVC: UIViewController, AVAudioPlayerDelegate {
                 alarmsMarkedAsPlayed.append(alarmAudioToFireID)
                 DispatchQueue.main.async {
                     FirebaseManager.shared.wakeUp(usedAlarm: true, audioID: alarmAudioToFireID) { (error) in
-                        if let error = error {
+                        if error != nil {
                             //print("failed to set alarm has_been_heard to false")
                             //print(error)
+                        }  else {
+                            
                         }
                     }
                 }
@@ -283,6 +291,55 @@ class playAlarmVC: UIViewController, AVAudioPlayerDelegate {
     }
     
     
+    
+    var descriptionViewShadowView: UIView?
+    
+    func userDidTapLikeButton(updatedAlarmObject: receivedAlarm) {
+        
+        //update objects sotoried in this VC
+        for (index, alarm) in alarms.enumerated() {
+            if alarm.audioID == updatedAlarmObject.audioID {
+                alarms[index].hasBeenLiked = updatedAlarmObject.hasBeenLiked
+                break
+            }
+        }
+        
+        //If liked, show description input VC
+        if !updatedAlarmObject.hasBeenLiked {return}
+        
+        //Pause audio
+        if let alarmPlayer = self.alarmPlayer {
+            //print("inside")
+            if (alarmPlayer.isPlaying) {
+                audioWasPausedBeforeViewPresented = false
+                curAlarmCell.activityIndicator.stopAnimating()
+                alarmPlayer.stop()
+                curAlarmCell.pausePlayButton.setTitle("Play", for: .normal)
+                curAlarmCell.pausePlayButton.layoutIfNeeded()
+            } else {
+                audioWasPausedBeforeViewPresented = true
+            }
+        }
+        
+        //show description VC
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let nextVC = storyboard.instantiateViewController(withIdentifier: "likedAlarmDescriptionVC") as! likedAlarmDescriptionVC
+        nextVC.homeVC = self
+        nextVC.modalPresentationStyle = .overFullScreen
+        self.present(nextVC, animated: true)
+        
+        //Show shadow view over screen
+        descriptionViewShadowView = UIView(frame: self.view.frame)
+        descriptionViewShadowView!.backgroundColor = .black
+        descriptionViewShadowView!.alpha = 0.0
+        self.view.addSubview(descriptionViewShadowView!)
+        UIView.animate(withDuration: 0.3) {
+            self.descriptionViewShadowView!.alpha = 0.25
+        }
+    }
+    
+    
+    
 }
 
 
@@ -328,12 +385,12 @@ extension playAlarmVC: reactionViewDelegate {
             self.reactionViewContainer.alpha = 0.1
         }) { (success) in
             self.reactionViewContainer.removeFromSuperview()
-            self.startAudioAfterReactionDismisses()
+            self.startAudioAfterOtherViewDismisses()
         }
     }
     
-    func startAudioAfterReactionDismisses() {
-        if audioWasPausedBeforeReaction {return}
+    func startAudioAfterOtherViewDismisses() {
+        if audioWasPausedBeforeViewPresented {return}
         if let alarmPlayer = self.alarmPlayer {
             //print("inside")
             if (alarmPlayer.isPlaying) {
@@ -353,7 +410,7 @@ extension playAlarmVC: reactionViewDelegate {
             self.reactionViewContainer.alpha = 0.1
         }) { (success) in
             self.reactionViewContainer.removeFromSuperview()
-            self.startAudioAfterReactionDismisses()
+            self.startAudioAfterOtherViewDismisses()
         }
     }
     
@@ -362,13 +419,13 @@ extension playAlarmVC: reactionViewDelegate {
         if let alarmPlayer = self.alarmPlayer {
             //print("inside")
             if (alarmPlayer.isPlaying) {
-                audioWasPausedBeforeReaction = false
+                audioWasPausedBeforeViewPresented = false
                 curAlarmCell.activityIndicator.stopAnimating()
                 alarmPlayer.stop()
                 curAlarmCell.pausePlayButton.setTitle("Play", for: .normal)
                 curAlarmCell.pausePlayButton.layoutIfNeeded()
             } else {
-                audioWasPausedBeforeReaction = true
+                audioWasPausedBeforeViewPresented = true
             }
         }
         reactionViewContainer = UIView(frame: self.view.bounds)

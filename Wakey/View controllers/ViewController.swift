@@ -428,9 +428,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
         }
     }
     
-    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool)
-    {
-        
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool)  {
         if player == buttonStartClickAudio && recordMode {
             buttonNoisePlaying = false
             startRecording()
@@ -453,13 +451,6 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
     }
     
     func startRecording() {
-//        do {
-//            try recordingSession.setCategory(.playAndRecord, mode: .default, options: [.mixWithOthers])
-//            try recordingSession.setActive(true)
-//            try recordingSession.overrideOutputAudioPort(AVAudioSession.PortOverride.speaker)
-//        } catch let error {
-//          return
-//        }
         if !self.configSharedAudioSession() {
             return
         }
@@ -483,9 +474,6 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
         audioRecorder.isMeteringEnabled = true
         audioRecorder.prepareToRecord()
         audioRecorder.record()
-        print("HEEEEEEEERE")
-        print(audioRecorder)
-        print(audioRecorder.isRecording)
         meterTimer = Timer.scheduledTimer(timeInterval: 0.05, target:self, selector:#selector(self.updateAudioMeter(timer:)), userInfo:nil, repeats: true)
         colorChangeTimer = Timer.scheduledTimer(timeInterval: TimeInterval(minRecordingLength), target:self, selector:#selector(self.messageLengthIsValid), userInfo:nil, repeats: false)
     }
@@ -787,7 +775,9 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
             let username = wakeyMessage[constants.scheduledAlarms.senderUsernameKey] as? String ?? ""
             let profilePicUrl = wakeyMessage[constants.scheduledAlarms.senderProfilePicUrlKey] as? String ?? ""
             let timeSent = wakeyMessage[constants.scheduledAlarms.timeSentKey] as? Date ?? Date()
-            alarms.append(receivedAlarm(alarm: ["created_at" : timeSent, "audio_id": audioID], sender: userModel(user: ["user_id" : senderID, "username": username, "profile_img_url": profilePicUrl]), localAudioUrl: localAudioUrl))
+            let canBeLiked = wakeyMessage[constants.scheduledAlarms.alarmCanBeLikedKey] as? Bool ?? false
+            let hasBeenLiked = wakeyMessage[constants.scheduledAlarms.alarmHasBeeenLikedKey] as? Bool ?? false
+            alarms.append(receivedAlarm(alarm: ["created_at" : timeSent, "audio_id": audioID, "has_been_liked": hasBeenLiked, "can_be_liked": canBeLiked], sender: userModel(user: ["user_id" : senderID, "username": username, "profile_img_url": profilePicUrl]), localAudioUrl: localAudioUrl))
         }
         return alarms
     }

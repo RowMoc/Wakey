@@ -108,7 +108,7 @@ class FirebaseManager {
                                             latestMessageSender = otherUser
                                             latestMessageReceiver = currUser
                                         }
-                                        let latestMessage = wakeyMessage(sender: latestMessageSender, receiver: latestMessageReceiver, timeSent: sentAt, timeHeard: heardAtDate, audioFileUrl: audioUrl, reaction: reaction, conversationID: conversationID, messageID: conversationID)
+                                        let latestMessage = wakeyMessage(sender: latestMessageSender, receiver: latestMessageReceiver, timeSent: sentAt, timeHeard: heardAtDate, audioFileUrl: audioUrl, reaction: reaction, conversationID: conversationID, messageID: conversationID, audioLength: nil)
                                         
                                         let finalConvo = wakeyConversation(conversationID: conversationID, other_user: otherUser, messages: [latestMessage])
                                         //print(user.userID)
@@ -168,16 +168,19 @@ class FirebaseManager {
                                         if let timeSentStr = message["sent_at"] as? String, timeSentStr != "" {
                                             timeSent = jsonDateToDate(jsonStr: timeSentStr)
                                         }
-                                        
+                                        var audioLength: Double?
+                                        if let len = message["audio_length"] as? Double {
+                                            audioLength = len
+                                        }
                                         var timeHeard: Date?
                                         if let timeHeardStr = message["opened_at"] as? String, timeHeardStr != "" {
                                             timeHeard = jsonDateToDate(jsonStr: timeHeardStr)
                                         }
                                         
                                         if senderID == currUser.userID {
-                                            messageArr.append(wakeyMessage(sender: currUser, receiver: otherUser, timeSent: timeSent, timeHeard: timeHeard, audioFileUrl: audioFileUrl, reaction: reaction, conversationID: conversationID, messageID: messageID))
+                                            messageArr.append(wakeyMessage(sender: currUser, receiver: otherUser, timeSent: timeSent, timeHeard: timeHeard, audioFileUrl: audioFileUrl, reaction: reaction, conversationID: conversationID, messageID: messageID, audioLength: audioLength))
                                         } else {
-                                            messageArr.append(wakeyMessage(sender: otherUser, receiver: currUser, timeSent: timeSent, timeHeard: timeHeard, audioFileUrl: audioFileUrl, reaction: reaction, conversationID: conversationID, messageID: messageID))
+                                            messageArr.append(wakeyMessage(sender: otherUser, receiver: currUser, timeSent: timeSent, timeHeard: timeHeard, audioFileUrl: audioFileUrl, reaction: reaction, conversationID: conversationID, messageID: messageID, audioLength: audioLength))
                                         }
                                     }
                                     completion(nil, messageArr, messageArr.last?.messageID)
@@ -198,7 +201,7 @@ class FirebaseManager {
     
     
     
-    func sendWakeyMessage(audioFileUrl: URL, recipients: [[String: Any]], completion: @escaping (Error?) -> ()) {
+    func sendWakeyMessage(audioFileUrl: URL, audioLength: Double, recipientsCanFavorite: Bool, recipients: [[String: Any]], completion: @escaping (Error?) -> ()) {
         self.getCurrentUser { (err, currUser) in
             FirebaseManager.shared.uploadAudioFile(audioFileUrl: audioFileUrl) { (error, webHostedurl) in
                 //upload the recorded message to storage
@@ -212,7 +215,9 @@ class FirebaseManager {
                         "Authorization": "Bearer " + token,
                         "Accept": "application/json"
                     ]
-                    let params = ["receivers": recipients,"audio_file_url": webHostedurl] as [String : Any]
+                    
+                    
+                    let params = ["receivers": recipients,"audio_file_url": webHostedurl, "audio_length": audioLength, "recipients_can_favorite": recipientsCanFavorite] as [String : Any]
                     //AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/send_message", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
                     AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/send_message", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
                         //debugprint(response)
@@ -942,6 +947,43 @@ class FirebaseManager {
     }
     
     
+    func likeAlarm(thisAlarm: receivedAlarm, didLike: Bool, completion: @escaping (String) -> ()) {
+        self.getCurrentUser { (error, currUser) in
+            if error != nil {
+                completion("Failed to send")
+            }
+            self.fetchToken { (token) in
+                let headers: HTTPHeaders = [
+                    "Authorization": "Bearer " + token,
+                    "Accept": "application/json"
+                ]
+                let params = ["audio_id": thisAlarm.audioID,"did_like": didLike] as [String : Any]
+                AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/did_favorite", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+                    .responseJSON { response in
+                        //debugprint(response)
+                        if let result = response.response?.statusCode {
+                            if result == 200 {
+                                if didLike {
+                                    completion("Liked " + thisAlarm.sender.username + "'s wakey")
+                                } else {
+                                    completion("Unliked " + thisAlarm.sender.username + "'s wakey")
+                                }
+                                
+                                return
+                            }
+                        }
+                        if didLike {
+                            completion("Failed to like " + thisAlarm.sender.username + "'s wakey")
+                        } else {
+                            completion("Failed to unlike " + thisAlarm.sender.username + "'s wakey")
+                        }
+                }
+            }
+        }
+    }
+    
+    
+    
     
     func sendAudio(audioFileUrl: URL, recipients: [userModel], completion: @escaping (Error?) -> ()) {
         FirebaseManager.shared.uploadAudioFile(audioFileUrl: audioFileUrl) { (error, url) in
@@ -1063,26 +1105,22 @@ class FirebaseManager {
                     if response.data != nil {
                         print("Response data isnt nil")
                         if let parseJSON = try JSONSerialization.jsonObject(with: response.data!, options: []) as? NSDictionary {
-                            print("YEEE Parsed it")
-                            if let audiosDict = parseJSON["messages"] as? [[String: Any]] {
-                                print("GETS INTO HERRREEERERERERER")
-                                print(audiosDict)
+                            if let audiosDict = parseJSON["messages"] as? [[String: [String: Any]]] {
                                 var alarms: [receivedAlarm] = []
                                 for msg in audiosDict {
+                                    let messageDetails = msg["message"]! as [String: Any]
+                                    let senderDetails = msg["sender"]! as [String: Any]
                                     
-                                    let alarmProps = ["audio_id": msg["message_id"] as Any,"audio_file_url": msg["audio_file_url"] as Any, "created_at": Date()] as [String:Any]
-                                    let userDict = ["user_id": "", "username": "Test", "profile_img_url": "https://firebasestorage.googleapis.com/v0/b/wakey-3bf93.appspot.com/o/user_profile_pics%2FqpxrfXuhilQElNlelGT2KnKhPuJ3.jpg?alt=media&token=3f5f9cb5-a5fd-4d4c-a1d7-417382646d65", "asleep": false, "created_at": Date()] as [String : Any]
+                                    
+                                    
+                                    let alarmProps = ["audio_id": messageDetails["message_id"] as Any,"audio_file_url": messageDetails["audio_file_url"] as Any, "created_at": jsonDateToDate(jsonStr: messageDetails["sent_at"] as? String ?? ""), "audio_length": messageDetails["audio_length"] as Any, "can_be_liked": messageDetails["can_be_liked"] as Any, "has_been_liked": messageDetails["has_been_liked"] as Any] as [String:Any]
+                                    let userDict = ["user_id": senderDetails["sender_id"] as Any, "username": senderDetails["username"] as Any, "profile_img_url": senderDetails["profile_img_url"] as Any, "asleep": false, "created_at": Date()] as [String : Any]
+                                    
                                     let user = userModel(user: userDict)
                                     let alarm = receivedAlarm(alarm: alarmProps, sender: user, localAudioUrl: nil)
                                     alarms.append(alarm)
-//                                    if let senderDict = msg["sender"] as? [String: Any] {
-//                                        let userDict = ["user_id": senderDict["sender_id"] as Any, "username": senderDict["sender_username"] as Any, "profile_img_url": senderDict["sender_img"] as Any, "asleep": false, "created_at": Date()] as [String : Any]
-//                                        let user = userModel(user: userDict)
-//
-//                                        let alarmProps = ["audio_id": msg["audio_id"] as Any,"audio_file_url": msg["audio_file_url"] as Any, "created_at": Date()] as [String:Any]
-//                                        let alarm = receivedAlarm(alarm: alarmProps, sender: user, localAudioUrl: nil)
-//                                        alarms.append(alarm)
-//                                    }
+                                    print("HERES A MESSAGE:")
+                                    print(alarmProps)
                                 }
                                 completion(nil, alarms)
                                 return
@@ -1177,7 +1215,7 @@ class FirebaseManager {
         SDWebImageDownloader.shared.downloadImage(with: URL(string: withUrl), options: [.continueInBackground], progress: nil) { (image, data, error, success) in
             if error == nil {
                 if let image = image {
-                    let rotatedImg = image.sd_rotatedImage(withAngle: 270, fitSize: false)!
+                    let rotatedImg = image.sd_rotatedImage(withAngle: 0, fitSize: false)!
                     do {
                         try rotatedImg.jpegData(compressionQuality: 0.2)?.write(to: fileURL)
                         completion(nil, fileURL)

@@ -39,6 +39,21 @@ class playAlarmCellSC: ListSectionController {
             if let previousBGTintColor = previousBGTintColor {
                 cell.tintBackgroundImage(color: previousBGTintColor, animate: false)
             }
+            
+            //check if this alarm can be liked, and if so, whether it has been liked
+            if alarm.canBeLiked {
+                cell.likeButton.isHidden = false
+                if alarm.hasBeenLiked {
+                    cell.likeButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+                } else {
+                    cell.likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
+                }
+            } else {
+                cell.likeButton.isHidden = true
+            }
+            
+            
+            
             if (alarm.sender.profilePicUrl != "") {
                 cell.profilePicImage.sd_setImage(with: URL(string: alarm.sender.profilePicUrl), placeholderImage: UIImage(named:"wakeyProfilePic")!, options: [.delayPlaceholder]) { (proPic, error, cacheType, url) in
                     if let proPic = proPic {
@@ -61,11 +76,6 @@ class playAlarmCellSC: ListSectionController {
                         }
                     }
                 }
-                //https://firebasestorage.googleapis.com/v0/b/wakey-3bf93.appspot.com/o/user_profile_pics%2FPrRXLnGrjLNC3x5Hdg5kqqfXMTJ2.jpg?alt=media&token=b95a4ee2-1f20-4cf5-b46d-ee06eab32543
-                //cell.profilePicImage.image = UIImage(named: "wakeyProfilePic")!
-//                UIView.transition(with: cell.backgroundImageView, duration: 0.5, options: [.beginFromCurrentState, .transitionCrossDissolve], animations: { () -> Void in
-//                    cell.tintBackgroundImage(color: UIColor(named: "AppRedColor")!, animate: true)
-//                }, completion: nil)
                 
                 
             }
@@ -107,13 +117,33 @@ class playAlarmCellSC: ListSectionController {
     
     
     func userDidSwipeToReact(cell:playAlarmCell) {
-        //print("hears swipe gesture")
+        ////print("hears swipe gesture")
         (self.viewController as! playAlarmVC).userDidSwipeToReact(duringAlarm: alarm)
     }
     
     
     func userDidPressExit() {
         (self.viewController as! playAlarmVC).userDidExit()
+    }
+    
+    
+    func didPressLikeButton(cell: playAlarmCell) {
+        guard let vc = self.viewController as? playAlarmVC else {
+            return
+        }
+        if alarm.canBeLiked {
+            cell.likeButton.isHidden = false
+            if alarm.hasBeenLiked {
+                cell.likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
+                self.alarm.hasBeenLiked = false
+            } else {
+                cell.likeButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+                self.alarm.hasBeenLiked = true
+            }
+            vc.userDidTapLikeButton(updatedAlarmObject: self.alarm)
+        } else {
+            cell.likeButton.isHidden = true
+        }
     }
     
 }

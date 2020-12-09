@@ -46,7 +46,7 @@ class connectFacebookCellSC: ListSectionController, LoginButtonDelegate {
     //FB login
     func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
         if let error = error {
-            print(error.localizedDescription)
+            //print(error.localizedDescription)
             return
         }
         guard let currAccessToken = AccessToken.current?.tokenString else {
@@ -57,14 +57,14 @@ class connectFacebookCellSC: ListSectionController, LoginButtonDelegate {
         request.start { (connection, result, reqError) in
             if let reqError = reqError {
                 let errorMessage = reqError.localizedDescription
-                print(errorMessage)
+                //print(errorMessage)
                 return
                 /* Handle error */
             }
             if let  result = result {
                 /*  handle response */
-                print("RESULT FROM FRIENDS")
-                print(result)
+                //print("RESULT FROM FRIENDS")
+                //print(result)
             }
         }
         return

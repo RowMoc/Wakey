@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="toggleMessagePrivacyCell" customModule="Wakey" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="504" height="50"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="504" height="50"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Recipients will be able to favorite this wakey" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gaS-6H-TBQ">
+                        <rect key="frame" x="15" y="16" width="256" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="18" id="t2W-yf-f33"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="13"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rwq-dV-uzn">
+                        <rect key="frame" x="440" y="9.5" width="51" height="31"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="49" id="3hx-sH-ouy"/>
+                            <constraint firstAttribute="height" constant="31" id="xGF-qa-eFs"/>
+                        </constraints>
+                        <color key="onTintColor" name="AppRedColor"/>
+                        <color key="thumbTintColor" name="cellBackgroud"/>
+                        <connections>
+                            <action selector="privacySwitchToggled:" destination="gTV-IL-0wX" eventType="valueChanged" id="CPK-vU-WfG"/>
+                        </connections>
+                    </switch>
+                </subviews>
+            </view>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="Rwq-dV-uzn" secondAttribute="trailing" constant="15" id="DRd-Fg-3vR"/>
+                <constraint firstItem="gaS-6H-TBQ" firstAttribute="centerY" secondItem="gTV-IL-0wX" secondAttribute="centerY" id="RfL-Pq-Kdy"/>
+                <constraint firstItem="Rwq-dV-uzn" firstAttribute="centerY" secondItem="gTV-IL-0wX" secondAttribute="centerY" id="aJW-36-bAx"/>
+                <constraint firstItem="gaS-6H-TBQ" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="15" id="h5Q-C6-uFS"/>
+            </constraints>
+            <size key="customSize" width="504" height="50"/>
+            <connections>
+                <outlet property="label" destination="gaS-6H-TBQ" id="E8n-bp-MsF"/>
+                <outlet property="privacySwitch" destination="Rwq-dV-uzn" id="vwt-xs-BTV"/>
+            </connections>
+            <point key="canvasLocation" x="314.49275362318843" y="103.79464285714285"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <namedColor name="AppRedColor">
+            <color red="1" green="0.32941176470588235" blue="0.32941176470588235" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="cellBackgroud">
+            <color white="0.95399999618530273" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </namedColor>
+    </resources>
+</document>

@@ -21,19 +21,9 @@ class constants {
         static let scheduledAlarmArrayKey = "scheduledAlarmArrayKey"
         //Date: Time alarm was set to go off
         static let alarmSetForTimeKey = "alarmSetForTimeKey"
-        //{scheduledAlarmDictionary} = {
-        //          "alarmSetForTimeKey": Date,
-        //          "scheduledAlarArrayKey": [
-        //                              "alarmLengthKey": Double,
-        //                              "audioIDKey": String,
-        //                              "whenToFireKey": Date,
-        //                              "localAudioUrlKey": String
-        //                              "senderIDKey": String,
-        //                              "senderUsernameKey": String
-        //                              "senderProfilePicUrlKey":String
-        //                              "timeSentKey": Date
-        //                              ]
-        //}
+        
+        static let alarmCanBeLikedKey = "alarmCanBeLikedKey"
+        static let alarmHasBeeenLikedKey = "alarmHasBeeenLikedKey"
         static let alarmLengthKey = "alarmLength"
         static let audioIDKey = "audioID"
         static let whenToFireKey = "whenToFire"

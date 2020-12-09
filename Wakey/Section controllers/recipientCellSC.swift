@@ -33,11 +33,11 @@ class recipientCellSC: ListSectionController {
             }
             
             if self.user.isSelected {
-                cell.cellBackgroundView.backgroundColor = UIColor(named: "AppGreenColor")!.withAlphaComponent(0.75)
+                cell.cellBackgroundView.backgroundColor = UIColor(named: "AppRedColor")!.withAlphaComponent(0.75)
                 cell.profilePic.layer.borderColor = UIColor.white.cgColor
             } else {
                 cell.cellBackgroundView.backgroundColor = UIColor.systemBackground
-                cell.profilePic.layer.borderColor = UIColor(named: "AppGreenColor")!.cgColor
+                cell.profilePic.layer.borderColor = UIColor(named: "AppRedColor")!.cgColor
             }
             self.thisCell = cell
         }
@@ -57,12 +57,12 @@ class recipientCellSC: ListSectionController {
         if self.user.isSelected {
             (self.viewController as! SelectRecipientsVC).removeRecipient(user: self.user.user)
             thisCell.cellBackgroundView.backgroundColor = UIColor.systemBackground
-            thisCell.profilePic.layer.borderColor = UIColor(named: "AppGreenColor")!.cgColor
+            thisCell.profilePic.layer.borderColor = UIColor(named: "AppRedColor")!.cgColor
             self.user.isSelected = false
         } else {
             //print("tried changing color")
             (self.viewController as! SelectRecipientsVC).addRecipient(user: self.user.user)
-            thisCell.cellBackgroundView.backgroundColor = UIColor(named: "AppGreenColor")!.withAlphaComponent(0.75)
+            thisCell.cellBackgroundView.backgroundColor = UIColor(named: "AppRedColor")!.withAlphaComponent(0.75)
             thisCell.profilePic.layer.borderColor = UIColor.white.cgColor
             self.user.isSelected = true
         }
@@ -83,8 +83,6 @@ func createStringWithEmoji(text: String, fontSize: CGFloat, emojiName: String, t
     let yPos = (UIFont(name: font, size: fontSize)!.capHeight - fontSize).rounded() / 2
     imageAttachment.bounds = CGRect(x: 0, y: yPos, width: fontSize, height: fontSize)
     let imageAttachmentString = NSMutableAttributedString(attachment: imageAttachment)
-
-
     titleTextString.append(imageAttachmentString)
     return titleTextString
 }

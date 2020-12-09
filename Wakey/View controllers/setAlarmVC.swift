@@ -8,6 +8,7 @@
 
 import UIKit
 import AVFoundation
+import CircleProgressBar
 
 class setAlarmVC: UIViewController, UNUserNotificationCenterDelegate{
 
@@ -17,6 +18,8 @@ class setAlarmVC: UIViewController, UNUserNotificationCenterDelegate{
     @IBOutlet weak var popUpView: UIView!
     @IBOutlet weak var topLabel: UILabel!
     @IBOutlet weak var middleLabel: UILabel!
+    @IBOutlet weak var confirmButton: UIButton!
+    @IBOutlet weak var progressRing: CircleProgressBar!
     
     var alarmFireDate: Date!
     var homeVC: ViewController!
@@ -26,7 +29,10 @@ class setAlarmVC: UIViewController, UNUserNotificationCenterDelegate{
         super.viewDidLoad()
         let alarmText = DateFormatter.localizedString(from: self.alarmFireDate, dateStyle: .none, timeStyle: .short).replacingOccurrences(of: " ", with: "")
         self.topLabel.text = "SETTING YOUR " + alarmText + " ALARM"
+        self.confirmButton.isEnabled = false
         configPopUpUI()
+        configCircleProgressBar()
+        repackAlarms()
     }
     
     func configPopUpUI() {
@@ -40,12 +46,32 @@ class setAlarmVC: UIViewController, UNUserNotificationCenterDelegate{
         popUpView.backgroundColor = UIColor(named: "cellBackgroud")!
     }
     
+    
+    func configCircleProgressBar() {
+        progressRing.hintHidden = false
+        progressRing.setHintTextGenerationBlock { (progress) -> String? in
+            return String.init(format: "%.0f", arguments: [progress * 100]) + "%"
+        }
+        progressRing.progressBarWidth = 10
+        progressRing.progressBarProgressColor = UIColor(named: "AppRedColor")?.withAlphaComponent(0.7)
+        progressRing.progressBarTrackColor = UIColor(named: "AppRedColor")?.withAlphaComponent(0.2)
+        progressRing.hintTextFont = UIFont(name: "Avenir-medium", size: 10)
+        progressRing.hintTextColor = UIColor(named: "default")
+        progressRing.hintViewBackgroundColor = .clear
+        progressRing.backgroundColor = .clear
+        progressRing.setProgress(0.25, animated: true, duration: 0.3)
+        
+        
+    }
+    
 
     
     func repackAlarms() {
         var repackedAlarms: [receivedAlarm] = []
         for alarm in alarmsToSet {
-            let alarmObject = ["created_at": alarm.timeReceived, "audio_file_url": alarm.audioFileUrl ,"audio_length": alarm.audioLength, "audio_id": alarm.messageId ] as [String: Any]
+            let alarmObject = ["created_at": alarm.timeReceived, "audio_file_url": alarm.audioFileUrl ,"audio_length": alarm.audioLength, "audio_id": alarm.messageId, "can_be_liked": alarm.canBeLiked, "has_been_liked": alarm.hasBeenLiked] as [String: Any]
+            print("REPACK THIS ALARM:")
+            print(alarmObject)
             let fetchedAlarm = receivedAlarm(alarm: alarmObject, sender: alarm.associatedProfile, localAudioUrl: nil)
             repackedAlarms.append(fetchedAlarm)
         }
@@ -60,7 +86,11 @@ class setAlarmVC: UIViewController, UNUserNotificationCenterDelegate{
         
         getAudios(fetchedAlarms: fetchedAlarms, timeToFire: alarmFireDate, settingAlarmProgress: 25.0, settingAlarmProgressLabel: downloadProgressLabl) { (error, notificationsContent) in
             //We've downloaded th audios and profile pics. Add alarms to local storage
-            self.saveAlarmDetailsLocally(fetchedAlarms: fetchedAlarms, notificationsContent: notificationsContent as! [UNNotificationContent])
+            if error == nil {
+                self.saveAlarmDetailsLocally(fetchedAlarms: fetchedAlarms, notificationsContent: notificationsContent as! [UNNotificationContent])
+            } else {
+                self.alarmsFailedToSet()
+            }
         }
     }
     
@@ -79,7 +109,9 @@ class setAlarmVC: UIViewController, UNUserNotificationCenterDelegate{
         //store alarms in user defaults
         UserDefaults.standard.set(localAlarmArray, forKey: constants.scheduledAlarms.scheduledAlarmDictionaryKey)
         UserDefaults.standard.synchronize()
-        //self.didSetAlarmSuccessfully()
+        
+        //alarms have been set successfully
+        self.alarmsSetSuccessfully()
     }
     
     
@@ -96,10 +128,15 @@ class setAlarmVC: UIViewController, UNUserNotificationCenterDelegate{
             let username = info[constants.scheduledAlarms.senderUsernameKey] as? String ?? ""
             let profilePicUrl = info[constants.scheduledAlarms.senderProfilePicUrlKey] as? String ?? ""
             let timeSent = info[constants.scheduledAlarms.timeSentKey] as? Date ?? Date()
-            localAlarmArray.append([constants.scheduledAlarms.audioIDKey: audioID, constants.scheduledAlarms.localAudioUrlKey: localAudioUrl, constants.scheduledAlarms.senderIDKey: senderID, constants.scheduledAlarms.senderUsernameKey: username, constants.scheduledAlarms.senderProfilePicUrlKey: profilePicUrl, constants.scheduledAlarms.timeSentKey: timeSent])
+            let canBeLiked = info[constants.scheduledAlarms.alarmCanBeLikedKey] as? Bool ?? false
+            let hasBeenLiked = info[constants.scheduledAlarms.alarmHasBeeenLikedKey] as? Bool ?? false
+            
+            
+            
+            localAlarmArray.append([constants.scheduledAlarms.audioIDKey: audioID, constants.scheduledAlarms.localAudioUrlKey: localAudioUrl, constants.scheduledAlarms.senderIDKey: senderID, constants.scheduledAlarms.senderUsernameKey: username, constants.scheduledAlarms.senderProfilePicUrlKey: profilePicUrl, constants.scheduledAlarms.timeSentKey: timeSent, constants.scheduledAlarms.alarmCanBeLikedKey: canBeLiked, constants.scheduledAlarms.alarmHasBeeenLikedKey: hasBeenLiked])
             let triggerDate = Calendar.current.dateComponents([.year,.month, .day, .hour, .minute, .second], from: updatedTimeToFire!)
             let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: false)
-            let request = UNNotificationRequest(identifier: alarm.audioID, content: content, trigger: trigger)
+            let request = UNNotificationRequest(identifier: alarm.audioID + "_" + Date().description, content: content, trigger: trigger)
             UNUserNotificationCenter.current().delegate = self
             UNUserNotificationCenter.current().add(request) { (error) in
                 if (error == nil){
@@ -107,14 +144,52 @@ class setAlarmVC: UIViewController, UNUserNotificationCenterDelegate{
                 }
             }
             var audioDuration = 0.0 as Double
-            if let audioLen = alarm.audioLength {
-                audioDuration = audioLen
-            } else {
-                let asset = AVURLAsset(url: alarm.localAudioUrl!, options: nil)
-                audioDuration = asset.duration.seconds
-            }
+//            if let audioLen = alarm.audioLength {
+//                audioDuration = audioLen
+//            } else {
+//                let asset = AVURLAsset(url: alarm.localAudioUrl!, options: nil)
+//                audioDuration = asset.duration.seconds
+//            }
+            let asset = AVURLAsset(url: alarm.localAudioUrl!, options: nil)
+            audioDuration = asset.duration.seconds
             updatedTimeToFire = Calendar.current.date(byAdding: .second, value: Int(audioDuration + 1), to: updatedTimeToFire!)!
         }
         return localAlarmArray
     }
+    
+    func alarmsSetSuccessfully() {
+        //UI of this VC
+        self.confirmButton.isEnabled = true
+        self.confirmButton.setTitle("Woohoo!", for: .normal)
+        self.middleLabel.text = ""
+        let alarmText = DateFormatter.localizedString(from: self.alarmFireDate, dateStyle: .none, timeStyle: .short).replacingOccurrences(of: " ", with: "")
+        self.topLabel.text = alarmText + " ALARM SET SUCCESSFULLY"
+        progressRing.setProgress(1.0, animated: true, duration: 0.3)
+        //UI of home VC
+        let alarmButtonText = DateFormatter.localizedString(from: alarmFireDate, dateStyle: .none, timeStyle: .short)
+        let attrTitle = createStringWithEmoji(text: alarmButtonText + "  ", fontSize: 25, emojiName: "asleep_face", textColor: .white, font: "Avenir-heavy")
+        self.homeVC.goToSleepButton.setAttributedTitle(attrTitle, for: .normal)
+        self.homeVC.alarmImage.alpha = 1
+        self.homeVC.alarmImage.image = UIImage.init(systemName: "alarm.fill")!
+    }
+    
+    
+    func alarmsFailedToSet() {
+        //UI of this VC
+        self.confirmButton.isEnabled = true
+        self.confirmButton.setTitle("Okay", for: .normal)
+        self.middleLabel.text = "Your alarm failed to be set"
+        self.topLabel.text = "NETWORK ERROR"
+        progressRing.setProgress(0.0, animated: true, duration: 0.3)
+        //UI of home VC
+    }
+    
+    
+    @IBAction func confirmButtonPressed(_ sender: Any) {
+        //Dismiss this vc and remove shadow from homeVC
+        self.homeVC.popUpShadeView.removeFromSuperview()
+        self.dismiss(animated: true)
+    }
+    
+    
 }

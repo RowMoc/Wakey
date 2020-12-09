@@ -56,7 +56,7 @@ class goToSleepVC: UIViewController, UNUserNotificationCenterDelegate {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
           try AVAudioSession.sharedInstance().setActive(true)
         } catch {
-          //print(error)
+          ////print(error)
         }
     }
     
@@ -118,7 +118,7 @@ class goToSleepVC: UIViewController, UNUserNotificationCenterDelegate {
         //self.performSegue(withIdentifier: "playAlarmsSegue", sender: alarmsToPlay)
         inSleepMode = false
         self.delegate?.userHasWokenUp()
-        //print("pumping up the brightness")
+        ////print("pumping up the brightness")
         UIScreen.main.brightness = CGFloat(1)
         self.performSegue(withIdentifier: "playAlarmSegue", sender: nil)
     }

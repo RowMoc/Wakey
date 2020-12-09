@@ -219,6 +219,7 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.7):
     - BoringSSL-GRPC/Interface (= 0.0.7)
   - BoringSSL-GRPC/Interface (0.0.7)
+  - CircleProgressBar (0.32)
   - DynamicBlurView (4.1.0)
   - EasyTipView (2.0.4)
   - FBSDKCoreKit (7.1.1):
@@ -386,6 +387,7 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire
+  - CircleProgressBar (~> 0.32)
   - EasyTipView
   - FBSDKLoginKit
   - Firebase/Analytics
@@ -407,6 +409,7 @@ SPEC REPOS:
     - abseil
     - Alamofire
     - BoringSSL-GRPC
+    - CircleProgressBar
     - DynamicBlurView
     - EasyTipView
     - FBSDKCoreKit
@@ -445,6 +448,7 @@ SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
   Alamofire: 814429acc853c6c54ff123fc3d2ef66803823ce0
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
+  CircleProgressBar: 3920079be5224b62b3d9ed6eeb23ac01c835b681
   DynamicBlurView: 58e18fae80bb614e34681a4486870e7d257b62e8
   EasyTipView: 4f8beae0a82db2ca4a9b5fd658785fc5f61d296b
   FBSDKCoreKit: b46507dc8b8cefed31d644e74d7cc30e2a715ef8
@@ -479,6 +483,6 @@ SPEC CHECKSUMS:
   SkyFloatingLabelTextField: 5a338412114808e961fe2d14ea2c5452c8b6e4aa
   UIImageColors: d2ef3b0877d203cbb06489eeb78ea8b7788caabe
 
-PODFILE CHECKSUM: e8dce89d561137c4c351a918c0147cce7f071644
+PODFILE CHECKSUM: 6bee5eb2a4b06677bcfb56701551a1ffc46a52be
 
 COCOAPODS: 1.8.4

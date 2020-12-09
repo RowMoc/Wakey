@@ -39,5 +39,7 @@ pod 'FlagPhoneNumber'
 
 pod 'UIImageColors'
 
+pod 'CircleProgressBar', '~> 0.32’
+
 
 end

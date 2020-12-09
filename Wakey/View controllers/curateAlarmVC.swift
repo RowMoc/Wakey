@@ -53,7 +53,7 @@ class curateAlarmVC: UIViewController  {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("TRYING HARDER")
+        //print("TRYING HARDER")
         adapter.collectionView = collectionView
         collectionView.backgroundColor = UIColor(named: "cellBackgroud")!
         adapter.dataSource = self
@@ -67,6 +67,7 @@ class curateAlarmVC: UIViewController  {
 //        self.layer.cornerRadius = 8.0
 //        cellBackgroundView.layer.masksToBounds = true
         ensureAlarmNotEmpty()
+        //populateWithFakeData()
         fetchAlarms()
     }
     
@@ -91,46 +92,28 @@ class curateAlarmVC: UIViewController  {
         cancelButtonView.layer.masksToBounds = true
         cancelButtonView.backgroundColor = UIColor(named: "cellBackgroud")!
     }
-    
+
     
     func fetchAlarms() {
         isLoading = true
-        
-        //unopened
-        let alarm = receivedAlarm(alarm: (["created_at": Date(), "audio_file_url": "", "audio_id": "defaultAlarmSound"] as [String: Any]), sender: userModel(user: ["username": "george_burnzzz", "profile_img_url": "https://firebasestorage.googleapis.com/v0/b/wakey-3bf93.appspot.com/o/user_profile_pics%2Fhxir6GJ6whg1auIA2FhlOcSIOzL2.jpg?alt=media&token=b80f9bce-efdf-4846-aac2-61f759612d54"]), localAudioUrl: URL(fileURLWithPath: Bundle.main.path(forResource: "defaultAlarmSound", ofType: "m4a")!))
-        let curatedAlarm = curateListAlarm(associatedProfile: alarm.sender, timeReceived: alarm.timeSent, audioFileUrl: alarm.audioUrl, audioLength: 15.0, description: "", messageId: String(0), curateListCategory: constants.curateAlarmListHeadings.unopenedMessage, isQueued: false)
-        self.unopenedAlarms.append(curatedAlarm)
-        
-        //default
-        let alarmDefault = receivedAlarm(alarm: (["created_at": Date(), "audio_file_url": "123", "audio_id": "defaultAlarmSound23"] as [String: Any]), sender: userModel(user: ["username": "Rowan", "profile_img_url": "https://firebasestorage.googleapis.com/v0/b/wakey-3bf93.appspot.com/o/user_profile_pics%2Fhxir6GJ6whg1auIA2FhlOcSIOzL2.jpg?alt=media&token=b80f9bce-efdf-4846-aac2-61f759612d54"]), localAudioUrl: URL(fileURLWithPath: Bundle.main.path(forResource: "defaultAlarmSound", ofType: "m4a")!))
-        let curatedAlarmDefault = curateListAlarm(associatedProfile: alarmDefault.sender, timeReceived: alarmDefault.timeSent, audioFileUrl: alarmDefault.audioUrl, audioLength: 17.0, description: "Here's a description 💸", messageId: String(0923), curateListCategory: constants.curateAlarmListHeadings.defaultAlarm, isQueued: false)
-        self.defaultAlarms.append(curatedAlarmDefault)
-        
-        //Favorited
-        let alarmFav = receivedAlarm(alarm: (["created_at": Date(), "audio_file_url": "1223", "audio_id": "defaultAlarmSound2333"] as [String: Any]), sender: userModel(user: ["username": "Someone else", "profile_img_url": "https://firebasestorage.googleapis.com/v0/b/wakey-3bf93.appspot.com/o/user_profile_pics%2Fhxir6GJ6whg1auIA2FhlOcSIOzL2.jpg?alt=media&token=b80f9bce-efdf-4846-aac2-61f759612d54"]), localAudioUrl: URL(fileURLWithPath: Bundle.main.path(forResource: "defaultAlarmSound", ofType: "m4a")!))
-        let curatedAlarmFav = curateListAlarm(associatedProfile: alarmFav.sender, timeReceived: alarmFav.timeSent, audioFileUrl: alarmFav.audioUrl, audioLength: 28.0, description: "", messageId: String(03434923), curateListCategory: constants.curateAlarmListHeadings.favorited, isQueued: true)
-        queuedAlarms.append(curatedAlarmFav)
-        ensureAlarmNotEmpty()
-        adjustTopLabelInfo()
-        self.isLoading = false
-        self.adapter.performUpdates(animated: true)
-//        FirebaseManager.shared.fetchUnopenedMessages { (error, alarms) in
-//            if let error = error {
-//                var randomID = 0
-//                for alarm in alarms {
-//                    var curatedAlarm = curateListAlarm(associatedProfile: alarm.sender, timeReceived: alarm.timeSent, audioFileUrl: alarm.audioUrl, audioLength: 15.0, description: "", messageId: String(randomID), curateListCategory: constants.curateAlarmListHeadings.unopenedMessage, isQueued: false)
-//                    self.unopenedAlarms.append(curatedAlarm)
-//                    randomID += 1
-//                }
-//                self.isLoading = false
-//                self.adapter.performUpdates(animated: true)
-//                return
-//            } else {
-//                print("NoooOOOoOoOoOOOoooOo")
-//            }
-//        }
-        
-        
+        FirebaseManager.shared.fetchUnopenedMessages { (error, alarms) in
+            self.isLoading = false
+            if error != nil {
+                return
+            } else {
+                var index = 0
+                for alarm in alarms {
+                    let curatedAlarm = curateListAlarm(associatedProfile: alarm.sender, timeReceived: alarm.timeSent, audioFileUrl: alarm.audioUrl, audioLength: 15.0, description: "", messageId: alarm.audioID, curateListCategory: constants.curateAlarmListHeadings.unopenedMessage, isQueued: true, canBeLiked: alarm.canBeLiked, hasBeenLiked: alarm.hasBeenLiked)
+                    index += 1
+                    //print(String(index) + " ALARM: ")
+                    //print(curatedAlarm.messageId)
+                    self.queuedAlarms.append(curatedAlarm)
+                }
+                self.ensureAlarmNotEmpty()
+                self.adjustTopLabelInfo()
+                self.adapter.performUpdates(animated: true)
+            }
+        }
     }
     
     
@@ -146,7 +129,7 @@ class curateAlarmVC: UIViewController  {
         nextVC.homeVC = self.homeVC
         nextVC.alarmsToSet = queuedAlarms
         nextVC.modalPresentationStyle = .overFullScreen
-        print("TRYING HARD")
+        //print("TRYING HARD")
         self.dismiss(animated: false) {
             self.homeVC.present(nextVC, animated: true)
         }
@@ -270,7 +253,7 @@ extension curateAlarmVC: ListAdapterDataSource{
             } else {
                 let sc = seperatorCellSC()
                 sc.labelText = (object as! String)
-                sc.lightText = true
+                sc.lightText = false
                 sc.fontSize = 14
                 return sc
             }

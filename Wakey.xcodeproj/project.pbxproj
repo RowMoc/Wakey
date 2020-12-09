@@ -42,6 +42,9 @@
 		205D44642493F4CB00644B4E /* WalkThroughPageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205D44632493F4CB00644B4E /* WalkThroughPageVC.swift */; };
 		205D4466249400E200644B4E /* WalkThroughVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205D4465249400E200644B4E /* WalkThroughVC.swift */; };
 		205D44682494545B00644B4E /* ReminderWalkThroughContentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205D44672494545B00644B4E /* ReminderWalkThroughContentVC.swift */; };
+		2072624E257E4FED00BA34AF /* toggleMessagePrivacyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2072624C257E4FED00BA34AF /* toggleMessagePrivacyCell.swift */; };
+		2072624F257E4FED00BA34AF /* toggleMessagePrivacyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2072624D257E4FED00BA34AF /* toggleMessagePrivacyCell.xib */; };
+		20726252257E51C000BA34AF /* toggleMessagePrivacySC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20726251257E51C000BA34AF /* toggleMessagePrivacySC.swift */; };
 		20742F4E2499AA31005BD3DD /* finishSignUpVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20742F4D2499AA31005BD3DD /* finishSignUpVC.swift */; };
 		2077B5FA24807CF8008492C4 /* CreateAlarm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2077B5F924807CF8008492C4 /* CreateAlarm.swift */; };
 		2081FE78245C07A300BAF268 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2081FE77245C07A300BAF268 /* AppDelegate.swift */; };
@@ -100,6 +103,9 @@
 		20A7804D2479D26400410652 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A780482479D26400410652 /* UIView.swift */; };
 		20B7D5FA2477EF36006607BC /* EmojiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B7D5F92477EF36006607BC /* EmojiManager.swift */; };
 		20B7D5FC2477FDD7006607BC /* defaultAlarmSound.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 20B7D5FB2477FDD7006607BC /* defaultAlarmSound.m4a */; };
+		20C1B3E02580B5D0009AD3FA /* likedAlarmDescriptionView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 20C1B3DF2580B5D0009AD3FA /* likedAlarmDescriptionView.xib */; };
+		20C1B3E32580B62E009AD3FA /* likedAlarmDescriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C1B3E22580B62E009AD3FA /* likedAlarmDescriptionView.swift */; };
+		20C1B4102580C3E4009AD3FA /* likedAlarmDescriptionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C1B40F2580C3E4009AD3FA /* likedAlarmDescriptionVC.swift */; };
 		20C3880A247700E100E599B1 /* ReactionsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 20C38809247700E100E599B1 /* ReactionsView.xib */; };
 		20C3880C2477031400E599B1 /* ReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3880B2477031400E599B1 /* ReactionsView.swift */; };
 		20C3880E2477397800E599B1 /* reactionSelected.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 20C3880D2477397800E599B1 /* reactionSelected.m4a */; };
@@ -121,7 +127,7 @@
 		20F593182498654400D7EAEE /* wakeyMessageCellSC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F593172498654400D7EAEE /* wakeyMessageCellSC.swift */; };
 		20F5931A249893F500D7EAEE /* wakeyConversationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F59319249893F500D7EAEE /* wakeyConversationVC.swift */; };
 		20F5931C24997F5200D7EAEE /* editProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F5931B24997F5200D7EAEE /* editProfileVC.swift */; };
-		6DEA783595A95E9A58A419B0 /* Pods_Wakey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCB56E71809EF6B6C25BC5F5 /* Pods_Wakey.framework */; };
+		9800ACDDCB3D4C4E2DF4E7CA /* Pods_Wakey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 929832688EDAD5C7BC150533 /* Pods_Wakey.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -161,6 +167,9 @@
 		205D44632493F4CB00644B4E /* WalkThroughPageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkThroughPageVC.swift; sourceTree = "<group>"; };
 		205D4465249400E200644B4E /* WalkThroughVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkThroughVC.swift; sourceTree = "<group>"; };
 		205D44672494545B00644B4E /* ReminderWalkThroughContentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderWalkThroughContentVC.swift; sourceTree = "<group>"; };
+		2072624C257E4FED00BA34AF /* toggleMessagePrivacyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = toggleMessagePrivacyCell.swift; sourceTree = "<group>"; };
+		2072624D257E4FED00BA34AF /* toggleMessagePrivacyCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = toggleMessagePrivacyCell.xib; sourceTree = "<group>"; };
+		20726251257E51C000BA34AF /* toggleMessagePrivacySC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = toggleMessagePrivacySC.swift; sourceTree = "<group>"; };
 		20742F4D2499AA31005BD3DD /* finishSignUpVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = finishSignUpVC.swift; sourceTree = "<group>"; };
 		2077B5F924807CF8008492C4 /* CreateAlarm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAlarm.swift; sourceTree = "<group>"; };
 		2081FE74245C07A300BAF268 /* Wakey.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wakey.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -222,6 +231,9 @@
 		20A780482479D26400410652 /* UIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		20B7D5F92477EF36006607BC /* EmojiManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiManager.swift; sourceTree = "<group>"; };
 		20B7D5FB2477FDD7006607BC /* defaultAlarmSound.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = defaultAlarmSound.m4a; sourceTree = "<group>"; };
+		20C1B3DF2580B5D0009AD3FA /* likedAlarmDescriptionView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = likedAlarmDescriptionView.xib; sourceTree = "<group>"; };
+		20C1B3E22580B62E009AD3FA /* likedAlarmDescriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = likedAlarmDescriptionView.swift; sourceTree = "<group>"; };
+		20C1B40F2580C3E4009AD3FA /* likedAlarmDescriptionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = likedAlarmDescriptionVC.swift; sourceTree = "<group>"; };
 		20C38809247700E100E599B1 /* ReactionsView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ReactionsView.xib; sourceTree = "<group>"; };
 		20C3880B2477031400E599B1 /* ReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsView.swift; sourceTree = "<group>"; };
 		20C3880D2477397800E599B1 /* reactionSelected.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = reactionSelected.m4a; sourceTree = "<group>"; };
@@ -243,9 +255,9 @@
 		20F593172498654400D7EAEE /* wakeyMessageCellSC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = wakeyMessageCellSC.swift; sourceTree = "<group>"; };
 		20F59319249893F500D7EAEE /* wakeyConversationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = wakeyConversationVC.swift; sourceTree = "<group>"; };
 		20F5931B24997F5200D7EAEE /* editProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = editProfileVC.swift; sourceTree = "<group>"; };
-		5209D7D86BC41E7EABD96A4C /* Pods-Wakey.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wakey.release.xcconfig"; path = "Target Support Files/Pods-Wakey/Pods-Wakey.release.xcconfig"; sourceTree = "<group>"; };
-		C45E6AE846D4065EB8687139 /* Pods-Wakey.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wakey.debug.xcconfig"; path = "Target Support Files/Pods-Wakey/Pods-Wakey.debug.xcconfig"; sourceTree = "<group>"; };
-		FCB56E71809EF6B6C25BC5F5 /* Pods_Wakey.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Wakey.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		83C566C2B9D484546B7B5FFB /* Pods-Wakey.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wakey.debug.xcconfig"; path = "Target Support Files/Pods-Wakey/Pods-Wakey.debug.xcconfig"; sourceTree = "<group>"; };
+		929832688EDAD5C7BC150533 /* Pods_Wakey.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Wakey.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C8279BC6462AF5CAF3C81984 /* Pods-Wakey.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wakey.release.xcconfig"; path = "Target Support Files/Pods-Wakey/Pods-Wakey.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -253,7 +265,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6DEA783595A95E9A58A419B0 /* Pods_Wakey.framework in Frameworks */,
+				9800ACDDCB3D4C4E2DF4E7CA /* Pods_Wakey.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -312,7 +324,7 @@
 				2081FE76245C07A300BAF268 /* Wakey */,
 				2081FE75245C07A300BAF268 /* Products */,
 				2BDFFED464E974107EFD68E9 /* Pods */,
-				47E1DE7E3435AC2F8200854A /* Frameworks */,
+				A298A727EDF5996D90BEBC44 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -360,6 +372,8 @@
 				2081FE9F245DD78A00BAF268 /* customImageView.swift */,
 				20C38809247700E100E599B1 /* ReactionsView.xib */,
 				20C3880B2477031400E599B1 /* ReactionsView.swift */,
+				20C1B3DF2580B5D0009AD3FA /* likedAlarmDescriptionView.xib */,
+				20C1B3E22580B62E009AD3FA /* likedAlarmDescriptionView.swift */,
 			);
 			path = "Custom classes";
 			sourceTree = "<group>";
@@ -383,6 +397,7 @@
 				2001C7A02576EA0C00BDC021 /* curateAlarmVC.swift */,
 				2092EC58257B9DA000DE987C /* setTimeVC.swift */,
 				2092EC5B257BB42F00DE987C /* setAlarmVC.swift */,
+				20C1B40F2580C3E4009AD3FA /* likedAlarmDescriptionVC.swift */,
 			);
 			path = "View controllers";
 			sourceTree = "<group>";
@@ -426,6 +441,8 @@
 				20F4138824B373A7004261DC /* settingActionButtonCell.xib */,
 				20A26CE42578E86E00EF428D /* curateAlarmCell.swift */,
 				20A26CE52578E86E00EF428D /* curateAlarmCell.xib */,
+				2072624C257E4FED00BA34AF /* toggleMessagePrivacyCell.swift */,
+				2072624D257E4FED00BA34AF /* toggleMessagePrivacyCell.xib */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -458,6 +475,7 @@
 				200D5A1124B26CED0014DE2C /* logOutSettingsCellSC.swift */,
 				20F4138B24B37550004261DC /* dailyReiminderTimeCellSC.swift */,
 				20A26CE925790C3F00EF428D /* curateAlarmSC.swift */,
+				20726251257E51C000BA34AF /* toggleMessagePrivacySC.swift */,
 			);
 			path = "Section controllers";
 			sourceTree = "<group>";
@@ -477,16 +495,16 @@
 		2BDFFED464E974107EFD68E9 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				C45E6AE846D4065EB8687139 /* Pods-Wakey.debug.xcconfig */,
-				5209D7D86BC41E7EABD96A4C /* Pods-Wakey.release.xcconfig */,
+				83C566C2B9D484546B7B5FFB /* Pods-Wakey.debug.xcconfig */,
+				C8279BC6462AF5CAF3C81984 /* Pods-Wakey.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		47E1DE7E3435AC2F8200854A /* Frameworks */ = {
+		A298A727EDF5996D90BEBC44 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				FCB56E71809EF6B6C25BC5F5 /* Pods_Wakey.framework */,
+				929832688EDAD5C7BC150533 /* Pods_Wakey.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -498,11 +516,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2081FE8B245C07A700BAF268 /* Build configuration list for PBXNativeTarget "Wakey" */;
 			buildPhases = (
-				A5289B38BA7359CE6513F58B /* [CP] Check Pods Manifest.lock */,
+				C8C0EB1EA7747DF8E0CCCC9F /* [CP] Check Pods Manifest.lock */,
 				2081FE70245C07A300BAF268 /* Sources */,
 				2081FE71245C07A300BAF268 /* Frameworks */,
 				2081FE72245C07A300BAF268 /* Resources */,
-				AF1B8434571E3AE3CA0A5B42 /* [CP] Embed Pods Frameworks */,
+				6F5A28CBFABB25BB634F2CF6 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -578,6 +596,7 @@
 				2081FEBA245EBA2700BAF268 /* sentAlarmCell.xib in Resources */,
 				2081FEAA245DE01C00BAF268 /* seperatorCell.xib in Resources */,
 				2087538E2468817200445EBA /* goToSleepCell.xib in Resources */,
+				20C1B3E02580B5D0009AD3FA /* likedAlarmDescriptionView.xib in Resources */,
 				2081FE9E245DD5C500BAF268 /* recipientCell.xib in Resources */,
 				20C3880A247700E100E599B1 /* ReactionsView.xib in Resources */,
 				2081FEB6245EB94100BAF268 /* profileHeaderCellCollectionViewCell.xib in Resources */,
@@ -589,6 +608,7 @@
 				2081FE84245C07A700BAF268 /* Assets.xcassets in Resources */,
 				2081FE7F245C07A300BAF268 /* Main.storyboard in Resources */,
 				20F4138A24B373A7004261DC /* settingActionButtonCell.xib in Resources */,
+				2072624F257E4FED00BA34AF /* toggleMessagePrivacyCell.xib in Resources */,
 				20830BC8246977BE000DDE2D /* loadingViewCell.xib in Resources */,
 				2081FEB2245E173C00BAF268 /* GoogleService-Info.plist in Resources */,
 				20F59316249862DF00D7EAEE /* wakeyMessageCell.xib in Resources */,
@@ -598,7 +618,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		A5289B38BA7359CE6513F58B /* [CP] Check Pods Manifest.lock */ = {
+		6F5A28CBFABB25BB634F2CF6 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Wakey/Pods-Wakey-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Wakey/Pods-Wakey-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Wakey/Pods-Wakey-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C8C0EB1EA7747DF8E0CCCC9F /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -618,23 +655,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		AF1B8434571E3AE3CA0A5B42 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Wakey/Pods-Wakey-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Wakey/Pods-Wakey-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Wakey/Pods-Wakey-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -678,6 +698,7 @@
 				20DE97A82475DA6B0058C57F /* addFriendCellSC.swift in Sources */,
 				20A7804B2479D26400410652 /* UIButton.swift in Sources */,
 				20A780402479C83C00410652 /* ButtonController.swift in Sources */,
+				2072624E257E4FED00BA34AF /* toggleMessagePrivacyCell.swift in Sources */,
 				2081FEB9245EBA2700BAF268 /* sentAlarmCell.swift in Sources */,
 				20F59312249856B700D7EAEE /* wakeyConversationCellSC.swift in Sources */,
 				200E555E2469BEA200B6D8FE /* playAlarmCell.swift in Sources */,
@@ -694,6 +715,7 @@
 				20A7804D2479D26400410652 /* UIView.swift in Sources */,
 				2081FEBE245EBD1F00BAF268 /* sentAlarmCellSC.swift in Sources */,
 				2081FEB5245EB94100BAF268 /* profileHeaderCellCollectionViewCell.swift in Sources */,
+				20C1B3E32580B62E009AD3FA /* likedAlarmDescriptionView.swift in Sources */,
 				200D5A1224B26CED0014DE2C /* logOutSettingsCellSC.swift in Sources */,
 				20F5931C24997F5200D7EAEE /* editProfileVC.swift in Sources */,
 				208753842468145C00445EBA /* FirebaseManager.swift in Sources */,
@@ -706,9 +728,11 @@
 				20A26CE62578E86E00EF428D /* curateAlarmCell.swift in Sources */,
 				2081FEA3245DD8CA00BAF268 /* Models.swift in Sources */,
 				2081FEB0245E0DBE00BAF268 /* loginVC.swift in Sources */,
+				20726252257E51C000BA34AF /* toggleMessagePrivacySC.swift in Sources */,
 				20830BC7246977BE000DDE2D /* loadingViewCell.swift in Sources */,
 				2081FEA9245DE01C00BAF268 /* seperatorCell.swift in Sources */,
 				20F59315249862DF00D7EAEE /* wakeyMessageCell.swift in Sources */,
+				20C1B4102580C3E4009AD3FA /* likedAlarmDescriptionVC.swift in Sources */,
 				200D5A1024B04AB90014DE2C /* dailyReminderSettingCellSC.swift in Sources */,
 				2081FE7A245C07A300BAF268 /* SceneDelegate.swift in Sources */,
 				205D44682494545B00644B4E /* ReminderWalkThroughContentVC.swift in Sources */,
@@ -858,7 +882,7 @@
 		};
 		2081FE8C245C07A700BAF268 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C45E6AE846D4065EB8687139 /* Pods-Wakey.debug.xcconfig */;
+			baseConfigurationReference = 83C566C2B9D484546B7B5FFB /* Pods-Wakey.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Wakey/Wakey.entitlements;
@@ -883,7 +907,7 @@
 		};
 		2081FE8D245C07A700BAF268 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5209D7D86BC41E7EABD96A4C /* Pods-Wakey.release.xcconfig */;
+			baseConfigurationReference = C8279BC6462AF5CAF3C81984 /* Pods-Wakey.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Wakey/WakeyRelease.entitlements;

@@ -97,7 +97,7 @@ func scheduleLocalNotification(forAlarm: receivedAlarm, timeToFire: Date, totalA
     let crit = UNNotificationSound.criticalSoundNamed(UNNotificationSoundName(rawValue: audioDirectoryArray.last!))
     //content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: audioDirectoryArray.last!))
     content.sound = crit
-    content.userInfo = [constants.scheduledAlarms.audioIDKey: forAlarm.audioID, constants.scheduledAlarms.whenToFireKey: timeToFire, constants.scheduledAlarms.localAudioUrlKey: forAlarm.localAudioUrl?.absoluteString as Any, constants.scheduledAlarms.senderIDKey: forAlarm.sender.userID, constants.scheduledAlarms.senderUsernameKey: forAlarm.sender.username, constants.scheduledAlarms.senderProfilePicUrlKey: forAlarm.sender.profilePicUrl, constants.scheduledAlarms.timeSentKey: forAlarm.timeSent]
+    content.userInfo = [constants.scheduledAlarms.audioIDKey: forAlarm.audioID, constants.scheduledAlarms.whenToFireKey: timeToFire, constants.scheduledAlarms.localAudioUrlKey: forAlarm.localAudioUrl?.absoluteString as Any, constants.scheduledAlarms.senderIDKey: forAlarm.sender.userID, constants.scheduledAlarms.senderUsernameKey: forAlarm.sender.username, constants.scheduledAlarms.senderProfilePicUrlKey: forAlarm.sender.profilePicUrl, constants.scheduledAlarms.timeSentKey: forAlarm.timeSent, constants.scheduledAlarms.alarmCanBeLikedKey: forAlarm.canBeLiked, constants.scheduledAlarms.alarmHasBeeenLikedKey: forAlarm.hasBeenLiked]
     return content
 }
 
