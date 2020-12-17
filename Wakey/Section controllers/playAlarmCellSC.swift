@@ -134,9 +134,11 @@ class playAlarmCellSC: ListSectionController {
         if alarm.canBeLiked {
             cell.likeButton.isHidden = false
             if alarm.hasBeenLiked {
+                //user is un-liking the message
                 cell.likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
                 self.alarm.hasBeenLiked = false
             } else {
+                //user is liking the message
                 cell.likeButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
                 self.alarm.hasBeenLiked = true
             }

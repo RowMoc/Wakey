@@ -236,6 +236,32 @@ class FirebaseManager {
             }
         }
     }
+    
+    
+    //used for like and dislike
+    func likeWakeyMessage(thisMessage: receivedAlarm, didLikeMessage: Bool , description: String, completion: @escaping (Error?) -> ()) {
+        self.fetchToken { (token) in
+            let headers: HTTPHeaders = [
+                "Authorization": "Bearer " + token,
+                "Accept": "application/json"
+            ]
+            let params = ["description": description,"messageID":thisMessage.audioID, "did_like_message": didLikeMessage] as [String : Any]
+            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/like_message", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
+                //debugprint(response)
+                if let result = response.response?.statusCode {
+                    if result == 200 {
+                        completion(nil)
+                        return
+                    }
+                }
+                completion(response.error)
+            }
+        }
+    }
+    
+    
+    
+    
                 
 //
 //
@@ -1142,6 +1168,64 @@ class FirebaseManager {
     }
     
     
+    
+    //Fetch all messages that have been liked by this user
+    func fetchLikedMessages(completion: @escaping (Error?, [receivedAlarm]) -> ()) {
+        fetchToken { (token) in
+            let headers: HTTPHeaders = [
+                "Authorization": "Bearer " + token,
+                "Accept": "application/json"
+            ]
+            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/all_liked_messages", headers: headers).responseJSON { response in
+                //debugprint(response)
+                //print("RESULT FROM FETCHING SINGLE ALARM")
+                print(response.result)
+                do {
+                    if response.data != nil {
+                        print("Response data isnt nil")
+                        if let parseJSON = try JSONSerialization.jsonObject(with: response.data!, options: []) as? NSDictionary {
+                            if let audiosDict = parseJSON["messages"] as? [[String: [String: Any]]] {
+                                var alarms: [receivedAlarm] = []
+                                for msg in audiosDict {
+                                    let messageDetails = msg["message"]! as [String: Any]
+                                    let senderDetails = msg["sender"]! as [String: Any]
+                                    
+                                    
+                                    
+                                    let alarmProps = ["audio_id": messageDetails["message_id"] as Any,"audio_file_url": messageDetails["audio_file_url"] as Any, "created_at": jsonDateToDate(jsonStr: messageDetails["sent_at"] as? String ?? ""), "audio_length": messageDetails["audio_length"] as Any, "can_be_liked": messageDetails["can_be_liked"] as Any, "has_been_liked": messageDetails["has_been_liked"] as Any] as [String:Any]
+                                    let userDict = ["user_id": senderDetails["sender_id"] as Any, "username": senderDetails["username"] as Any, "profile_img_url": senderDetails["profile_img_url"] as Any, "asleep": false, "created_at": Date()] as [String : Any]
+                                    
+                                    let user = userModel(user: userDict)
+                                    let alarm = receivedAlarm(alarm: alarmProps, sender: user, localAudioUrl: nil)
+                                    alarms.append(alarm)
+                                    print("HERES A MESSAGE:")
+                                    print(alarmProps)
+                                }
+                                completion(nil, alarms)
+                                return
+
+                            } else {
+                                //empty
+                                completion(nil, [])
+                                return
+                            }
+                        }
+                    }
+                    completion(nil, [])
+                } catch let parseError {
+                    //print("JSON Error \(parseError.localizedDescription)")
+                    completion(parseError, [])
+                }
+            }
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
     func uploadAudioFile(audioFileUrl: URL, completion: @escaping (Error?,String?) -> ()) {
         FirebaseManager.shared.getCurrentUser { (error, user) in
             if let user = user {
@@ -1315,6 +1399,11 @@ class FirebaseManager {
             }
         }
     }
+    
+    
+    
+    
+    
     
 //    func fetchFriends(cursorDoc: DocumentSnapshot?, paginate: Bool,completion: @escaping (Error?, [userModel], DocumentSnapshot?) -> ()) {
 //           FirebaseManager.shared.getCurrentUser { (error_curr_user, currUser) in

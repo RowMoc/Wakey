@@ -304,9 +304,20 @@ class playAlarmVC: UIViewController, AVAudioPlayerDelegate {
             }
         }
         
-        //If liked, show description input VC
-        if !updatedAlarmObject.hasBeenLiked {return}
+        //If unliked, unlike on the backend
+        if !updatedAlarmObject.hasBeenLiked {
+            FirebaseManager.shared.likeWakeyMessage(thisMessage: updatedAlarmObject, didLikeMessage: false, description: "") { (error) in
+                if error == nil {
+                    print("Unliked alarm on the backend")
+                } else {
+                    print("Failed to unlike alarm on the backend")
+                }
+            }
+            return
+        }
         
+        
+        //Message was liked
         //Pause audio
         if let alarmPlayer = self.alarmPlayer {
             //print("inside")
@@ -321,10 +332,11 @@ class playAlarmVC: UIViewController, AVAudioPlayerDelegate {
             }
         }
         
-        //show description VC
+        //If liked, show description input VC
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let nextVC = storyboard.instantiateViewController(withIdentifier: "likedAlarmDescriptionVC") as! likedAlarmDescriptionVC
         nextVC.homeVC = self
+        nextVC.likedAlarm = updatedAlarmObject
         nextVC.modalPresentationStyle = .overFullScreen
         self.present(nextVC, animated: true)
         

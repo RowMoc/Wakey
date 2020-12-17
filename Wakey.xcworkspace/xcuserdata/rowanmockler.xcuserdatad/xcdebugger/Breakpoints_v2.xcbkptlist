@@ -574,10 +574,10 @@
             filePath = "Wakey/FirebaseManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1290"
-            endingLineNumber = "1290"
-            landmarkName = "getFriends(cursorDocID:limit:completion:)"
-            landmarkType = "7">
+            startingLineNumber = "1374"
+            endingLineNumber = "1374"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -590,10 +590,10 @@
             filePath = "Wakey/FirebaseManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1289"
-            endingLineNumber = "1289"
-            landmarkName = "getFriends(cursorDocID:limit:completion:)"
-            landmarkType = "7">
+            startingLineNumber = "1373"
+            endingLineNumber = "1373"
+            landmarkName = "unknown"
+            landmarkType = "0">
             <Locations>
                <Location
                   uuid = "12C47AF9-A63F-4B2A-807D-EC5B4FCABB8C - cd9adfc8f196774f"
@@ -638,10 +638,10 @@
             filePath = "Wakey/FirebaseManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1299"
-            endingLineNumber = "1299"
-            landmarkName = "getFriends(cursorDocID:limit:completion:)"
-            landmarkType = "7">
+            startingLineNumber = "1383"
+            endingLineNumber = "1383"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -672,8 +672,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "73"
             endingLineNumber = "73"
-            landmarkName = "fetchWakeyConversations(cursorDocument:limit:completion:)"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -688,8 +688,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "74"
             endingLineNumber = "74"
-            landmarkName = "fetchWakeyConversations(cursorDocument:limit:completion:)"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -704,8 +704,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "156"
             endingLineNumber = "156"
-            landmarkName = "fetchWakeyConversationMessages(cursorDocumentID:otherUser:conversationID:completion:)"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -926,10 +926,10 @@
             filePath = "Wakey/FirebaseManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1087"
-            endingLineNumber = "1087"
-            landmarkName = "sendPushNotification(receiverDeviceId:messageTitle:messageBody:)"
-            landmarkType = "7">
+            startingLineNumber = "1113"
+            endingLineNumber = "1113"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

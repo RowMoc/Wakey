@@ -29,6 +29,7 @@ class likedAlarmDescriptionVC: UIViewController, UITextFieldDelegate {
     
     
     var homeVC: playAlarmVC!
+    var likedAlarm: receivedAlarm!
     
     
     override func viewDidLoad() {
@@ -73,23 +74,36 @@ class likedAlarmDescriptionVC: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func confirmButtonPressed(_ sender: Any) {
+        
+        completeLikedMessageBackend(description: self.descriptionTF.text ?? "")
         self.homeVC.descriptionViewShadowView?.removeFromSuperview()
         self.dismiss(animated: false) {
             self.homeVC.startAudioAfterOtherViewDismisses()
         }
-
     }
     
     
     
     
     @IBAction func skipButtonPressed(_ sender: Any) {
+        completeLikedMessageBackend(description: "")
         self.homeVC.descriptionViewShadowView?.removeFromSuperview()
         self.dismiss(animated: false) {
             self.homeVC.startAudioAfterOtherViewDismisses()
         }
-        
     }
+    
+    
+    func completeLikedMessageBackend(description: String) {
+        FirebaseManager.shared.likeWakeyMessage(thisMessage: likedAlarm, didLikeMessage: true, description: description) { (error) in
+            if error == nil {
+                
+            } else {
+                print("Failed to like alarm on the backend")
+            }
+        }
+    }
+    
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         guard let textFieldText = textField.text,
