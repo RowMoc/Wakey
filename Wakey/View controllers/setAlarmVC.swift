@@ -69,10 +69,14 @@ class setAlarmVC: UIViewController, UNUserNotificationCenterDelegate{
     func repackAlarms() {
         var repackedAlarms: [receivedAlarm] = []
         for alarm in alarmsToSet {
-            let alarmObject = ["created_at": alarm.timeReceived, "audio_file_url": alarm.audioFileUrl ,"audio_length": alarm.audioLength, "audio_id": alarm.messageId, "can_be_liked": alarm.canBeLiked, "has_been_liked": alarm.hasBeenLiked] as [String: Any]
+            var localAudioUrl: URL? = nil
+            if (alarm.curateListCategory == constants.curateAlarmListHeadings.defaultAlarm) {
+                localAudioUrl = alarm.audioFileUrl!
+            }
+            let alarmObject = ["created_at": alarm.timeReceived, "audio_file_url": alarm.audioFileUrl?.absoluteString ?? "" ,"audio_length": alarm.audioLength, "audio_id": alarm.messageId, "can_be_liked": alarm.canBeLiked, "has_been_liked": alarm.hasBeenLiked] as [String: Any]
             print("REPACK THIS ALARM:")
             print(alarmObject)
-            let fetchedAlarm = receivedAlarm(alarm: alarmObject, sender: alarm.associatedProfile, localAudioUrl: nil)
+            let fetchedAlarm = receivedAlarm(alarm: alarmObject, sender: alarm.associatedProfile, localAudioUrl: localAudioUrl)
             repackedAlarms.append(fetchedAlarm)
         }
         scheduleNotifications(fetchedAlarms: repackedAlarms)
@@ -87,7 +91,7 @@ class setAlarmVC: UIViewController, UNUserNotificationCenterDelegate{
         getAudios(fetchedAlarms: fetchedAlarms, timeToFire: alarmFireDate, settingAlarmProgress: 25.0, settingAlarmProgressLabel: downloadProgressLabl) { (error, notificationsContent) in
             //We've downloaded th audios and profile pics. Add alarms to local storage
             if error == nil {
-                self.saveAlarmDetailsLocally(fetchedAlarms: fetchedAlarms, notificationsContent: notificationsContent as! [UNNotificationContent])
+                self.saveAlarmDetailsLocally(fetchedAlarms: fetchedAlarms, notificationsContent: notificationsContent as? [UNNotificationContent] ?? [])
             } else {
                 self.alarmsFailedToSet()
             }
@@ -109,7 +113,6 @@ class setAlarmVC: UIViewController, UNUserNotificationCenterDelegate{
         //store alarms in user defaults
         UserDefaults.standard.set(localAlarmArray, forKey: constants.scheduledAlarms.scheduledAlarmDictionaryKey)
         UserDefaults.standard.synchronize()
-        
         //alarms have been set successfully
         self.alarmsSetSuccessfully()
     }
@@ -122,7 +125,6 @@ class setAlarmVC: UIViewController, UNUserNotificationCenterDelegate{
             let alarm = fetchedAlarms[index]
             let info = content.userInfo
             let audioID = info[constants.scheduledAlarms.audioIDKey] as? String ?? ""
-            //Maybe make defualt value the defaunlt alarm audio path?
             let localAudioUrl = info[constants.scheduledAlarms.localAudioUrlKey] as? String ?? ""
             let senderID = info[constants.scheduledAlarms.senderIDKey] as? String ?? ""
             let username = info[constants.scheduledAlarms.senderUsernameKey] as? String ?? ""
@@ -136,7 +138,7 @@ class setAlarmVC: UIViewController, UNUserNotificationCenterDelegate{
             localAlarmArray.append([constants.scheduledAlarms.audioIDKey: audioID, constants.scheduledAlarms.localAudioUrlKey: localAudioUrl, constants.scheduledAlarms.senderIDKey: senderID, constants.scheduledAlarms.senderUsernameKey: username, constants.scheduledAlarms.senderProfilePicUrlKey: profilePicUrl, constants.scheduledAlarms.timeSentKey: timeSent, constants.scheduledAlarms.alarmCanBeLikedKey: canBeLiked, constants.scheduledAlarms.alarmHasBeeenLikedKey: hasBeenLiked])
             let triggerDate = Calendar.current.dateComponents([.year,.month, .day, .hour, .minute, .second], from: updatedTimeToFire!)
             let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: false)
-            let request = UNNotificationRequest(identifier: alarm.audioID + "_" + Date().description, content: content, trigger: trigger)
+            let request = UNNotificationRequest(identifier: constants.wakeyMessageNotificationIdentifier + "_" + alarm.audioID + "_" + Date().description, content: content, trigger: trigger)
             UNUserNotificationCenter.current().delegate = self
             UNUserNotificationCenter.current().add(request) { (error) in
                 if (error == nil){
@@ -144,12 +146,6 @@ class setAlarmVC: UIViewController, UNUserNotificationCenterDelegate{
                 }
             }
             var audioDuration = 0.0 as Double
-//            if let audioLen = alarm.audioLength {
-//                audioDuration = audioLen
-//            } else {
-//                let asset = AVURLAsset(url: alarm.localAudioUrl!, options: nil)
-//                audioDuration = asset.duration.seconds
-//            }
             let asset = AVURLAsset(url: alarm.localAudioUrl!, options: nil)
             audioDuration = asset.duration.seconds
             updatedTimeToFire = Calendar.current.date(byAdding: .second, value: Int(audioDuration + 1), to: updatedTimeToFire!)!
@@ -166,11 +162,8 @@ class setAlarmVC: UIViewController, UNUserNotificationCenterDelegate{
         self.topLabel.text = alarmText + " ALARM SET SUCCESSFULLY"
         progressRing.setProgress(1.0, animated: true, duration: 0.3)
         //UI of home VC
-        let alarmButtonText = DateFormatter.localizedString(from: alarmFireDate, dateStyle: .none, timeStyle: .short)
-        let attrTitle = createStringWithEmoji(text: alarmButtonText + "  ", fontSize: 25, emojiName: "asleep_face", textColor: .white, font: "Avenir-heavy")
-        self.homeVC.goToSleepButton.setAttributedTitle(attrTitle, for: .normal)
-        self.homeVC.alarmImage.alpha = 1
-        self.homeVC.alarmImage.image = UIImage.init(systemName: "alarm.fill")!
+        self.homeVC.alarmHasBeenSet(alarmFireTimeDate: alarmFireDate)
+        FirebaseManager.shared.setAsleepProperty(asleepBool: true) { (error) in}
     }
     
     

@@ -213,6 +213,8 @@ PODS:
     - abseil/base/config
     - abseil/meta/type_traits
   - Alamofire (5.2.2)
+  - AlgoliaSearchClient (8.4.2):
+    - Logging
   - BoringSSL-GRPC (0.0.7):
     - BoringSSL-GRPC/Implementation (= 0.0.7)
     - BoringSSL-GRPC/Interface (= 0.0.7)
@@ -365,8 +367,20 @@ PODS:
   - IGListDiffKit (4.0.0)
   - IGListKit (4.0.0):
     - IGListDiffKit (= 4.0.0)
+  - InstantSearch (7.6.1):
+    - InstantSearch/UI (= 7.6.1)
+  - InstantSearch/Core (7.6.1):
+    - AlgoliaSearchClient (~> 8.4)
+    - InstantSearch/Insights
+  - InstantSearch/Insights (7.6.1):
+    - AlgoliaSearchClient (~> 8.4)
+    - InstantSearchInsights (~> 2.3)
+  - InstantSearch/UI (7.6.1):
+    - InstantSearch/Core
+  - InstantSearchInsights (2.3.2)
   - leveldb-library (1.22)
   - LinearProgressBar (1.0.2)
+  - Logging (1.4.0)
   - nanopb (1.30906.0):
     - nanopb/decode (= 1.30906.0)
     - nanopb/encode (= 1.30906.0)
@@ -397,6 +411,7 @@ DEPENDENCIES:
   - Firebase/Storage
   - FlagPhoneNumber
   - IGListKit (~> 4.0.0)
+  - InstantSearch (~> 7.1)
   - LinearProgressBar
   - NVActivityIndicatorView
   - PopupDialog
@@ -408,6 +423,7 @@ SPEC REPOS:
   trunk:
     - abseil
     - Alamofire
+    - AlgoliaSearchClient
     - BoringSSL-GRPC
     - CircleProgressBar
     - DynamicBlurView
@@ -433,8 +449,11 @@ SPEC REPOS:
     - GTMSessionFetcher
     - IGListDiffKit
     - IGListKit
+    - InstantSearch
+    - InstantSearchInsights
     - leveldb-library
     - LinearProgressBar
+    - Logging
     - nanopb
     - NVActivityIndicatorView
     - PopupDialog
@@ -447,6 +466,7 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
   Alamofire: 814429acc853c6c54ff123fc3d2ef66803823ce0
+  AlgoliaSearchClient: 87e1f41dc087d52e4987f99e00cb49e83dd2ea70
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   CircleProgressBar: 3920079be5224b62b3d9ed6eeb23ac01c835b681
   DynamicBlurView: 58e18fae80bb614e34681a4486870e7d257b62e8
@@ -472,8 +492,11 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 6f5c8abbab8a9bce4bb3f057e317728ec6182b10
   IGListDiffKit: 665d6cf43ce726e676013db9c7d6c4294259b6b2
   IGListKit: fd5a5d21935298f5849fa49d426843cff97b77c7
+  InstantSearch: 7e54f36a89dabb835bf557670e4f674bda1af23b
+  InstantSearchInsights: 62d5850fa7c7ae768cab621117b855e73c441aaf
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   LinearProgressBar: 619d6f286b608e501f39406557f60cdab3faf910
+  Logging: beeb016c9c80cf77042d62e83495816847ef108b
   nanopb: 59317e09cf1f1a0af72f12af412d54edf52603fc
   NVActivityIndicatorView: 738e843cb8924e9e4fc3e559d0728031624bf860
   PopupDialog: 720c92befd8bc23c13442254945213db5612f149
@@ -483,6 +506,6 @@ SPEC CHECKSUMS:
   SkyFloatingLabelTextField: 5a338412114808e961fe2d14ea2c5452c8b6e4aa
   UIImageColors: d2ef3b0877d203cbb06489eeb78ea8b7788caabe
 
-PODFILE CHECKSUM: 6bee5eb2a4b06677bcfb56701551a1ffc46a52be
+PODFILE CHECKSUM: 3a71861d66796ed02767ff4f9934f2c2a59c8f46
 
 COCOAPODS: 1.8.4

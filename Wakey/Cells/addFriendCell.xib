@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -29,15 +31,6 @@
                                             <constraint firstAttribute="width" secondItem="qCE-vV-NzV" secondAttribute="height" id="JtV-o7-OV1"/>
                                         </constraints>
                                     </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w78-hm-uQd">
-                                        <rect key="frame" x="91" y="25.5" width="233" height="35"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="35" id="O2A-v5-X2B"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="22"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="fJn-Av-HPd">
                                         <rect key="frame" x="334" y="30.5" width="90" height="25"/>
                                         <subviews>
@@ -79,23 +72,41 @@
                                             <userDefinedRuntimeAttribute type="string" keyPath="typeName" value="lineScale"/>
                                         </userDefinedRuntimeAttributes>
                                     </view>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="gZ8-Ih-8rf">
+                                        <rect key="frame" x="91" y="10" width="233" height="66"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w78-hm-uQd">
+                                                <rect key="frame" x="0.0" y="0.0" width="233" height="33"/>
+                                                <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="15"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zKa-8d-TJ9">
+                                                <rect key="frame" x="0.0" y="33" width="233" height="33"/>
+                                                <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="15"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                    </stackView>
                                 </subviews>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstItem="w78-hm-uQd" firstAttribute="centerY" secondItem="muh-Hy-c5N" secondAttribute="centerY" id="100-8N-eic"/>
-                                    <constraint firstItem="w78-hm-uQd" firstAttribute="leading" secondItem="qCE-vV-NzV" secondAttribute="trailing" constant="15" id="8Db-hL-KSh"/>
+                                    <constraint firstItem="iaZ-hp-hpt" firstAttribute="leading" secondItem="gZ8-Ih-8rf" secondAttribute="trailing" constant="10" id="7JG-yt-23N"/>
                                     <constraint firstItem="qCE-vV-NzV" firstAttribute="top" secondItem="muh-Hy-c5N" secondAttribute="top" constant="10" id="9nU-ET-aZt"/>
+                                    <constraint firstItem="gZ8-Ih-8rf" firstAttribute="bottom" secondItem="qCE-vV-NzV" secondAttribute="bottom" id="PY1-Iw-ncj"/>
                                     <constraint firstItem="fJn-Av-HPd" firstAttribute="centerY" secondItem="muh-Hy-c5N" secondAttribute="centerY" id="U86-le-pPL"/>
+                                    <constraint firstItem="gZ8-Ih-8rf" firstAttribute="leading" secondItem="qCE-vV-NzV" secondAttribute="trailing" constant="15" id="Wb4-Iu-wRG"/>
                                     <constraint firstItem="qCE-vV-NzV" firstAttribute="leading" secondItem="muh-Hy-c5N" secondAttribute="leading" constant="10" id="abs-x2-Dg4"/>
-                                    <constraint firstItem="fJn-Av-HPd" firstAttribute="leading" secondItem="w78-hm-uQd" secondAttribute="trailing" constant="10" id="fxZ-lP-3ei"/>
                                     <constraint firstAttribute="bottom" secondItem="qCE-vV-NzV" secondAttribute="bottom" constant="10" id="vUH-3R-y2K"/>
                                     <constraint firstAttribute="trailing" secondItem="nk0-u1-vUM" secondAttribute="trailing" constant="45" id="xRX-IV-oDb"/>
+                                    <constraint firstItem="gZ8-Ih-8rf" firstAttribute="top" secondItem="qCE-vV-NzV" secondAttribute="top" id="xaE-D2-pck"/>
                                     <constraint firstAttribute="trailing" secondItem="fJn-Av-HPd" secondAttribute="trailing" constant="10" id="z7z-u4-NLi"/>
                                     <constraint firstItem="nk0-u1-vUM" firstAttribute="centerY" secondItem="muh-Hy-c5N" secondAttribute="centerY" id="zcz-7W-Qkn"/>
                                 </constraints>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="muh-Hy-c5N" firstAttribute="leading" secondItem="WbU-VH-vJr" secondAttribute="leading" id="Kbh-Lf-jJM"/>
                             <constraint firstAttribute="trailing" secondItem="muh-Hy-c5N" secondAttribute="trailing" id="MEd-Fg-PZa"/>
@@ -105,29 +116,33 @@
                     </view>
                 </subviews>
             </view>
+            <viewLayoutGuide key="safeArea" id="pOg-5s-n1L"/>
             <constraints>
                 <constraint firstItem="WbU-VH-vJr" firstAttribute="leading" secondItem="kvg-WE-EYF" secondAttribute="leading" constant="10" id="8pC-7g-TIE"/>
                 <constraint firstItem="WbU-VH-vJr" firstAttribute="top" secondItem="kvg-WE-EYF" secondAttribute="top" constant="10" id="Rhj-gL-r3C"/>
                 <constraint firstAttribute="bottom" secondItem="WbU-VH-vJr" secondAttribute="bottom" constant="10" id="c3A-Ic-JRQ"/>
                 <constraint firstAttribute="trailing" secondItem="WbU-VH-vJr" secondAttribute="trailing" constant="10" id="o9M-mW-rEq"/>
             </constraints>
-            <viewLayoutGuide key="safeArea" id="pOg-5s-n1L"/>
             <size key="customSize" width="454" height="106"/>
             <connections>
                 <outlet property="cellBackgroundView" destination="muh-Hy-c5N" id="JIJ-Xi-flL"/>
+                <outlet property="fullNameLabel" destination="zKa-8d-TJ9" id="EmG-Tl-B7T"/>
                 <outlet property="leftButton" destination="iaZ-hp-hpt" id="QEd-PC-1U9"/>
                 <outlet property="messageActivityIndicator" destination="nk0-u1-vUM" id="IRi-bP-xzG"/>
-                <outlet property="nameLabel" destination="w78-hm-uQd" id="Ust-Au-zA4"/>
                 <outlet property="profilePic" destination="qCE-vV-NzV" id="9cO-0h-NM6"/>
                 <outlet property="rightButton" destination="fzI-Hv-ro7" id="v0n-En-1kT"/>
                 <outlet property="shadowView" destination="WbU-VH-vJr" id="2gb-6X-W64"/>
+                <outlet property="usernameLabel" destination="w78-hm-uQd" id="Ust-Au-zA4"/>
             </connections>
             <point key="canvasLocation" x="444.92753623188412" y="156.69642857142856"/>
         </collectionViewCell>
     </objects>
     <resources>
         <namedColor name="AppRedColor">
-            <color red="1" green="0.33300000429153442" blue="0.33300000429153442" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.32941176470588235" blue="0.32941176470588235" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>

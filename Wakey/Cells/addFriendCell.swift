@@ -21,8 +21,9 @@ class addFriendCell: UICollectionViewCell {
     @IBOutlet weak var profilePic: RoundedProfilePic!
     
     @IBOutlet weak var messageActivityIndicator: NVActivityIndicatorView!
-    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var usernameLabel: UILabel!
     
+    @IBOutlet weak var fullNameLabel: UILabel!
     @IBOutlet weak var rightButton: UIButton!
     
     @IBOutlet weak var leftButton: UIButton!
@@ -33,7 +34,7 @@ class addFriendCell: UICollectionViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        nameLabel.adjustsFontSizeToFitWidth = true
+        usernameLabel.adjustsFontSizeToFitWidth = true
         
         leftButton.layer.cornerRadius = 4
         leftButton.titleLabel?.adjustsFontSizeToFitWidth = true

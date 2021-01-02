@@ -211,9 +211,19 @@ class loginVC: UIViewController, UITextFieldDelegate, UINavigationControllerDele
         self.keyboardIsShown = shown
     }
     
+    
+    var loading: NVActivityIndicatorView?
+    var centreLogo: UIImageView?
     override func viewDidAppear(_ animated: Bool) {
         setupKeyboardObservers()
         if !didUnwind {
+            loading = NVActivityIndicatorView(frame: CGRect(x: view.frame.width/2 - 35, y: view.frame.height/2 - 35, width: 70, height: 70), type: .circleStrokeSpin, color: .white, padding: 0)
+            centreLogo = UIImageView(frame: CGRect(x: view.frame.width/2 - 25, y: view.frame.height/2 - 25, width: 50, height: 50))
+            centreLogo?.image = UIImage(named: "whiteLogo")
+            centreLogo?.contentMode = .scaleAspectFit
+            view.addSubview(centreLogo!)
+            view.addSubview(loading!)
+            loading!.startAnimating()
             let user = Auth.auth().currentUser
             if user != nil {
                 self.determineSegueAway(signedUpWithFB: true)
@@ -238,6 +248,9 @@ class loginVC: UIViewController, UITextFieldDelegate, UINavigationControllerDele
                 //                    // User is logged in, do work such as go to next view controller.
                 //
             }
+            self.loading?.stopAnimating()
+            self.loading?.removeFromSuperview()
+            self.centreLogo?.removeFromSuperview()
             self.setUpFirstState()
             return
         } else {
@@ -434,7 +447,11 @@ class loginVC: UIViewController, UITextFieldDelegate, UINavigationControllerDele
     func determineSegueAway(signedUpWithFB: Bool) {
         //check if signed in user has created a user document. If they have, take them to home screen
         //If they haven't, take them to finishSignUpVC
+        print("CHECKING COMPLETED SIGN UP!!!!! ")
         FirebaseManager.shared.checkIfUserHasCompletedSignUp { (err, hasCompleted) in
+            self.loading?.stopAnimating()
+            self.loading?.removeFromSuperview()
+            self.centreLogo?.removeFromSuperview()
             if let err = err {
                 self.activityIndicator.stopAnimating()
                 self.topLabel.text = "An error occured. Please try again"

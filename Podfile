@@ -41,5 +41,9 @@ pod 'UIImageColors'
 
 pod 'CircleProgressBar', '~> 0.32’
 
+pod 'InstantSearch', '~> 7.1'
+
+
+
 
 end

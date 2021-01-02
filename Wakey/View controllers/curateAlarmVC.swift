@@ -37,15 +37,20 @@ class curateAlarmVC: UIViewController  {
     
     var queuedAlarms: [curateListAlarm] = []
     var unopenedAlarms: [curateListAlarm] = []
-    var favoritedAlarms: [curateListAlarm] = []
+    var likedAlarms: [curateListAlarm] = []
     var defaultAlarms: [curateListAlarm] = []
-    var isLoading = true
     var homeVC: ViewController!
+    
+    
+    var fetchingUnopenedMessages = true
+    var fetchingLikedMessages = true
+    
+    
     
     let queuedmessagesLabel = "Queued"
     let availableMessagesLabel = "Available wakeys"
     let unopenedMessagesLabel = "Unopened"
-    let favoritedMessagesLabel = "Favorited"
+    let likedMessagesLabel = "Favorited"
     let defaultMessagesLabel = "Default"
     let emptyAlarmLabel = "Create your alarm by choosing from the available wakeys below! 🎙🔊🚨"
     
@@ -95,18 +100,20 @@ class curateAlarmVC: UIViewController  {
 
     
     func fetchAlarms() {
-        isLoading = true
+        fetchUnopenedMessages()
+        fetchLikedMessages()
+        fetchDefaultAlarms()
+    }
+    
+    func fetchUnopenedMessages() {
+        fetchingUnopenedMessages = true
         FirebaseManager.shared.fetchUnopenedMessages { (error, alarms) in
-            self.isLoading = false
+            self.fetchingUnopenedMessages = false
             if error != nil {
                 return
             } else {
-                var index = 0
                 for alarm in alarms {
-                    let curatedAlarm = curateListAlarm(associatedProfile: alarm.sender, timeReceived: alarm.timeSent, audioFileUrl: alarm.audioUrl, audioLength: 15.0, description: "", messageId: alarm.audioID, curateListCategory: constants.curateAlarmListHeadings.unopenedMessage, isQueued: true, canBeLiked: alarm.canBeLiked, hasBeenLiked: alarm.hasBeenLiked)
-                    index += 1
-                    //print(String(index) + " ALARM: ")
-                    //print(curatedAlarm.messageId)
+                    let curatedAlarm = curateListAlarm(associatedProfile: alarm.sender, timeReceived: alarm.timeSent, audioFileUrl: URL(string: alarm.audioUrl)!, audioLength: alarm.audioLength ?? 15.0, description: "", messageId: alarm.audioID, curateListCategory: constants.curateAlarmListHeadings.unopenedMessage, isQueued: true, canBeLiked: alarm.canBeLiked, hasBeenLiked: alarm.hasBeenLiked)
                     self.queuedAlarms.append(curatedAlarm)
                 }
                 self.ensureAlarmNotEmpty()
@@ -115,6 +122,34 @@ class curateAlarmVC: UIViewController  {
             }
         }
     }
+    
+    func fetchLikedMessages() {
+        fetchingLikedMessages = true
+        FirebaseManager.shared.fetchLikedMessages { (error, likedAlarms) in
+            self.fetchingLikedMessages = false
+            if error != nil {
+                return
+            } else {
+                for alarm in likedAlarms {
+                    let curatedAlarm = curateListAlarm(associatedProfile: alarm.sender, timeReceived: alarm.timeSent, audioFileUrl: URL(string: alarm.audioUrl)!, audioLength: alarm.audioLength ?? 15.0, description: alarm.msgDescription, messageId: alarm.audioID, curateListCategory: constants.curateAlarmListHeadings.likedMessage, isQueued: false, canBeLiked: alarm.canBeLiked, hasBeenLiked: alarm.hasBeenLiked)
+                    self.likedAlarms.append(curatedAlarm)
+                }
+                self.adapter.performUpdates(animated: true)
+            }
+        }
+    }
+    
+    
+    func fetchDefaultAlarms() {
+        
+        self.defaultAlarms = [constants.defaultAlarms.marimbaAlarm, constants.defaultAlarms.radarAlarm, constants.defaultAlarms.hipAlarm, constants.defaultAlarms.fireAlarm]
+        for alarm in defaultAlarms {
+            alarm.isQueued = false
+        }
+        
+        self.adapter.performUpdates(animated: true)
+    }
+    
     
     
     @IBAction func cancelButtonPressed(_ sender: Any) {
@@ -143,9 +178,9 @@ class curateAlarmVC: UIViewController  {
             queuedAlarms.removeAll(where: { $0.isEqual(toDiffableObject: thisAlarm) })
             thisAlarm.isQueued = false
             switch thisAlarm.curateListCategory {
-            case constants.curateAlarmListHeadings.favorited:
-                favoritedAlarms.append(thisAlarm)
-                favoritedAlarms.sort(by: {$0.timeReceived < $1.timeReceived})
+            case constants.curateAlarmListHeadings.likedMessage:
+                likedAlarms.append(thisAlarm)
+                likedAlarms.sort(by: {$0.timeReceived < $1.timeReceived})
             case constants.curateAlarmListHeadings.unopenedMessage:
                 unopenedAlarms.append(thisAlarm)
                 unopenedAlarms.sort(by: {$0.timeReceived < $1.timeReceived})
@@ -157,12 +192,11 @@ class curateAlarmVC: UIViewController  {
                 return thisAlarm
             }
             adapter.performUpdates(animated: true)
-            //adapter.reloadData()
         } else {
             //add this to the queue
             switch thisAlarm.curateListCategory {
-            case constants.curateAlarmListHeadings.favorited:
-                favoritedAlarms.removeAll(where: { $0.isEqual(toDiffableObject: thisAlarm) })
+            case constants.curateAlarmListHeadings.likedMessage:
+                likedAlarms.removeAll(where: { $0.isEqual(toDiffableObject: thisAlarm) })
             case constants.curateAlarmListHeadings.unopenedMessage:
                 unopenedAlarms.removeAll(where: { $0.isEqual(toDiffableObject: thisAlarm) })
             case constants.curateAlarmListHeadings.defaultAlarm:
@@ -177,8 +211,6 @@ class curateAlarmVC: UIViewController  {
         ensureAlarmNotEmpty()
         adjustTopLabelInfo()
         return thisAlarm
-        
-        
     }
     
     
@@ -210,22 +242,35 @@ class curateAlarmVC: UIViewController  {
 
 extension curateAlarmVC: ListAdapterDataSource{
     func objects(for listAdapter: ListAdapter) -> [ListDiffable] {
-        if isLoading {
-            return [queuedmessagesLabel, "Loading", availableMessagesLabel,unopenedMessagesLabel, "Loading", favoritedMessagesLabel,"Loading", defaultMessagesLabel, "Loading"] as [ListDiffable]
-        }
         var screenItems: [ListDiffable] = []
-        screenItems += [self.queuedmessagesLabel] as [ListDiffable]
-        if queuedAlarms.isEmpty {
-            screenItems += [self.emptyAlarmLabel] as [ListDiffable]
-        }
+        
+        screenItems += [queuedmessagesLabel] as [ListDiffable]
         screenItems += self.queuedAlarms as [ListDiffable]
-        let numAvailableString = " (" + String(Int(unopenedAlarms.count + favoritedAlarms.count + defaultAlarms.count)) + ")"
+        if fetchingUnopenedMessages {
+            screenItems += ["loading_queued"] as [ListDiffable]
+        } else {
+            if queuedAlarms.isEmpty {
+                screenItems += [self.emptyAlarmLabel] as [ListDiffable]
+            }
+        }
+        
+        var numAvailableString = ""
+        if !fetchingUnopenedMessages || !fetchingLikedMessages {
+            numAvailableString = " (" + String(Int(unopenedAlarms.count + likedAlarms.count + defaultAlarms.count)) + ")"
+        }
         screenItems += [self.availableMessagesLabel + numAvailableString, self.unopenedMessagesLabel] as [ListDiffable]
-        screenItems += self.unopenedAlarms as [ListDiffable]
-        screenItems += [self.favoritedMessagesLabel] as [ListDiffable]
-        screenItems += self.favoritedAlarms as [ListDiffable]
-        screenItems += [self.defaultMessagesLabel] as [ListDiffable]
-        screenItems += self.defaultAlarms as [ListDiffable]
+        screenItems += unopenedAlarms as [ListDiffable]
+        if fetchingUnopenedMessages {
+            screenItems += ["loading_unopened"] as [ListDiffable]
+        }
+        screenItems += [likedMessagesLabel] as [ListDiffable]
+        screenItems += likedAlarms as [ListDiffable]
+        if fetchingLikedMessages {
+            screenItems += ["loading_liked"] as [ListDiffable]
+        }
+        
+        screenItems += [defaultMessagesLabel] as [ListDiffable]
+        screenItems += defaultAlarms as [ListDiffable]
         return screenItems
     }
     
@@ -236,7 +281,7 @@ extension curateAlarmVC: ListAdapterDataSource{
             return sc
         }
         if (object is String) {
-            if (object as! String == "Loading") {
+            if ((object as! String).contains("loading")) {
                 let sc = loadingViewCellSC()
                 return sc
             } else if ((object as! String).contains(availableMessagesLabel) || object as! String == queuedmessagesLabel) {

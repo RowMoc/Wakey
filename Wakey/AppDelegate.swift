@@ -175,7 +175,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // Set translucent. (Default value is already true, so this can be removed if desired.)
         UINavigationBar.appearance().isTranslucent = true
     }
-
 }
 
 extension AppDelegate : MessagingDelegate {
@@ -187,6 +186,11 @@ extension AppDelegate : MessagingDelegate {
     NotificationCenter.default.post(name: Notification.Name("FCMToken"), object: nil, userInfo: dataDict)
     // TODO: If necessary send token to application server.
     // Note: This callback is fired at each app startup and whenever a new token is generated.
+    FirebaseManager.shared.setDeviceID(deviceID: fcmToken) { (error) in
+        if error != nil {
+            print("error setting device id")
+        }
+    }
   }
   // [END refresh_token]
 }

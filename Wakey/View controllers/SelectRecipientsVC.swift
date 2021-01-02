@@ -75,9 +75,12 @@ class SelectRecipientsVC: UIViewController, AVAudioPlayerDelegate {
         fetchingData = true
         allArray = []
         self.adapter.performUpdates(animated: true)
-        FirebaseManager.shared.getFriends(cursorDocID: nil, limit: nil) { (errString, friendsArray, lastDocID) in
+        //fetch all friends
+        FirebaseManager.shared.fetchAllFriends { (error, friendsArray) in
+            if error != nil {
+                return
+            }
             DispatchQueue.main.async {
-                print(errString)
                 for user in friendsArray {
                     let recipient = recipientModel(user: user, isSelected: false)
                     if user.isAsleep {
@@ -238,6 +241,7 @@ class SelectRecipientsVC: UIViewController, AVAudioPlayerDelegate {
             regularClickAudio.delegate = self
             regularClickAudio = try AVAudioPlayer(contentsOf: URL.init(fileURLWithPath: Bundle.main.path(forResource: "addRecipient", ofType: "m4a")!))
             regularClickAudio.enableRate = true
+            regularClickAudio.volume = 0.1
             regularClickAudio.rate = 1.5
             regularClickAudio.prepareToPlay()
         } catch {

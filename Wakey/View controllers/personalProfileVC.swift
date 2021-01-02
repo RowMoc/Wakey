@@ -29,11 +29,13 @@ class personalProfileVC: UIViewController, UIScrollViewDelegate {
     }()
     private let refreshControl = UIRefreshControl()
     let seperatorCell = "Wakey messages"
+    let noMessageLabel = "This is where your wakey message history will appear!"
     var feedItems = [Any]()
     var stillFetching = false
     var centerVC: CenterVC!
     
     var currUserID: String!
+    var firstAppearance = true
     
     //used for pagination nation
     var cursorDocumentID: String? = nil
@@ -62,7 +64,6 @@ class personalProfileVC: UIViewController, UIScrollViewDelegate {
         addGradientView()
         setUpRefresher()
         setupSearchBar()
-        fetchData(firstFetch: true)
     }
     
     func setupSearchBar() {
@@ -107,8 +108,18 @@ class personalProfileVC: UIViewController, UIScrollViewDelegate {
                 }
             }
         }
+        
+        
     }
     
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if firstAppearance {
+            fetchData(firstFetch: true)
+            firstAppearance = false
+        }
+    }
     
     @IBAction func profileButtonPressed(_ sender: Any) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -161,13 +172,6 @@ class personalProfileVC: UIViewController, UIScrollViewDelegate {
                     self.adapter.performUpdates(animated: true)
                     self.refreshControl.endRefreshing()
                 }
-//                FirebaseManager.shared.fetchWakeyConversations(cursorDocument: self.cursorDocument) { (err, conversations, newCursorDoc) in
-//                    self.cursorDocument = newCursorDoc
-//                    self.feedItems += conversations
-//                    self.stillFetching = false
-//                    self.adapter.performUpdates(animated: true)
-//                    self.refreshControl.endRefreshing()
-//                }
             }
         }
     }
@@ -176,12 +180,12 @@ class personalProfileVC: UIViewController, UIScrollViewDelegate {
     
     
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset:UnsafeMutablePointer<CGPoint>) {
-        let distance = scrollView.contentSize.height - (targetContentOffset.pointee.y + scrollView.bounds.height)
-        if !stillFetching && distance < 20 {
-            stillFetching = true
-            adapter.performUpdates(animated: true, completion: nil)
-            fetchData(firstFetch: false)
-        }
+//        let distance = scrollView.contentSize.height - (targetContentOffset.pointee.y + scrollView.bounds.height)
+//        if !stillFetching && distance < 20 {
+//            stillFetching = true
+//            adapter.performUpdates(animated: true, completion: nil)
+//            fetchData(firstFetch: false)
+//        }
     }
 
 }
@@ -189,8 +193,12 @@ class personalProfileVC: UIViewController, UIScrollViewDelegate {
 extension personalProfileVC: ListAdapterDataSource{
     func objects(for listAdapter: ListAdapter) -> [ListDiffable] {
         var screenItems: [ListDiffable] = [seperatorCell] + feedItems as! [ListDiffable]
-        if (feedItems.count == 1 && stillFetching) {
-            screenItems.append((self.loadingViewCell as ListDiffable))
+        if (feedItems.isEmpty) {
+            if stillFetching {
+                screenItems.append((self.loadingViewCell as ListDiffable))
+            } else {
+                screenItems += ([noMessageLabel]) as [ListDiffable]
+            }
         }
         return screenItems
     }
@@ -210,9 +218,13 @@ extension personalProfileVC: ListAdapterDataSource{
         if (object is String && (object as! String) == seperatorCell) {
             let sc = seperatorCellSC()
             sc.labelText = (object as! String)
-//            sc.showHelper = true
-//            sc.helperText = "All the Wakey messages you've sent will come up here. In the next update you'll be able to see the messages that were sent to you, too!"
             sc.fontSize = CGFloat(30)
+            return sc
+        }
+        if (object is String && (object as! String) == noMessageLabel) {
+            let sc = seperatorCellSC()
+            sc.labelText = (object as! String)
+            sc.fontSize = CGFloat(15)
             return sc
         }
         if object is userModel {

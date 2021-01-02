@@ -7,9 +7,10 @@
 //
 
 import UIKit
+import NVActivityIndicatorView
 
 protocol connectContactsCellDelegate: class {
-    func connectPressed()
+    func connectPressed(cell: connectContactsCell)
 }
 
 class connectContactsCell: UICollectionViewCell {
@@ -35,12 +36,27 @@ class connectContactsCell: UICollectionViewCell {
         shadowView.layer.shadowOffset = CGSize(width: 1, height: 3)
         shadowView.layer.shadowOpacity = 0.2
         shadowView.layer.shadowRadius = 2.0
-        
     }
     
     
     @IBAction func connectPressed(_ sender: Any) {
-        delegate?.connectPressed()
+        delegate?.connectPressed(cell: self)
+    }
+    
+    
+    var activityIndicator: NVActivityIndicatorView?
+    
+    func beginLoadingView() {
+        self.connectButton.setTitle("", for: .normal)
+        activityIndicator = NVActivityIndicatorView(frame: connectButton.frame, type: .lineScale, color: .white, padding: 7)
+        activityIndicator?.startAnimating()
+        self.addSubview(activityIndicator!)
+    }
+    
+    func stopLoadingView(titleText: String) {
+        self.connectButton.setTitle(titleText, for: .normal)
+        activityIndicator?.stopAnimating()
+        activityIndicator?.removeFromSuperview()
     }
     
 

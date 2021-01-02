@@ -15,10 +15,14 @@ class curateAlarmSC: ListSectionController {
     
     
     override func sizeForItem(at index: Int) -> CGSize {
+        var cellHeight = 70.0 as CGFloat
+//        if alarm != nil, alarm.curateListCategory == constants.curateAlarmListHeadings.likedMessage {
+//            cellHeight = 80.0 as CGFloat
+//        }
         guard let width = self.collectionContext?.containerSize.width else {
-            return CGSize(width: UIScreen.main.bounds.width, height: 70)
+            return CGSize(width: UIScreen.main.bounds.width, height: cellHeight)
         }
-        return CGSize(width: width , height: 70)
+        return CGSize(width: width , height: cellHeight)
     }
     
     var alarm: curateListAlarm!
@@ -28,17 +32,37 @@ class curateAlarmSC: ListSectionController {
         if let cell = cell as? curateAlarmCell {
             cell.alarm = alarm
             cell.sectionController = self
-            cell.profilePic.sd_setImage(with: URL(string: alarm.associatedProfile.profilePicUrl))
+            
             cell.topLabel.text = alarm!.associatedProfile.username
-            
-            
             //Elapsed time since received and length
-            cell.middleLabel.text = alarm.timeReceived.getElapsedInterval() + " ago  •  " + String(Int(alarm.audioLength)) + " seconds"
-            if alarm.description == "" {
+            var middleLabelText = ""
+            
+            if alarm.curateListCategory == constants.curateAlarmListHeadings.defaultAlarm {
+                middleLabelText = String(Int(alarm.audioLength)) + " seconds"
+                cell.profilePic.image = UIImage(named: "wakeyProfilePic")
+            } else {
+                middleLabelText = alarm.timeReceived.getElapsedInterval() + " ago  •  " + String(Int(alarm.audioLength)) + " seconds"
+                cell.profilePic.sd_setImage(with: URL(string: alarm.associatedProfile.profilePicUrl))
+            }
+            
+            
+            switch alarm.curateListCategory {
+            case constants.curateAlarmListHeadings.unopenedMessage:
+                middleLabelText += "  •  Unopened"
+            case constants.curateAlarmListHeadings.likedMessage:
+                middleLabelText += "  •  Liked"
+            case constants.curateAlarmListHeadings.defaultAlarm:
+                middleLabelText += "  •  Default"
+            default:
+                middleLabelText += ""
+            }
+            cell.middleLabel.text = middleLabelText
+            
+            if alarm.msgDescription == "" {
                 cell.bottomLabel.isHidden = true
             } else {
                 cell.bottomLabel.isHidden = false
-                cell.bottomLabel.text = alarm.description
+                cell.bottomLabel.text = alarm.msgDescription
             }
             if alarm.isQueued {
                 cell.selectedIconButton.setImage(UIImage.init(systemName: "checkmark.circle.fill"), for: .normal)
@@ -63,7 +87,8 @@ class curateAlarmSC: ListSectionController {
             return
         }
         let updatedAlarmObject = vc.reorder(thisAlarm: alarm)
-        cell.alarm = updatedAlarmObject
+        self.alarm = updatedAlarmObject
+        cell.alarm = alarm
     }
    
     

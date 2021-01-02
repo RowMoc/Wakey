@@ -34,14 +34,13 @@ class FirebaseManager {
     
     static let shared = FirebaseManager()
     
-    
     var currentUser: userModel?
+
     
     
-    
-    //USING NEW SCHEMA AS OF 21 JUNE 2020
-    
-    //FETCHING WAKEY CHATS
+    //
+    //WAKEY CONVERSATIONS / MESSAGES STUFF
+    //
     
     //return value: [error string, conversations, cursor doc string]
     func fetchWakeyConversations(cursorDocument: String?,limit: Int?, completion: @escaping (String?, [wakeyConversation], String?) -> ()) {
@@ -198,9 +197,6 @@ class FirebaseManager {
     }
     
     
-    
-    
-    
     func sendWakeyMessage(audioFileUrl: URL, audioLength: Double, recipientsCanFavorite: Bool, recipients: [[String: Any]], completion: @escaping (Error?) -> ()) {
         self.getCurrentUser { (err, currUser) in
             FirebaseManager.shared.uploadAudioFile(audioFileUrl: audioFileUrl) { (error, webHostedurl) in
@@ -215,17 +211,12 @@ class FirebaseManager {
                         "Authorization": "Bearer " + token,
                         "Accept": "application/json"
                     ]
-                    
-                    
-                    let params = ["receivers": recipients,"audio_file_url": webHostedurl, "audio_length": audioLength, "recipients_can_favorite": recipientsCanFavorite] as [String : Any]
+                    let params = ["receivers": recipients,"audio_file_url": webHostedurl, "audio_length": audioLength, "can_be_liked": recipientsCanFavorite, "sender_username": currUser!.username, "sender_full_name": currUser!.fullName, "sender_profile_img_url": currUser!.profilePicUrl ] as [String : Any]
                     //AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/send_message", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
                     AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/send_message", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
                         //debugprint(response)
                         if let result = response.response?.statusCode {
                             if result == 200 {
-                                for receiver in recipients {
-                                    self.sendPushNotification(receiverDeviceId: (receiver["receiver_device_id"] as? String ?? "") as String, messageTitle: "Wakey received", messageBody: (currUser?.username ?? "Somebody") + " sent you a Wakey message")
-                                }
                                 completion(nil)
                                 return
                             }
@@ -238,457 +229,184 @@ class FirebaseManager {
     }
     
     
-    //used for like and dislike
+    
     func likeWakeyMessage(thisMessage: receivedAlarm, didLikeMessage: Bool , description: String, completion: @escaping (Error?) -> ()) {
+        self.getCurrentUser { (error, currUser) in
+            if error != nil {
+                completion(error)
+            }
+            self.fetchToken { (token) in
+                let headers: HTTPHeaders = [
+                    "Authorization": "Bearer " + token,
+                    "Accept": "application/json"
+                ]
+                let params = ["description": description,"message_id":thisMessage.audioID, "did_like_message": didLikeMessage, "sender_id": thisMessage.sender.userID, "receiver_username": currUser!.username] as [String : Any]
+                AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/like_message", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
+                    //debugprint(response)
+                    if let result = response.response?.statusCode {
+                        if result == 200 {
+                            completion(nil)
+                            return
+                        }
+                    }
+                    completion(response.error)
+                }
+            }
+        }
+    }
+    
+    func sendReaction(reactedToAlarm: receivedAlarm, reactionString: String, completion: @escaping (String) -> ()) {
+        self.getCurrentUser { (error, currUser) in
+            if error != nil {
+                completion("Failed to send")
+            }
+            self.fetchToken { (token) in
+                let headers: HTTPHeaders = [
+                    "Authorization": "Bearer " + token,
+                    "Accept": "application/json"
+                ]
+                let params = ["message_id": reactedToAlarm.audioID,"reaction": reactionString, "sender_id": reactedToAlarm.sender.userID, "receiver_username": currUser!.username] as [String : Any]
+                AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/open_message", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+                    .responseJSON { response in
+                        //debugprint(response)
+                        if let result = response.response?.statusCode {
+                            if result == 200 {
+                                completion("Sent to " + reactedToAlarm.sender.username)
+                                return
+                            }
+                        }
+                        completion("Failed to send to " + reactedToAlarm.sender.username)
+                    }
+            }
+        }
+    }
+    
+    
+    func likeAlarm(thisAlarm: receivedAlarm, didLike: Bool, completion: @escaping (String) -> ()) {
+        self.getCurrentUser { (error, currUser) in
+            if error != nil {
+                completion("Failed to send")
+            }
+            self.fetchToken { (token) in
+                let headers: HTTPHeaders = [
+                    "Authorization": "Bearer " + token,
+                    "Accept": "application/json"
+                ]
+                let params = ["audio_id": thisAlarm.audioID,"did_like": didLike] as [String : Any]
+                AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/did_favorite", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+                    .responseJSON { response in
+                        //debugprint(response)
+                        if let result = response.response?.statusCode {
+                            if result == 200 {
+                                if didLike {
+                                    completion("Liked " + thisAlarm.sender.username + "'s wakey")
+                                } else {
+                                    completion("Unliked " + thisAlarm.sender.username + "'s wakey")
+                                }
+                                
+                                return
+                            }
+                        }
+                        if didLike {
+                            completion("Failed to like " + thisAlarm.sender.username + "'s wakey")
+                        } else {
+                            completion("Failed to unlike " + thisAlarm.sender.username + "'s wakey")
+                        }
+                    }
+            }
+        }
+    }
+    
+    
+    func sendAudio(audioFileUrl: URL, recipients: [userModel], completion: @escaping (Error?) -> ()) {
+        FirebaseManager.shared.uploadAudioFile(audioFileUrl: audioFileUrl) { (error, url) in
+            guard let url = url else {
+                completion(error)
+                return
+            }
+            self.fetchToken { (token) in
+                let headers: HTTPHeaders = [
+                    "Authorization": "Bearer " + token,
+                    "Accept": "application/json"
+                ]
+                var recipientsJson: [[String:Any]] = []
+                for user in recipients {
+                    let recip = ["receiver_user_id": user.userID,"receiver_user_img": user.profilePicUrl ,"receiver_user_username":user.username]
+                    recipientsJson.append(recip)
+                }
+                let params = ["receivers": recipientsJson, "audio_file_url": url] as [String : Any]
+                
+                AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/audio_msg", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+                    .responseJSON { response in
+                        //debugprint(response)
+                    }
+            }
+        }
+    }
+    
+    func wakeUp(usedAlarm: Bool, audioID: String, completion: @escaping (Error?) -> ()) {
         self.fetchToken { (token) in
             let headers: HTTPHeaders = [
                 "Authorization": "Bearer " + token,
                 "Accept": "application/json"
             ]
-            let params = ["description": description,"messageID":thisMessage.audioID, "did_like_message": didLikeMessage] as [String : Any]
-            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/like_message", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
-                //debugprint(response)
-                if let result = response.response?.statusCode {
-                    if result == 200 {
-                        completion(nil)
+            let params = ["used_alarm": usedAlarm, "audio_id": audioID] as [String : Any]
+            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/wake_up", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+                .responseJSON { response in
+                    //debugprint(response)
+                }
+        }
+    }
+    
+    
+    func setAsleepProperty(asleepBool: Bool, completion: @escaping (Error?) -> ()) {
+        self.fetchToken { (token) in
+            let headers: HTTPHeaders = [
+                "Authorization": "Bearer " + token,
+                "Accept": "application/json"
+            ]
+            let params = ["asleep_bool": asleepBool] as [String : Any]
+            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/go_sleep", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+                .responseString { response in
+                    if let result = response.response?.statusCode {
+                        if result != 200 {
+                            //created user
+                            completion(wakeyError.unknownError)
+                            return
+                        } else {
+                            completion(nil)
+                        }
+                    } else {
+                        completion(wakeyError.unknownError)
                         return
                     }
                 }
-                completion(response.error)
-            }
+        }
+    }
+        
+    
+    func sendPushNotification(receiverDeviceId: String, messageTitle: String,messageBody: String) {
+        self.fetchToken { (token) in
+            let headers: HTTPHeaders = [
+                "Authorization": "Bearer " + token,
+                "Accept": "application/json"
+            ]
+            let params = ["device_id": receiverDeviceId, "msg_title": messageTitle, "msg_body": messageBody] as [String : Any]
+            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/send_push", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+                //AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/send_push", parameters: params, headers: headers)
+                .responseString { response in
+                    //debugprint(response)
+                    print("RESPONSE FROM TRYING TO SEND PUSH NOTIFICATION: ")
+                    debugPrint(response)
+                }
         }
     }
     
-    
-    
-    
-                
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//                let db = Firestore.firestore()
-//                let downloadGroup = DispatchGroup()
-//                for recipient in recipients {
-//                    //check if the conversation exists;if it does, add a new wakey_message document
-//                    //to the convo subCollection. If it doesn't exist, create a new
-//                    //conversation and add a new wakey_message document to the convo subCollection
-//                    downloadGroup.enter()
-//                    let timesent = Timestamp(date: Date())
-//                    //new schema
-//                    let docuRef = db.collection("wakey_conversations")
-//                    docuRef.whereField("participants", in: [[currUser!.userID, recipient.userID], [recipient.userID, currUser?.userID]]).limit(to: 1).getDocuments { (convo, convoErr) in
-//                        if convoErr != nil {
-//                            downloadGroup.leave()
-//                        }
-//                        if let conversations = convo {
-//                            if let conversation = conversations.documents.first  {
-//                                //update the array and time
-//                                //do a batched write here:
-//                                let batch = db.batch()
-//                                let thisMessageRef = docuRef.document(conversation.documentID).collection("/wakey_messages").document()
-//
-//                                batch.setData([
-//                                    "audio_file_url" : webHostedurl,
-//                                    "opened": false,
-//                                    "receiver": recipient.userID,
-//                                    "sender_id": currUser!.userID,
-//                                    "time_sent": timesent
-//                                ], forDocument: thisMessageRef)
-//
-//
-//                                let mostRecentMessage = ["audio_file_url": webHostedurl, "message_id": thisMessageRef.documentID, "sender_id": currUser!.userID, "time_sent": timesent] as [String: Any]
-//                                let thisConvoRef = docuRef.document(conversation.documentID)
-//                                batch.updateData([
-//                                    "most_recent_message" : mostRecentMessage,
-//                                    "last_wakey_sent_time": timesent
-//                                ], forDocument: thisConvoRef)
-//
-//                                // Commit the batch
-//                                batch.commit() { err in
-//                                    if let err = err {
-//                                        print("Error writing batch \(err)")
-//                                        downloadGroup.leave()
-//                                    } else {
-//                                        print("Batch write succeeded.")
-//                                        downloadGroup.leave()
-//                                    }
-//                                }
-//                            } else {
-//
-//                                //create the document
-//
-//                                let batch = db.batch()
-//                                let newConvoRef = docuRef.document()
-//                                let thisMessageRef = docuRef.document(newConvoRef.documentID).collection("/wakey_messages").document()
-//
-//                                batch.setData([
-//                                    "audio_file_url" : webHostedurl,
-//                                    "opened": false,
-//                                    "receiver": recipient.userID,
-//                                    "sender_id": currUser!.userID,
-//                                    "time_sent": timesent
-//                                ], forDocument: thisMessageRef)
-//
-//                                let mostRecentMessage = ["audio_file_url": webHostedurl, "message_id": thisMessageRef.documentID, "sender_id": currUser!.userID, "time_sent": timesent] as [String: Any]
-//                                let participants = [currUser!.userID, recipient.userID]
-//
-//                                let participantDetails = [["profile_pic_url": currUser!.profilePicUrl, "user_name": currUser!.userName, "user_id": currUser!.userID], ["profile_pic_url": recipient.profilePicUrl, "user_name": recipient.userName, "user_id": recipient.userID]]
-//
-//                                batch.setData([
-//                                    "last_action_time": timesent,
-//                                    "participants": participants,
-//                                    "participant_details": participantDetails,
-//                                    "most_recent_message" : mostRecentMessage,
-//                                    "last_wakey_sent_time": timesent
-//                                ], forDocument: newConvoRef)
-//
-//                                // Commit the batch
-//                                batch.commit() { err in
-//                                    if let err = err {
-//                                        print("Error writing batch \(err)")
-//                                        downloadGroup.leave()
-//                                    } else {
-//                                        print("Batch write succeeded.")
-//                                        downloadGroup.leave()
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//                downloadGroup.notify(queue: DispatchQueue.main) {
-//                    completion(nil)
-//                }
-//            }
-//        }
-//    }
-//
-    
-    func acceptFriendRequest(requestID: String, sender: userModel, completion: @escaping (Error?, String?) -> ()) {
-        FirebaseManager.shared.getCurrentUser { (error_curr_user, currUser) in
-            if error_curr_user != nil {
-                completion(error_curr_user, nil)
-            }
-            let db = Firestore.firestore()
-            //check if the request exists;if it does, check its status and update accordinly; create it if it doesn't exist
-            let requestRef = db.collection("wakey_friend_requests").document(requestID)
 
-            db.runTransaction({ (transaction, errorPointer) -> Any? in
-                let requestDoc: DocumentSnapshot
-                do {
-                    try requestDoc = transaction.getDocument(requestRef)
-                } catch let fetchError as NSError {
-                    errorPointer?.pointee = fetchError
-                    return nil
-                }
-
-                guard let oldStatus = requestDoc.data()?["status"] as? String else {
-                    let error = NSError(
-                        domain: "AppErrorDomain",
-                        code: -1,
-                        userInfo: [
-                            NSLocalizedDescriptionKey: "Unable to retrieve status from snapshot \(requestDoc)"
-                        ]
-                    )
-                    errorPointer?.pointee = error
-                    return nil
-                }
-                guard let oldReceiver = requestDoc.data()?["receiver"] as? String else {
-                    let error = NSError(
-                        domain: "AppErrorDomain",
-                        code: -1,
-                        userInfo: [
-                            NSLocalizedDescriptionKey: "Unable to retrieve receiver from snapshot \(requestDoc)"
-                        ]
-                    )
-                    errorPointer?.pointee = error
-                    return nil
-                }
-                
-                if oldReceiver == currUser!.userID {
-                    switch oldStatus {
-                        case "ACCEPTED":
-                            return constants.friendConditions.areFriends
-                        case "DENIED":
-                            transaction.updateData(["status": "ACCEPTED"], forDocument: requestRef)
-                            return constants.friendConditions.areFriends
-                        case "REQUESTED":
-                            transaction.updateData(["status": "ACCEPTED"], forDocument: requestRef)
-                            return constants.friendConditions.areFriends
-                    default:
-                        break
-                    }
-                } else {
-                    switch oldStatus {
-                        case "ACCEPTED":
-                            transaction.updateData(["status": "ACCEPTED", "receiver": sender.userID], forDocument: requestRef)
-                            return constants.friendConditions.areFriends
-                        case "DENIED":
-                            return constants.friendConditions.arentFriends
-                        case "REQUESTED":
-                            return constants.friendConditions.sentRequest
-                    default:
-                        break
-                    }
-                }
-                return nil
-            }) { (object, error) in
-                if let error = error {
-                    print("Transaction failed: \(error)")
-                    completion(error, nil)
-                } else {
-                    completion(nil, object as? String ?? "")
-                }
-            }
-        }
-    }
     
-    
-    func fetchReceivedFriendRequests(cursorDoc: DocumentSnapshot?,completion: @escaping (Error?, [userModel], DocumentSnapshot?) -> ()) {
-        FirebaseManager.shared.getCurrentUser { (error_curr_user, currUser) in
-            if error_curr_user != nil {
-                completion(error_curr_user, [], nil)
-            }
-            let db = Firestore.firestore()
-            //check if the request exists;if it does, check its status and update accordinly; create it if it doesn't exist
-            var query = db.collection("wakey_friend_requests").whereField("receiver", isEqualTo: currUser!.userID).whereField("status", isEqualTo: "REQUESTED").limit(to: kMaxFriends)
-            if let cursorDoc = cursorDoc {
-                query = query.start(afterDocument: cursorDoc)
-            }
-            query.getDocuments { (requestObjects, reqErr) in
-                if reqErr != nil {
-                    completion(reqErr, [], nil)
-                }
-                if requestObjects == nil || requestObjects?.documents.count == 0  {
-                    completion(nil, [], nil)
-                } else {
-                    let lastDoc = requestObjects!.documents.last
-                    
-                    var requestArr: [userModel] = []
-                    for requestObject in requestObjects!.documents {
-                        guard let participantDetails = requestObject["participant_details"] as? [[String: String]] else {
-                            continue
-                        }
-                        var otherUser = currUser!
-                        var requestReceivedDate = Date()
-                        if let requestReceivedAt = requestObject["last_activity_time"] as? Timestamp {
-                            requestReceivedDate = requestReceivedAt.dateValue()
-                        }
-                        for details in participantDetails {
-                            if let userID = details["user_id"], userID != currUser!.userID {
-                                otherUser = userModel(user: ["username" : details["user_name"] ?? "", "user_id": userID, "profile_img_url": details["profile_pic_url"] ?? "", "friendship_id": requestObject.documentID, "friendship_status": constants.friendConditions.receivedRequest, "became_friends": requestReceivedDate,"asleep": false])
-                                break
-                            }
-                        }
-                        requestArr.append(otherUser)
-                    }
-                    completion(nil, requestArr, lastDoc)
-                }
-            }
-        }
-    }
-    
-    
-   
-    
-    
-    func unfriend(requestID: String, completion: @escaping (Error?) -> ()) {
-        //Maybe I should delete all where these two people are friends?
-        let db = Firestore.firestore()
-        db.collection("wakey_friend_requests").document(requestID).delete() { err in
-            if let err = err {
-                completion(err)
-            } else {
-                completion(nil)
-            }
-        }
-    }
-    
-    func denyFriendRequest(requestID: String, completion: @escaping (Error?) -> ()) {
-        FirebaseManager.shared.getCurrentUser { (error_curr_user, currUser) in
-            if error_curr_user != nil {
-                completion(error_curr_user)
-            }
-            let db = Firestore.firestore()
-            //check if the request exists;if it does, check its status and update accordinly; create it if it doesn't exist
-            let requestRef = db.collection("wakey_friend_requests").document(requestID)
-            
-            db.runTransaction({ (transaction, errorPointer) -> Any? in
-                let requestDoc: DocumentSnapshot
-                do {
-                    try requestDoc = transaction.getDocument(requestRef)
-                } catch let fetchError as NSError {
-                    errorPointer?.pointee = fetchError
-                    return nil
-                }
-                
-                guard let oldStatus = requestDoc.data()?["status"] as? String else {
-                    let error = NSError(
-                        domain: "AppErrorDomain",
-                        code: -1,
-                        userInfo: [
-                            NSLocalizedDescriptionKey: "Unable to retrieve status from snapshot \(requestDoc)"
-                        ]
-                    )
-                    errorPointer?.pointee = error
-                    return nil
-                }
-                guard let oldReceiver = requestDoc.data()?["receiver"] as? String else {
-                    let error = NSError(
-                        domain: "AppErrorDomain",
-                        code: -1,
-                        userInfo: [
-                            NSLocalizedDescriptionKey: "Unable to retrieve from snapshot \(requestDoc)"
-                        ]
-                    )
-                    errorPointer?.pointee = error
-                    return nil
-                }
-                
-                if oldReceiver == currUser!.userID {
-                    switch oldStatus {
-                    case "ACCEPTED":
-                        transaction.updateData(["status": "DENIED"], forDocument: requestRef)
-                        return constants.friendConditions.arentFriends
-                    case "DENIED":
-                        return constants.friendConditions.arentFriends
-                    case "REQUESTED":
-                        transaction.updateData(["status": "DENIED"], forDocument: requestRef)
-                        return constants.friendConditions.arentFriends
-                    default:
-                        break
-                    }
-                } else {
-                    switch oldStatus {
-                    case "ACCEPTED":
-                        transaction.deleteDocument(requestRef)
-                        return constants.friendConditions.arentFriends
-                    case "DENIED":
-                        return constants.friendConditions.arentFriends
-                    case "REQUESTED":
-                        transaction.deleteDocument(requestRef)
-                        return constants.friendConditions.arentFriends
-                    default:
-                        break
-                    }
-                }
-                return nil
-            }) { (object, error) in
-                if let error = error {
-                    completion(error)
-                } else {
-                    completion(nil)
-                }
-            }
-        }
-    }
-    
-    
-    
-    
-    func sendFriendRequest(receiver: userModel, completion: @escaping (Error?, String?) -> ()) {
-        FirebaseManager.shared.getCurrentUser { (error_curr_user, currUser) in
-            if error_curr_user != nil {
-                completion(error_curr_user, nil)
-            }
-            let db = Firestore.firestore()
-            //check if the request exists;if it does, check its status and update accordinly; create it if it doesn't exist
-            let docuRef = db.collection("wakey_friend_requests")
-            docuRef.whereField("participants", in: [[currUser!.userID, receiver.userID], [receiver.userID, currUser!.userID]]).limit(to: 1).getDocuments { (requestObj, reqErr) in
-                if reqErr != nil {
-                    completion(reqErr, nil)
-                }
-                if let requests = requestObj {
-                    if let request = requests.documents.first  {
-                        //update the array and time
-                        //do a batched write here:
-                        
-                        let currentStatus = request["status"] as? String ?? "DENIED"
-                        let thisRelationshipRef = docuRef.document(request.documentID)
-                        switch currentStatus {
-                        case "ACCEPTED":
-                            completion(nil, constants.friendConditions.areFriends)
-                            return
-                        case "REQUESTED":
-                            if let receiverID = request["receiver"] as? String, currUser!.userID == receiverID {
-                                //declare friends since this persons sending a request to someone who requested them
-                                thisRelationshipRef.updateData(["status": "ACCEPTED", "last_activity_time": Timestamp(date: Date())]) { (err) in
-                                    if err != nil {
-                                        completion(err, nil)
-                                        return
-                                    }
-                                    completion(nil, constants.friendConditions.areFriends)
-                                    return
-                                }
-                            } else {
-                                completion(nil, constants.friendConditions.sentRequest)
-                                return
-                            }
-                        default:
-                            thisRelationshipRef.updateData(["status": "REQUESTED", "receiver": receiver.userID, "last_activity_time": Timestamp(date: Date())]) { (err_three) in
-                                if err_three != nil {
-                                    completion(err_three, nil)
-                                    return
-                                }
-                                completion(nil, constants.friendConditions.sentRequest)
-                                return
-                            }
-                        }
-                    } else {
-                        
-                        //create the request
-                        let participants = [currUser!.userID, receiver.userID]
-                        
-                        let participantDetails = [["profile_pic_url": currUser!.profilePicUrl, "user_name": currUser!.username, "user_id": currUser!.userID], ["profile_pic_url": receiver.profilePicUrl, "user_name": receiver.username, "user_id": receiver.userID]]
-                        docuRef.addDocument(data:[
-                            "participants": participants,
-                            "participant_details": participantDetails,
-                            "last_activity_time": Timestamp(date: Date()),
-                            "status": "REQUESTED",
-                            "receiver": receiver.userID,
-                        ]) { (docCreateErr) in
-                            if docCreateErr != nil {
-                                completion(docCreateErr, nil)
-                                return
-                            }
-                            completion(nil, constants.friendConditions.sentRequest)
-                            return
-                            
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    
-    
-     //END OF NEW ENDPOINTS THAT ARE USING NEW SCHEMA AS OF 21 JUNE 2020
-    
-    
-    
-    
-    
-    
-    
-    //    func signUp(email: String, password: String, fullName: String, profileImage: UIImage, completion: @escaping (Error?) -> ()) {
-    //        Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
-    //            if let error = error {
-    //                completion(error)
-    //            } else {
-    //                //print("Auth made the user")
-    //                FirebaseManager.shared.createNewUser(user: result!.user, fullName: fullName, email: email, profileImage: profileImage) { (thisError) in
-    //                    completion(thisError)
-    //                }
-    //            }
-    //        }
-    //    }
+    //
+    //USER CREATION / UPDATING STUFF
+    //
     
     
     //returns (error?, pro pic did upload)
@@ -716,7 +434,7 @@ class FirebaseManager {
                             return
                         } else if let profilePicUrl = profilePicUrl {
                             //we've got the pro pic url; go ahead and create the user
-                            let params = ["username": username,"full_name": fullName,  "profile_img_url": profilePicUrl.absoluteString, "asleep": false, "bed_time": 7.0, "fb_data": [],"phone_num": phoneNumber] as [String : Any]
+                            let params = ["username": username,"full_name": fullName,  "profile_img_url": profilePicUrl.absoluteString, "asleep": false, "bed_time": 7.0,"phone_num": phoneNumber] as [String : Any]
                             AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/create_user", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
                                 //debugprint(response)
                                 if let result = response.response?.statusCode {
@@ -745,57 +463,32 @@ class FirebaseManager {
             
         }
     }
-        
-        
-        
-//
-//        imageRef.putData(profileImage.jpeg(.lowest)!, metadata: nil) { (metadata, error) in
-//            if let error = error {
-//                completion(nil,error)
-//            } else {
-//               imageRef.downloadURL { (url, urlError) in
-//                    if let urlError = urlError {
-//                        completion(nil, urlError)
-//                    } else {
-//                        completion(url!.absoluteString, nil)
-//                    }
-//                }
-//            }
-//        }
-//    }
-//        FirebaseManager.shared.uploadProfilePic(profileImage: profileImage, user: user) { (url, error) in
-//            if let error = error {
-//                //failed
-//                completion(error)
-//            } else {
-//                //print("Auth made the user")
-//                let userDict = ["user_id": user.uid, "username": fullName, "profile_img_url": url!, "asleep": false, "created_at": Date()] as [String : Any]
-//                FirebaseManager.shared.currentUser = userModel(user: userDict)
-//                //TO-DO
-//                self.fetchToken { (token) in
-//                    let headers: HTTPHeaders = [
-//                        "Authorization": "Bearer " + token,
-//                        "Accept": "application/json"
-//                    ]
-//                    let params = ["username": fullName,"email": email, "img_url": url!] as [String : Any]
-//                    AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/create_user", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
-//                        //debugprint(response)
-//                        if let result = response.response?.statusCode {
-//                            if result == 201 {
-//                                completion(nil)
-//                                return
-//                            }
-//                        }
-//                        completion(response.error)
-//                    }
-//                }
-//            }
-//        }
     
     
-    
-    
-    
+    func setDeviceID(deviceID: String,completion: @escaping (Error?) -> ()) {
+        self.fetchToken { (token) in
+            let headers: HTTPHeaders = [
+                "Authorization": "Bearer " + token,
+                "Accept": "application/json"
+            ]
+            let params = ["device_id": deviceID] as [String : Any]
+            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/set_device_id", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+                .responseJSON { response in
+                    if let result = response.response?.statusCode {
+                        if result != 200 {
+                            completion(wakeyError.unknownError)
+                            return
+                        } else {
+                            completion(nil)
+                            return
+                        }
+                    } else {
+                        completion(wakeyError.unknownError)
+                        return
+                    }
+                }
+        }
+    }
     
     
     //need to use auth token in future
@@ -817,7 +510,6 @@ class FirebaseManager {
         }
     }
     
-    //Checks if the signed in user has completed sign up)
     //return (error?, has completed sign up)
     func checkIfUserHasCompletedSignUp(completion: @escaping (Error?, Bool?) -> ()) {
         fetchToken { (token) in
@@ -863,7 +555,6 @@ class FirebaseManager {
     }
     
     
-    
     func signIn(email: String, password: String, completion: @escaping (String?) -> ()) {
         Auth.auth().signIn(withEmail:email, password: password) { (result, error) in
             if let error = error {
@@ -899,7 +590,6 @@ class FirebaseManager {
         }
     }
     
-    
     func setCurrentUser(completion: @escaping (Error?, userModel?) -> ()) {
         fetchToken { (token) in
             let headers: HTTPHeaders = [
@@ -928,9 +618,9 @@ class FirebaseManager {
             try Auth.auth().signOut()
             FirebaseManager.shared.currentUser = nil
             completion(nil)
-            } catch let err {
-                completion(err)
-            }
+        } catch let err {
+            completion(err)
+        }
     }
     
     
@@ -939,271 +629,45 @@ class FirebaseManager {
             if error != nil {
                 //print("error gett auth token")
             } else {
+                print("THIS IS THE TOKEN: " + (token ?? ""))
                 completion(token!)
             }
         })
     }
     
     
-    func sendReaction(reactedToAlarm: receivedAlarm, reactionString: String, completion: @escaping (String) -> ()) {
-        self.getCurrentUser { (error, currUser) in
-            if error != nil {
-                
-                completion("Failed to send")
-            }
-            self.fetchToken { (token) in
-                let headers: HTTPHeaders = [
-                    "Authorization": "Bearer " + token,
-                    "Accept": "application/json"
-                ]
-                let params = ["audio_id": reactedToAlarm.audioID,"reaction": reactionString] as [String : Any]
-                AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/react", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
-                    .responseJSON { response in
-                        //debugprint(response)
-                        if let result = response.response?.statusCode {
-                            if result == 200 {
-                                completion("Sent to " + reactedToAlarm.sender.username)
-                                return
-                            }
-                        }
-                        completion("Failed to send to " + reactedToAlarm.sender.username)
-                }
-            }
-        }
-    }
     
     
-    func likeAlarm(thisAlarm: receivedAlarm, didLike: Bool, completion: @escaping (String) -> ()) {
-        self.getCurrentUser { (error, currUser) in
-            if error != nil {
-                completion("Failed to send")
-            }
-            self.fetchToken { (token) in
-                let headers: HTTPHeaders = [
-                    "Authorization": "Bearer " + token,
-                    "Accept": "application/json"
-                ]
-                let params = ["audio_id": thisAlarm.audioID,"did_like": didLike] as [String : Any]
-                AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/did_favorite", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
-                    .responseJSON { response in
-                        //debugprint(response)
-                        if let result = response.response?.statusCode {
-                            if result == 200 {
-                                if didLike {
-                                    completion("Liked " + thisAlarm.sender.username + "'s wakey")
-                                } else {
-                                    completion("Unliked " + thisAlarm.sender.username + "'s wakey")
-                                }
-                                
-                                return
-                            }
-                        }
-                        if didLike {
-                            completion("Failed to like " + thisAlarm.sender.username + "'s wakey")
-                        } else {
-                            completion("Failed to unlike " + thisAlarm.sender.username + "'s wakey")
-                        }
-                }
-            }
-        }
-    }
+    //SETTING ALARMS
     
-    
-    
-    
-    func sendAudio(audioFileUrl: URL, recipients: [userModel], completion: @escaping (Error?) -> ()) {
-        FirebaseManager.shared.uploadAudioFile(audioFileUrl: audioFileUrl) { (error, url) in
-            guard let url = url else {
-                completion(error)
-                return
-            }
-            self.fetchToken { (token) in
-                let headers: HTTPHeaders = [
-                    "Authorization": "Bearer " + token,
-                    "Accept": "application/json"
-                ]
-                var recipientsJson: [[String:Any]] = []
-                for user in recipients {
-                    let recip = ["receiver_user_id": user.userID,"receiver_user_img": user.profilePicUrl ,"receiver_user_username":user.username]
-                    recipientsJson.append(recip)
-                }
-                let params = ["receivers": recipientsJson, "audio_file_url": url] as [String : Any]
-                
-                AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/audio_msg", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
-                    .responseJSON { response in
-                        //debugprint(response)
-                }
-            }
-        }
-    }
-    
-    func wakeUp(usedAlarm: Bool, audioID: String, completion: @escaping (Error?) -> ()) {
-        self.fetchToken { (token) in
-            let headers: HTTPHeaders = [
-                "Authorization": "Bearer " + token,
-                "Accept": "application/json"
-            ]
-            let params = ["used_alarm": usedAlarm, "audio_id": audioID] as [String : Any]
-            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/wake_up", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
-                .responseJSON { response in
-                //debugprint(response)
-            }
-        }
-    }
-    
-    
-    func fetchAllAlarmsReceived(completion: @escaping (Error?, [receivedAlarm]) -> ()) {
-        fetchToken { (token) in
-            let headers: HTTPHeaders = [
-                "Authorization": "Bearer " + token,
-                "Accept": "application/json"
-            ]
-            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/go_sleep", headers: headers).responseJSON { response in
-                //debugprint(response)
-                //print("RESULT FROM FETCHING SINGLE ALARM")
-                //print(response.result)
-                do {
-                    if response.data != nil {
-                        //print("Response data isnt nil")
-                        if let parseJSON = try JSONSerialization.jsonObject(with: response.data!, options: []) as? NSDictionary {
-                            //print("Parsed it")
-                            if let audiosDict = parseJSON["audios"] as? [[String: Any]] {
-                                var alarms: [receivedAlarm] = []
-                                for msg in audiosDict {
-                                    if let senderDict = msg["sender"] as? [String: Any] {
-                                        let userDict = ["user_id": senderDict["sender_id"] as Any, "username": senderDict["sender_username"] as Any, "profile_img_url": senderDict["sender_img"] as Any, "asleep": false, "created_at": Date()] as [String : Any]
-                                        let user = userModel(user: userDict)
-                                        
-                                        let alarmProps = ["audio_id": msg["audio_id"] as Any,"audio_file_url": msg["audio_file_url"] as Any, "created_at": Date()] as [String:Any]
-                                        let alarm = receivedAlarm(alarm: alarmProps, sender: user, localAudioUrl: nil)
-                                        alarms.append(alarm)
-                                    }
-                                }
-                                completion(nil, alarms)
-                                return
-
-                            } else {
-                                //empty
-                                completion(nil, [])
-                                return
-                            }
-                        }
-                    }
-                    completion(nil, [])
-                } catch let parseError {
-                    //print("JSON Error \(parseError.localizedDescription)")
-                    completion(parseError, [])
-                }
-            }
-        }
-    }
-    
-    
-    func sendPushNotification(receiverDeviceId: String, messageTitle: String,messageBody: String) {
-        self.fetchToken { (token) in
-            let headers: HTTPHeaders = [
-                "Authorization": "Bearer " + token,
-                "Accept": "application/json"
-            ]
-            let params = ["device_id": receiverDeviceId, "msg_title": messageTitle, "msg_body": messageBody] as [String : Any]
-            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/send_push", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
-            //AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/send_push", parameters: params, headers: headers)
-                .responseString { response in
-                //debugprint(response)
-                    print("RESPONSE FROM TRYING TO SEND PUSH NOTIFICATION: ")
-                    debugPrint(response)
-            }
-        }
-    }
-    
-    
-    func fetchUnopenedMessages(completion: @escaping (Error?, [receivedAlarm]) -> ()) {
-        fetchToken { (token) in
-            let headers: HTTPHeaders = [
-                "Authorization": "Bearer " + token,
-                "Accept": "application/json"
-            ]
-            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/unopened_messages", headers: headers).responseJSON { response in
-                //debugprint(response)
-                //print("RESULT FROM FETCHING SINGLE ALARM")
-                print(response.result)
-                do {
-                    if response.data != nil {
-                        print("Response data isnt nil")
-                        if let parseJSON = try JSONSerialization.jsonObject(with: response.data!, options: []) as? NSDictionary {
-                            if let audiosDict = parseJSON["messages"] as? [[String: [String: Any]]] {
-                                var alarms: [receivedAlarm] = []
-                                for msg in audiosDict {
-                                    let messageDetails = msg["message"]! as [String: Any]
-                                    let senderDetails = msg["sender"]! as [String: Any]
-                                    
-                                    
-                                    
-                                    let alarmProps = ["audio_id": messageDetails["message_id"] as Any,"audio_file_url": messageDetails["audio_file_url"] as Any, "created_at": jsonDateToDate(jsonStr: messageDetails["sent_at"] as? String ?? ""), "audio_length": messageDetails["audio_length"] as Any, "can_be_liked": messageDetails["can_be_liked"] as Any, "has_been_liked": messageDetails["has_been_liked"] as Any] as [String:Any]
-                                    let userDict = ["user_id": senderDetails["sender_id"] as Any, "username": senderDetails["username"] as Any, "profile_img_url": senderDetails["profile_img_url"] as Any, "asleep": false, "created_at": Date()] as [String : Any]
-                                    
-                                    let user = userModel(user: userDict)
-                                    let alarm = receivedAlarm(alarm: alarmProps, sender: user, localAudioUrl: nil)
-                                    alarms.append(alarm)
-                                    print("HERES A MESSAGE:")
-                                    print(alarmProps)
-                                }
-                                completion(nil, alarms)
-                                return
-
-                            } else {
-                                //empty
-                                completion(nil, [])
-                                return
-                            }
-                        }
-                    }
-                    completion(nil, [])
-                } catch let parseError {
-                    //print("JSON Error \(parseError.localizedDescription)")
-                    completion(parseError, [])
-                }
-            }
-        }
-    }
-    
-    
-    
-    //Fetch all messages that have been liked by this user
     func fetchLikedMessages(completion: @escaping (Error?, [receivedAlarm]) -> ()) {
         fetchToken { (token) in
             let headers: HTTPHeaders = [
                 "Authorization": "Bearer " + token,
                 "Accept": "application/json"
             ]
-            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/all_liked_messages", headers: headers).responseJSON { response in
+            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/liked_messages", headers: headers).responseJSON { response in
                 //debugprint(response)
                 //print("RESULT FROM FETCHING SINGLE ALARM")
                 print(response.result)
                 do {
                     if response.data != nil {
-                        print("Response data isnt nil")
                         if let parseJSON = try JSONSerialization.jsonObject(with: response.data!, options: []) as? NSDictionary {
                             if let audiosDict = parseJSON["messages"] as? [[String: [String: Any]]] {
                                 var alarms: [receivedAlarm] = []
                                 for msg in audiosDict {
                                     let messageDetails = msg["message"]! as [String: Any]
                                     let senderDetails = msg["sender"]! as [String: Any]
-                                    
-                                    
-                                    
-                                    let alarmProps = ["audio_id": messageDetails["message_id"] as Any,"audio_file_url": messageDetails["audio_file_url"] as Any, "created_at": jsonDateToDate(jsonStr: messageDetails["sent_at"] as? String ?? ""), "audio_length": messageDetails["audio_length"] as Any, "can_be_liked": messageDetails["can_be_liked"] as Any, "has_been_liked": messageDetails["has_been_liked"] as Any] as [String:Any]
+                                    let alarmProps = ["audio_id": messageDetails["message_id"] as Any,"audio_file_url": messageDetails["audio_file_url"] as Any, "created_at": jsonDateToDate(jsonStr: messageDetails["sent_at"] as? String ?? ""), "audio_length": messageDetails["audio_length"] as Any, "can_be_liked": messageDetails["can_be_liked"] as Any, "has_been_liked": messageDetails["has_been_liked"] as Any, "description": messageDetails["description"] as Any] as [String:Any]
                                     let userDict = ["user_id": senderDetails["sender_id"] as Any, "username": senderDetails["username"] as Any, "profile_img_url": senderDetails["profile_img_url"] as Any, "asleep": false, "created_at": Date()] as [String : Any]
                                     
                                     let user = userModel(user: userDict)
                                     let alarm = receivedAlarm(alarm: alarmProps, sender: user, localAudioUrl: nil)
                                     alarms.append(alarm)
-                                    print("HERES A MESSAGE:")
-                                    print(alarmProps)
                                 }
                                 completion(nil, alarms)
                                 return
-
+                                
                             } else {
                                 //empty
                                 completion(nil, [])
@@ -1213,18 +677,11 @@ class FirebaseManager {
                     }
                     completion(nil, [])
                 } catch let parseError {
-                    //print("JSON Error \(parseError.localizedDescription)")
                     completion(parseError, [])
                 }
             }
         }
     }
-    
-    
-    
-    
-    
-    
     
     func uploadAudioFile(audioFileUrl: URL, completion: @escaping (Error?,String?) -> ()) {
         FirebaseManager.shared.getCurrentUser { (error, user) in
@@ -1233,20 +690,20 @@ class FirebaseManager {
                 let referenceString = user.username + " " + user.userID + " " + Date().description
                 let audioRef = storageRef.reference().child("/audio_message/" + referenceString)
                 let uploadTask = audioRef.putFile(from: audioFileUrl, metadata: nil) { metadata, error in
-                  guard let metadata = metadata else {
-                    // error occurred!
-                    return
-                  }
-                  audioRef.downloadURL { (url, error) in
-                    guard let downloadURL = url else {
-                      // error occurred!
-                      return
+                    guard let metadata = metadata else {
+                        // error occurred!
+                        return
                     }
-                    //print("uploaded url is this:")
-                    //print(downloadURL.absoluteString)
-                    completion(nil, downloadURL.absoluteString)
-                    
-                  }
+                    audioRef.downloadURL { (url, error) in
+                        guard let downloadURL = url else {
+                            // error occurred!
+                            return
+                        }
+                        //print("uploaded url is this:")
+                        //print(downloadURL.absoluteString)
+                        completion(nil, downloadURL.absoluteString)
+                        
+                    }
                 }
             }
         }
@@ -1261,7 +718,7 @@ class FirebaseManager {
             //Library/Sounds
             do {
                 try FileManager.default.createDirectory(atPath: soundsDirectoryURL.path,
-                                                withIntermediateDirectories: true, attributes: nil)
+                                                        withIntermediateDirectories: true, attributes: nil)
             } catch let error as NSError {
                 //print("COULDNT CREATE DIRECTORY")
                 //print("Error: \(error.localizedDescription)")
@@ -1269,9 +726,10 @@ class FirebaseManager {
             
             //let fileURL = documentsURL.appendingPathComponent("wakey_message_sent_" + pathPrefix + ".m4a")
             let fileURL = soundsDirectoryURL.appendingPathComponent("wakey_message_sent_" + pathPrefix + ".m4a")
-
+            
             return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
         }
+        
         
         
         AF.download(withUrl, to: destination).responseData { (response) in
@@ -1312,10 +770,6 @@ class FirebaseManager {
         }
     }
     
-    
-    
-    
-    
     func getAllAlarmsSent(completion: @escaping ([sentAlarm]) -> ()) {
         var sentAlarms:[sentAlarm] = []
         fetchToken { (token) in
@@ -1330,7 +784,7 @@ class FirebaseManager {
                     if response.data != nil {
                         if let parseJSON = try JSONSerialization.jsonObject(with: response.data!, options: []) as? NSDictionary {
                             //print("GETS HERE")
-
+                            
                             if let alarms = parseJSON["audio_sent"] as? [[String:Any]] {
                                 //print("These are the alarms")
                                 //print(alarms)
@@ -1360,41 +814,281 @@ class FirebaseManager {
         }
     }
     
-    //return value: error string, [friends], last doc id
-    func getFriends(cursorDocID: String?, limit: Int?, completion: @escaping (String?, [userModel], String?) -> ()) {
-        var friends:[userModel] = []
+    func fetchUnopenedMessages(completion: @escaping (Error?, [receivedAlarm]) -> ()) {
         fetchToken { (token) in
             let headers: HTTPHeaders = [
                 "Authorization": "Bearer " + token,
                 "Accept": "application/json"
             ]
-            //let params = ["after_id": cursorDocID as Any,"limit": limit as Any] as [String : Any]
-            let params = [:] as [String: Any]
-            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/friends", parameters: params, headers: headers).responseJSON { response in
+            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/unopened_messages", headers: headers).responseJSON { response in
+                //debugprint(response)
+                //print("RESULT FROM FETCHING SINGLE ALARM")
+                print(response.result)
+                do {
+                    if response.data != nil {
+                        print("Response data isnt nil")
+                        if let parseJSON = try JSONSerialization.jsonObject(with: response.data!, options: []) as? NSDictionary {
+                            if let audiosDict = parseJSON["messages"] as? [[String: [String: Any]]] {
+                                var alarms: [receivedAlarm] = []
+                                for msg in audiosDict {
+                                    let messageDetails = msg["message"]! as [String: Any]
+                                    let senderDetails = msg["sender"]! as [String: Any]
+                                    
+                                    
+                                    
+                                    let alarmProps = ["audio_id": messageDetails["message_id"] as Any,"audio_file_url": messageDetails["audio_file_url"] as Any, "created_at": jsonDateToDate(jsonStr: messageDetails["sent_at"] as? String ?? ""), "audio_length": messageDetails["audio_length"] as Any, "can_be_liked": messageDetails["can_be_liked"] as Any, "has_been_liked": messageDetails["has_been_liked"] as Any] as [String:Any]
+                                    let userDict = ["user_id": senderDetails["sender_id"] as Any, "username": senderDetails["username"] as Any, "profile_img_url": senderDetails["profile_img_url"] as Any, "asleep": false, "created_at": Date()] as [String : Any]
+                                    
+                                    let user = userModel(user: userDict)
+                                    let alarm = receivedAlarm(alarm: alarmProps, sender: user, localAudioUrl: nil)
+                                    alarms.append(alarm)
+                                    print("HERES A MESSAGE:")
+                                    print(alarmProps)
+                                }
+                                completion(nil, alarms)
+                                return
+                                
+                            } else {
+                                //empty
+                                completion(nil, [])
+                                return
+                            }
+                        }
+                    }
+                    completion(nil, [])
+                } catch let parseError {
+                    //print("JSON Error \(parseError.localizedDescription)")
+                    completion(parseError, [])
+                }
+            }
+        }
+    }
+    
+    
+    //
+    //FRIENDS ENDPOINTS
+    //
+    
+    func fetchAllFriends(completion: @escaping (Error?, [userModel]) -> ()) {
+        self.fetchToken { (token) in
+            let headers: HTTPHeaders = [
+                "Authorization": "Bearer " + token,
+                "Accept": "application/json"
+            ]
+            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/fetch_all_friends", headers: headers).responseJSON { response in
+                do {
+                    if response.data != nil {
+                        if let parseJSON = try JSONSerialization.jsonObject(with: response.data!, options: []) as? NSDictionary {
+                            if let friendsArr = parseJSON["friends"] as? [[String: String]] {
+                                var friends: [userModel] = []
+                                for frnd in friendsArr {
+                                    let requestId = frnd["request_id"]! as String
+                                    let profileImgUrl = frnd["profile_img_url"]! as String
+                                    let userID = frnd["user_id"]! as String
+                                    let username = frnd["username"]! as String
+                                    let connectedAt = jsonDateToDate(jsonStr: frnd["connected_at"] ?? "")
+                                    let userDict = ["user_id": userID, "username": username, "profile_img_url": profileImgUrl, "became_friends": connectedAt, "friendship_status": constants.friendConditions.areFriends, "frienship_id": requestId] as [String : Any]
+                                    let user = userModel(user: userDict)
+                                    friends.append(user)
+                                }
+                                completion(nil, friends)
+                                return
+                            } else {
+                                completion(nil, [])
+                                return
+                            }
+                        }
+                    }
+                    completion(nil, [])
+                } catch let parseError {
+                    completion(parseError, [])
+                }
+            }
+        }
+    }
+    
+    
+    //Returns (error, request_id, status)
+    func fetchRelationshipStatus(otherUserID: String,completion: @escaping (Error?, String, String) -> ()) {
+        self.fetchToken { (token) in
+            let headers: HTTPHeaders = [
+                "Authorization": "Bearer " + token,
+                "Accept": "application/json"
+            ]
+            
+            
+            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/fetch_relationship_status/" + otherUserID, headers: headers).responseJSON { response in
                 if let result = response.response?.statusCode {
                     if result == 500 {
-                        completion("An error occurred", [], nil)
+                        completion(wakeyError.unknownError,"" , "")
+                        return
+                    } else if result == 400 {
+                        completion(wakeyError.unknownError,"" , "")
+                        return
+                    }
+                }
+                do {
+                    if response.data != nil {
+                        print(response.data!)
+                        
+                        
+                        if let parseJSON = try JSONSerialization.jsonObject(with: response.data!, options: []) as? NSDictionary {
+                            if let statusDict = parseJSON as? [String: String] {
+                                let requestID = statusDict["request_id"]! as String
+                                let status = statusDict["status"]! as String
+                                completion(nil, requestID, status)
+                                return
+                            } else {
+                                completion(wakeyError.unknownError, "", "")
+                                return
+                            }
+                        }
+                    }
+                    completion(wakeyError.unknownError, "", "")
+                } catch let parseError {
+                    print(parseError.localizedDescription)
+                    completion(wakeyError.unknownError, "", "")
+                }
+            }
+        }
+    }
+    
+    //returns (error, request_id, status)
+    func requestFriend(otherUser: userModel, completion: @escaping (Error?, String, String) -> ()) {
+        self.getCurrentUser { (error, currUser) in
+            if error != nil {
+                completion(wakeyError.unknownError, "", "")
+                return
+            }
+            self.fetchToken { (token) in
+                let headers: HTTPHeaders = [
+                    "Authorization": "Bearer " + token,
+                    "Accept": "application/json"
+                ]
+                let params = ["receiver_id": otherUser.userID, "receiver_username": otherUser.username,"sender_full_name": currUser?.username, "receiver_profile_img_url": otherUser.profilePicUrl, "sender_id": currUser!.userID, "sender_username": currUser!.username, "sender_profile_img_url": currUser!.profilePicUrl] as [String : Any]
+                AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/request_friend", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+                    .responseJSON { response in
+                        if let result = response.response?.statusCode {
+                            if result == 500 {
+                                completion(wakeyError.unknownError, "", "")
+                                return
+                            }
+                        }
+                        do {
+                            if response.data != nil {
+                                if let parseJSON = try JSONSerialization.jsonObject(with: response.data!, options: []) as? NSDictionary {
+                                    if let statusDict = parseJSON as? [String: String] {
+                                        let requestID = statusDict["request_id"]! as String
+                                        let status = statusDict["status"]! as String
+                                        completion(nil, requestID, status)
+                                        return
+                                    } else {
+                                        completion(wakeyError.unknownError, "", "")
+                                        return
+                                    }
+                                }
+                            }
+                            completion(wakeyError.unknownError, "", "")
+                        } catch let parseError {
+                            print(parseError.localizedDescription)
+                            completion(wakeyError.unknownError, "", "")
+                        }
+                    }
+            }
+        }
+    }
+    
+    
+    //returns (error, request_id, status)
+    func acceptOrDenyFriendRequest(otherUser: userModel, requestID: String, acceptedRequest: Bool, completion: @escaping (Error?, String, String) -> ()) {
+        self.getCurrentUser { (error, currUser) in
+            if error != nil {
+                completion(wakeyError.unknownError, "", "")
+                return
+            }
+            self.fetchToken { (token) in
+                let headers: HTTPHeaders = [
+                    "Authorization": "Bearer " + token,
+                    "Accept": "application/json"
+                ]
+                let params = ["receiver_id": currUser!.userID, "receiver_username":currUser!.username, "receiver_full_name": currUser!.fullName, "sender_id": otherUser.userID, "request_id": requestID, "accepted_bool": acceptedRequest] as [String : Any]
+                AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/accept_or_deny_friend_request", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+                    .responseJSON { response in
+                        if let result = response.response?.statusCode {
+                            if result == 500 {
+                                completion(wakeyError.unknownError, "", "")
+                                return
+                            }
+                        }
+                        do {
+                            if response.data != nil {
+                                if let parseJSON = try JSONSerialization.jsonObject(with: response.data!, options: []) as? NSDictionary {
+                                    if let statusDict = parseJSON as? [String: String] {
+                                        let requestID = statusDict["request_id"]! as String
+                                        let status = statusDict["status"]! as String
+                                        completion(nil, requestID, status)
+                                        return
+                                    } else {
+                                        completion(wakeyError.unknownError, "", "")
+                                        return
+                                    }
+                                }
+                            }
+                            completion(wakeyError.unknownError, "", "")
+                        } catch let parseError {
+                            print(parseError.localizedDescription)
+                            completion(wakeyError.unknownError, "", "")
+                        }
+                    }
+            }
+        }
+    }
+    
+    //returnsL (error?, [request user])
+    func fetchPendingRequestReceived(completion: @escaping (Error?, [userModel]) -> ()) {
+        self.fetchToken { (token) in
+            let headers: HTTPHeaders = [
+                "Authorization": "Bearer " + token,
+                "Accept": "application/json"
+            ]
+            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/pending_requests_received", headers: headers).responseJSON { response in
+                if let result = response.response?.statusCode {
+                    if result == 500 {
+                        completion(wakeyError.unknownError, [])
+                        return
+                    } else if result == 400 {
+                        completion(wakeyError.unknownError, [])
                         return
                     }
                 }
                 do {
                     if response.data != nil {
                         if let parseJSON = try JSONSerialization.jsonObject(with: response.data!, options: []) as? NSDictionary {
-                            if let users = parseJSON["friends"] as? [[String:Any]] {
-                                for userDict in users {
-                                    //print("dictionary rep")
-                                    //print(userDict)
-                                    let user = userModel(user: userDict)
-                                    //print(user.userID)
-                                    friends.append(user)
+                            if let requests = parseJSON["pending_requests_received"] as? [[String: Any]] {
+                                var requestArr: [userModel] = []
+                                for request in requests {
+                                    var requestID = ""
+                                    requestID = request["request_id"] as? String ?? ""
+                                    let senderDetails = request["sender_details"] as? [String: String] ?? [:]
+                                    let lastActivityTime = jsonDateToDate(jsonStr: (request["last_activity_time"] as? String ?? ""))
+                                    let userDict = ["user_id": senderDetails["user_id"] ?? "", "username": senderDetails["username"] ?? "", "profile_img_url": senderDetails["profile_img_url"] ?? "", "became_friends": lastActivityTime, "friendship_status": constants.friendConditions.receivedRequest, "friendship_id": requestID] as [String : Any]
+                                    let requestUser = userModel(user: userDict)
+                                    requestArr.append(requestUser)
                                 }
-                                completion(nil, friends, friends.last?.userID)
+                                completion(nil, requestArr)
+                                return
                             }
+                        } else {
+                            completion(wakeyError.unknownError, [])
+                            return
                         }
+                    } else {
+                        completion(wakeyError.unknownError, [])
+                        return
                     }
                 } catch let parseError {
-                    print("ERROR HERE", parseError.localizedDescription)
-                    completion("An error occurred",[], nil)
+                    completion(wakeyError.unknownError, [])
+                    return
                 }
             }
         }
@@ -1402,59 +1096,101 @@ class FirebaseManager {
     
     
     
+    func findFriendsFromContacts(numbersToSearchFor: [String], completion: @escaping (Error?, [userModel]) -> ()) {
+        self.getCurrentUser { (error, currUser) in
+            if error != nil {
+                completion(wakeyError.unknownError, [])
+                return
+            }
+            self.fetchToken { (token) in
+                let headers: HTTPHeaders = [
+                    "Authorization": "Bearer " + token,
+                    "Accept": "application/json"
+                ]
+                let params = ["contact_numbers": numbersToSearchFor, "this_username":currUser!.username, "this_user_full_name": currUser!.fullName] as [String : Any]
+                AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/find_friends_from_contacts", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+                    .responseJSON { response in
+                        do {
+                            if response.data != nil {
+                                if let parseJSON = try JSONSerialization.jsonObject(with: response.data!, options: []) as? NSDictionary {
+                                    if let userArray = parseJSON["found_friends"] as? [[String: String]] {
+                                        var foundFriends: [userModel] = []
+                                        for user in userArray {
+                                            let thisUser = userModel(user: user)
+                                            foundFriends.append(thisUser)
+                                        }
+                                        completion(nil, foundFriends)
+                                        return
+                                    } else {
+                                        completion(wakeyError.unknownError, [])
+                                        return
+                                    }
+                                }
+                            }
+                            completion(wakeyError.unknownError, [])
+                        } catch let parseError {
+                            print(parseError.localizedDescription)
+                            completion(wakeyError.unknownError, [])
+                        }
+                    }
+            }
+        }
+    }
     
     
-    
-//    func fetchFriends(cursorDoc: DocumentSnapshot?, paginate: Bool,completion: @escaping (Error?, [userModel], DocumentSnapshot?) -> ()) {
-//           FirebaseManager.shared.getCurrentUser { (error_curr_user, currUser) in
-//               if error_curr_user != nil {
-//                   completion(error_curr_user, [], nil)
-//               }
-//               let db = Firestore.firestore()
-//               //check if the request exists;if it does, check its status and update accordinly; create it if it doesn't exist
-//               var query = db.collection("wakey_friend_requests").whereField("participants", arrayContains: currUser!.userID).whereField("status", isEqualTo: "ACCEPTED")
-//
-//               if paginate {
-//                   if let cursorDoc = cursorDoc {
-//                       query = query.limit(to: kMaxFriends).start(afterDocument: cursorDoc)
-//                   } else {
-//                       query = query.limit(to: kMaxFriends)
-//                   }
-//               } else {
-//                   //want to fetch all at the same time
-//                   query = db.collection("wakey_friend_requests").whereField("participants", arrayContains: currUser!.userID).whereField("status", isEqualTo: "ACCEPTED")
-//               }
-//               query.getDocuments { (requestObjects, friendsErr) in
-//                   if friendsErr != nil {
-//                       completion(friendsErr, [], nil)
-//                   }
-//                   if requestObjects == nil || requestObjects?.documents.count == 0  {
-//                       completion(nil, [], nil)
-//                   } else {
-//                       let lastDoc = requestObjects!.documents.last
-//
-//                       var friendsArr: [userModel] = []
-//                       for requestObject in requestObjects!.documents {
-//                           guard let participantDetails = requestObject["participant_details"] as? [[String: String]] else {
-//                               continue
-//                           }
-//                           var otherUser = currUser!
-//                           let becameFriends = requestObject["last_activity_time"] as? Timestamp
-//                           for details in participantDetails {
-//                               if let userID = details["user_id"], userID != currUser!.userID {
-//                                   otherUser = userModel(user: ["username" : details["user_name"] ?? "", "user_id": userID, "profile_img_url": details["profile_pic_url"] ?? "", "friendship_id": requestObject.documentID, "friendship_status": constants.friendConditions.areFriends, "became_friends": becameFriends?.dateValue() as Any,"asleep": false])
-//                                   break
-//                               }
-//                           }
-//                           friendsArr.append(otherUser)
-//                       }
-//                       completion(nil, friendsArr, lastDoc)
-//                   }
-//               }
-//           }
-//       }
-    
-
+    //returns (error?, contactsHaveBeenQueried, foundFriends)
+    func checkIfContactsHaveBeenQueried(completion: @escaping (Error?, Bool, [userModel]) -> ()) {
+        self.fetchToken { (token) in
+            let headers: HTTPHeaders = [
+                "Authorization": "Bearer " + token,
+                "Accept": "application/json"
+            ]
+            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/check_friends_found_from_contacts", headers: headers).responseJSON { response in
+                if let result = response.response?.statusCode {
+                    if result == 500 {
+                        completion(wakeyError.unknownError, false,[])
+                        return
+                    } else if result == 400 {
+                        completion(wakeyError.unknownError, false,[])
+                        return
+                    }
+                }
+                do {
+                    if response.data != nil {
+                        if let parseJSON = try JSONSerialization.jsonObject(with: response.data!, options: []) as? NSDictionary {
+                            if let arrayFound = parseJSON["array_exists"] as? Bool, arrayFound == true {
+                                var foundFriendsModels: [userModel] = []
+                                //we've already queried the contacts, so just populate the array
+                                guard let foundFriends = parseJSON["users_found_from_contacts"] as? [[String:String]] else {
+                                    completion(wakeyError.unknownError, true,[])
+                                    return
+                                }
+                                for friend in foundFriends {
+                                    foundFriendsModels.append(userModel(user: friend))
+                                }
+                                completion(wakeyError.unknownError, true, foundFriendsModels)
+                                return
+                                
+                            } else {
+                                //we should index the contacts
+                                completion(wakeyError.unknownError, false,[])
+                                return
+                            }
+                        } else {
+                            completion(wakeyError.unknownError, false,[])
+                            return
+                        }
+                    } else {
+                        completion(wakeyError.unknownError, false,[])
+                        return
+                    }
+                } catch let parseError {
+                    completion(wakeyError.unknownError, false,[])
+                    return
+                }
+            }
+        }
+    }
     
     
 }

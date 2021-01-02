@@ -48,7 +48,6 @@ class playAlarmVC: UIViewController, AVAudioPlayerDelegate {
         for al in alarms {
             print(al.canBeLiked)
         }
-        
         alarmToPlay = alarms[currAlarmIndex]
         adapter.collectionView = collectionView
         adapter.dataSource = self
@@ -125,9 +124,17 @@ class playAlarmVC: UIViewController, AVAudioPlayerDelegate {
     
     
     func configAndPlay(localAudioUrl: URL, alarmAudioID: String, cell: playAlarmCell) {
-        var audioUrl = URL(fileURLWithPath: Bundle.main.path(forResource: "defaultAlarmSound", ofType: "m4a")!)
+//        var audioUrl = URL(fileURLWithPath: Bundle.main.path(forResource: "defaultAlarmSound", ofType: "m4a")!)
+//        if localAudioUrl.absoluteString.lowercased().contains("library/sounds") {
+//            audioUrl = fetchAudioUrl(absoluteUrl: localAudioUrl)
+//        }
+        var audioUrl = localAudioUrl
         if localAudioUrl.absoluteString.lowercased().contains("library/sounds") {
-            audioUrl = fetchAudioUrl(absoluteUrl: localAudioUrl)
+            //isn't a local audio url. Must recreate the directory and fetch the audio
+            audioUrl = fetchRemotelyDownloadedAudioUrl(absoluteUrl: localAudioUrl)
+        } else {
+            //is a local audio url. Must recreate url using the name of the default
+            audioUrl = fetchDefaultAudioUrl(absoluteUrl: localAudioUrl)
         }
         //determine how long it is
         curAlarmCell = cell
@@ -141,7 +148,7 @@ class playAlarmVC: UIViewController, AVAudioPlayerDelegate {
     }
     
     
-    func fetchAudioUrl(absoluteUrl: URL) -> URL {
+    func fetchRemotelyDownloadedAudioUrl(absoluteUrl: URL) -> URL {
         let resourceNames = absoluteUrl.absoluteString.components(separatedBy: "/")
         let soundsDirectoryURL = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first!.appendingPathComponent("Sounds")
         //Library/Sounds
@@ -149,12 +156,18 @@ class playAlarmVC: UIViewController, AVAudioPlayerDelegate {
             try FileManager.default.createDirectory(atPath: soundsDirectoryURL.path,
                                             withIntermediateDirectories: true, attributes: nil)
         } catch let error as NSError {
-            //print("COULDNT CREATE DIRECTORY")
-            //print("Error: \(error.localizedDescription)")
         }
-        //let fileURL = documentsURL.appendingPathComponent("wakey_message_sent_" + pathPrefix + ".m4a")
         let fileURL = soundsDirectoryURL.appendingPathComponent(resourceNames.last!)
         return fileURL
+    }
+    
+    func fetchDefaultAudioUrl(absoluteUrl: URL) -> URL {
+        let resourceNames = absoluteUrl.absoluteString.components(separatedBy: "/")
+        let fileName = resourceNames.last?.replacingOccurrences(of: ".m4a", with: "")
+        guard let fileUrl = Bundle.main.url(forResource: fileName, withExtension: "m4a") else {
+            return Bundle.main.url(forResource: "defaultAlarmSound", withExtension: "m4a")!
+        }
+        return fileUrl
     }
     
     var alarmPlayer: AVAudioPlayer?
@@ -174,16 +187,12 @@ class playAlarmVC: UIViewController, AVAudioPlayerDelegate {
             if !alarmsMarkedAsPlayed.contains(alarmAudioToFireID) {
                 alarmsMarkedAsPlayed.append(alarmAudioToFireID)
                 DispatchQueue.main.async {
-                    FirebaseManager.shared.wakeUp(usedAlarm: true, audioID: alarmAudioToFireID) { (error) in
-                        if error != nil {
-                            //print("failed to set alarm has_been_heard to false")
-                            //print(error)
-                        }  else {
-                            
+                    if let thisAlarm = self.alarms.first(where: {$0.audioID == alarmAudioToFireID}) {
+                        FirebaseManager.shared.sendReaction(reactedToAlarm: thisAlarm, reactionString: "") { (resultString) in
+                            //Do something
                         }
                     }
                 }
-                
             }
         } catch let error as NSError {
             //self.player = nil
@@ -310,6 +319,7 @@ class playAlarmVC: UIViewController, AVAudioPlayerDelegate {
                 if error == nil {
                     print("Unliked alarm on the backend")
                 } else {
+                    print(error?.localizedDescription)
                     print("Failed to unlike alarm on the backend")
                 }
             }

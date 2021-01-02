@@ -55,7 +55,7 @@ class playAlarmCellSC: ListSectionController {
             
             
             if (alarm.sender.profilePicUrl != "") {
-                cell.profilePicImage.sd_setImage(with: URL(string: alarm.sender.profilePicUrl), placeholderImage: UIImage(named:"wakeyProfilePic")!, options: [.delayPlaceholder]) { (proPic, error, cacheType, url) in
+                cell.profilePicImage.sd_setImage(with: URL(string: alarm.sender.profilePicUrl), placeholderImage: nil, options: []) { (proPic, error, cacheType, url) in
                     if let proPic = proPic {
                         proPic.getColors { colors in
                             guard let colors = colors else {
@@ -66,18 +66,8 @@ class playAlarmCellSC: ListSectionController {
                     }
                 }
             } else {
-                cell.profilePicImage.sd_setImage(with: URL(string: "https:firebasestorage.googleapis.com/v0/b/wakey-3bf93.appspot.com/o/user_profile_pics%2FPrRXLnGrjLNC3x5Hdg5kqqfXMTJ2.jpg?alt=media&token=b95a4ee2-1f20-4cf5-b46d-ee06eab32543"), placeholderImage: UIImage(named:"wakeyProfilePic")!, options: [.delayPlaceholder]){ (proPic, error, cacheType, url) in
-                    if let proPic = proPic {
-                        proPic.getColors { colors in
-                            guard let colors = colors else {
-                                return
-                            }
-                            cell.tintBackgroundImage(color: colors.detail, animate: true)
-                        }
-                    }
-                }
-                
-                
+                cell.profilePicImage.image = UIImage(named: "wakeyProfilePic")!
+                cell.tintBackgroundImage(color: UIColor(named: "AppRedColor")!, animate: true)
             }
             cell.activityIndicator.startAnimating()
             if (!UserDefaults.standard.bool(forKey:constants.helperVCKeys.hasHelpedPresentingAlarmScreen)) {

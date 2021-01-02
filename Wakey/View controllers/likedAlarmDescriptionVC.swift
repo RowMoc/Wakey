@@ -74,7 +74,6 @@ class likedAlarmDescriptionVC: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func confirmButtonPressed(_ sender: Any) {
-        
         completeLikedMessageBackend(description: self.descriptionTF.text ?? "")
         self.homeVC.descriptionViewShadowView?.removeFromSuperview()
         self.dismiss(animated: false) {

@@ -177,6 +177,7 @@ class finishSignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func roundProfilePic() {
         uploadProfilePicButton.backgroundColor = .clear
+        uploadProfilePicButton.contentMode = .scaleAspectFill
         uploadProfilePicButton.layer.cornerRadius = self.uploadProfilePicButton.frame.width/2
         uploadProfilePicButton.layer.borderWidth = 1
         uploadProfilePicButton.layer.borderColor = UIColor.white.cgColor
@@ -276,8 +277,12 @@ class finishSignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavig
             self.view.isUserInteractionEnabled = true
             return
         }
+        //Format number so that we can search for it
+        let phoneNum = (phoneNumberTF.getFormattedPhoneNumber(format: FPNFormat.National) ?? "").components(separatedBy: CharacterSet.decimalDigits.inverted).joined(separator: "")
+        let lastNineSanNum = String(phoneNum.suffix(9))
         
-        FirebaseManager.shared.createNewUser(authUser: currAuthUser, username: username, fullName: fullNameTF.text ?? "" , phoneNumber: phoneNumberTF.getRawPhoneNumber() ?? "", profileImage: profilePic) { (createUserErrString, proPicUploadSuccesfully) in
+        
+        FirebaseManager.shared.createNewUser(authUser: currAuthUser, username: username, fullName: fullNameTF.text ?? "" , phoneNumber: lastNineSanNum, profileImage: profilePic) { (createUserErrString, proPicUploadSuccesfully) in
             if let createUserErrString = createUserErrString {
                 self.errorLabel.text = createUserErrString
                 self.completeSignUpButton.isHidden = false

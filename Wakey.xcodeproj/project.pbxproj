@@ -31,6 +31,8 @@
 		200E5575246BF60700B6D8FE /* nextAlarmSound.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 200E5574246BF60700B6D8FE /* nextAlarmSound.m4a */; };
 		202129812474104A00BC27EF /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202129802474104A00BC27EF /* Constants.swift */; };
 		202129832475353800BC27EF /* GlobalMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202129822475353800BC27EF /* GlobalMethods.swift */; };
+		2042C9B92597344700786463 /* searchFriendsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2042C9B82597344700786463 /* searchFriendsVC.swift */; };
+		2042C9BC2597345C00786463 /* viewRequestsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2042C9BB2597345C00786463 /* viewRequestsVC.swift */; };
 		2048A38524615A4C002AEA61 /* buttonEndClick.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2048A38324615A4C002AEA61 /* buttonEndClick.m4a */; };
 		2048A38824615F7E002AEA61 /* buttonStartClick.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2048A38724615F7E002AEA61 /* buttonStartClick.m4a */; };
 		2048A38A246161CB002AEA61 /* messageSent.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2048A389246161CA002AEA61 /* messageSent.m4a */; };
@@ -109,6 +111,11 @@
 		20C3880A247700E100E599B1 /* ReactionsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 20C38809247700E100E599B1 /* ReactionsView.xib */; };
 		20C3880C2477031400E599B1 /* ReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3880B2477031400E599B1 /* ReactionsView.swift */; };
 		20C3880E2477397800E599B1 /* reactionSelected.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 20C3880D2477397800E599B1 /* reactionSelected.m4a */; };
+		20C90CDC2591EF65004EF593 /* fire_alarm.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 20C90CD82591EF63004EF593 /* fire_alarm.m4a */; };
+		20C90CDD2591EF65004EF593 /* hip_ringtone.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 20C90CD92591EF64004EF593 /* hip_ringtone.m4a */; };
+		20C90CDE2591EF65004EF593 /* radar_alarm.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 20C90CDA2591EF64004EF593 /* radar_alarm.m4a */; };
+		20C90CDF2591EF65004EF593 /* marimba_alarm.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 20C90CDB2591EF65004EF593 /* marimba_alarm.m4a */; };
+		20C90CE22591F23D004EF593 /* wakeyProfilePic.png in Resources */ = {isa = PBXBuildFile; fileRef = 20C90CE12591F23D004EF593 /* wakeyProfilePic.png */; };
 		20DE979C2475D2A80058C57F /* addFriendsMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20DE979B2475D2A80058C57F /* addFriendsMainVC.swift */; };
 		20DE979E2475D49A0058C57F /* searchBarSC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20DE979D2475D49A0058C57F /* searchBarSC.swift */; };
 		20DE97A12475D4F30058C57F /* searchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20DE979F2475D4F30058C57F /* searchCell.swift */; };
@@ -127,10 +134,11 @@
 		20F593182498654400D7EAEE /* wakeyMessageCellSC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F593172498654400D7EAEE /* wakeyMessageCellSC.swift */; };
 		20F5931A249893F500D7EAEE /* wakeyConversationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F59319249893F500D7EAEE /* wakeyConversationVC.swift */; };
 		20F5931C24997F5200D7EAEE /* editProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F5931B24997F5200D7EAEE /* editProfileVC.swift */; };
-		9800ACDDCB3D4C4E2DF4E7CA /* Pods_Wakey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 929832688EDAD5C7BC150533 /* Pods_Wakey.framework */; };
+		B9ECE2D5EDA7BF27BED6CC4E /* Pods_Wakey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AEEBE4227D4E8BFD5BB2A99B /* Pods_Wakey.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		04ACD239AA6617FDEBCE8984 /* Pods-Wakey.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wakey.debug.xcconfig"; path = "Target Support Files/Pods-Wakey/Pods-Wakey.debug.xcconfig"; sourceTree = "<group>"; };
 		2001C7A02576EA0C00BDC021 /* curateAlarmVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = curateAlarmVC.swift; sourceTree = "<group>"; };
 		200A23C424A8496F005B2630 /* connectFacebookCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = connectFacebookCell.swift; sourceTree = "<group>"; };
 		200A23C524A8496F005B2630 /* connectFacebookCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = connectFacebookCell.xib; sourceTree = "<group>"; };
@@ -155,6 +163,8 @@
 		200E5574246BF60700B6D8FE /* nextAlarmSound.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = nextAlarmSound.m4a; sourceTree = "<group>"; };
 		202129802474104A00BC27EF /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		202129822475353800BC27EF /* GlobalMethods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalMethods.swift; sourceTree = "<group>"; };
+		2042C9B82597344700786463 /* searchFriendsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = searchFriendsVC.swift; sourceTree = "<group>"; };
+		2042C9BB2597345C00786463 /* viewRequestsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = viewRequestsVC.swift; sourceTree = "<group>"; };
 		20467628247333B900899C9C /* WakeyRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WakeyRelease.entitlements; sourceTree = "<group>"; };
 		2048A38324615A4C002AEA61 /* buttonEndClick.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = buttonEndClick.m4a; sourceTree = "<group>"; };
 		2048A38724615F7E002AEA61 /* buttonStartClick.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = buttonStartClick.m4a; sourceTree = "<group>"; };
@@ -178,7 +188,7 @@
 		2081FE7B245C07A300BAF268 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		2081FE7E245C07A300BAF268 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		2081FE81245C07A300BAF268 /* Wakey.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Wakey.xcdatamodel; sourceTree = "<group>"; };
-		2081FE83245C07A700BAF268 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2081FE83245C07A700BAF268 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = /Users/rowanmockler/Desktop/Wakey/Wakey/Assets.xcassets; sourceTree = "<absolute>"; };
 		2081FE86245C07A700BAF268 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2081FE88245C07A700BAF268 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2081FE91245DCAE400BAF268 /* CustomButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButtons.swift; sourceTree = "<group>"; };
@@ -237,6 +247,11 @@
 		20C38809247700E100E599B1 /* ReactionsView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ReactionsView.xib; sourceTree = "<group>"; };
 		20C3880B2477031400E599B1 /* ReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsView.swift; sourceTree = "<group>"; };
 		20C3880D2477397800E599B1 /* reactionSelected.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = reactionSelected.m4a; sourceTree = "<group>"; };
+		20C90CD82591EF63004EF593 /* fire_alarm.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = fire_alarm.m4a; sourceTree = "<group>"; };
+		20C90CD92591EF64004EF593 /* hip_ringtone.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = hip_ringtone.m4a; sourceTree = "<group>"; };
+		20C90CDA2591EF64004EF593 /* radar_alarm.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = radar_alarm.m4a; sourceTree = "<group>"; };
+		20C90CDB2591EF65004EF593 /* marimba_alarm.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = marimba_alarm.m4a; sourceTree = "<group>"; };
+		20C90CE12591F23D004EF593 /* wakeyProfilePic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wakeyProfilePic.png; sourceTree = "<group>"; };
 		20DE979B2475D2A80058C57F /* addFriendsMainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = addFriendsMainVC.swift; sourceTree = "<group>"; };
 		20DE979D2475D49A0058C57F /* searchBarSC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = searchBarSC.swift; sourceTree = "<group>"; };
 		20DE979F2475D4F30058C57F /* searchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = searchCell.swift; sourceTree = "<group>"; };
@@ -255,9 +270,8 @@
 		20F593172498654400D7EAEE /* wakeyMessageCellSC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = wakeyMessageCellSC.swift; sourceTree = "<group>"; };
 		20F59319249893F500D7EAEE /* wakeyConversationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = wakeyConversationVC.swift; sourceTree = "<group>"; };
 		20F5931B24997F5200D7EAEE /* editProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = editProfileVC.swift; sourceTree = "<group>"; };
-		83C566C2B9D484546B7B5FFB /* Pods-Wakey.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wakey.debug.xcconfig"; path = "Target Support Files/Pods-Wakey/Pods-Wakey.debug.xcconfig"; sourceTree = "<group>"; };
-		929832688EDAD5C7BC150533 /* Pods_Wakey.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Wakey.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C8279BC6462AF5CAF3C81984 /* Pods-Wakey.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wakey.release.xcconfig"; path = "Target Support Files/Pods-Wakey/Pods-Wakey.release.xcconfig"; sourceTree = "<group>"; };
+		46997CB0AA9203E7B7FF97E0 /* Pods-Wakey.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wakey.release.xcconfig"; path = "Target Support Files/Pods-Wakey/Pods-Wakey.release.xcconfig"; sourceTree = "<group>"; };
+		AEEBE4227D4E8BFD5BB2A99B /* Pods_Wakey.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Wakey.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -265,16 +279,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9800ACDDCB3D4C4E2DF4E7CA /* Pods_Wakey.framework in Frameworks */,
+				B9ECE2D5EDA7BF27BED6CC4E /* Pods_Wakey.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2048A37E24615714002AEA61 /* Sounds */ = {
+		2048A37E24615714002AEA61 /* Sounds and images */ = {
 			isa = PBXGroup;
 			children = (
+				20C90CE12591F23D004EF593 /* wakeyProfilePic.png */,
+				20C90CD82591EF63004EF593 /* fire_alarm.m4a */,
+				20C90CD92591EF64004EF593 /* hip_ringtone.m4a */,
+				20C90CDB2591EF65004EF593 /* marimba_alarm.m4a */,
+				20C90CDA2591EF64004EF593 /* radar_alarm.m4a */,
 				2087539324696DBC00445EBA /* lockSound.m4a */,
 				2048A38324615A4C002AEA61 /* buttonEndClick.m4a */,
 				2048A38724615F7E002AEA61 /* buttonStartClick.m4a */,
@@ -293,7 +312,7 @@
 				20C3880D2477397800E599B1 /* reactionSelected.m4a */,
 				20B7D5FB2477FDD7006607BC /* defaultAlarmSound.m4a */,
 			);
-			path = Sounds;
+			path = "Sounds and images";
 			sourceTree = "<group>";
 		};
 		205D445D2493EF0300644B4E /* Storyboards */ = {
@@ -320,11 +339,11 @@
 		2081FE6B245C07A300BAF268 = {
 			isa = PBXGroup;
 			children = (
-				2048A37E24615714002AEA61 /* Sounds */,
+				2048A37E24615714002AEA61 /* Sounds and images */,
 				2081FE76245C07A300BAF268 /* Wakey */,
 				2081FE75245C07A300BAF268 /* Products */,
 				2BDFFED464E974107EFD68E9 /* Pods */,
-				A298A727EDF5996D90BEBC44 /* Frameworks */,
+				942EB8F14DDC428076349A03 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -388,16 +407,18 @@
 				2081FEBB245EBC9900BAF268 /* personalProfileVC.swift */,
 				2087538F2468857800445EBA /* goToSleepVC.swift */,
 				200E5562246B3AE800B6D8FE /* playAlarmVC.swift */,
-				20DE979B2475D2A80058C57F /* addFriendsMainVC.swift */,
 				20A7803D24792FB300410652 /* CenterVC.swift */,
 				20A7803F2479C83C00410652 /* ButtonController.swift */,
 				20A780412479CB6800410652 /* PanController.swift */,
 				20F59319249893F500D7EAEE /* wakeyConversationVC.swift */,
 				20F5931B24997F5200D7EAEE /* editProfileVC.swift */,
-				2001C7A02576EA0C00BDC021 /* curateAlarmVC.swift */,
 				2092EC58257B9DA000DE987C /* setTimeVC.swift */,
+				2001C7A02576EA0C00BDC021 /* curateAlarmVC.swift */,
 				2092EC5B257BB42F00DE987C /* setAlarmVC.swift */,
 				20C1B40F2580C3E4009AD3FA /* likedAlarmDescriptionVC.swift */,
+				20DE979B2475D2A80058C57F /* addFriendsMainVC.swift */,
+				2042C9B82597344700786463 /* searchFriendsVC.swift */,
+				2042C9BB2597345C00786463 /* viewRequestsVC.swift */,
 			);
 			path = "View controllers";
 			sourceTree = "<group>";
@@ -495,16 +516,16 @@
 		2BDFFED464E974107EFD68E9 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				83C566C2B9D484546B7B5FFB /* Pods-Wakey.debug.xcconfig */,
-				C8279BC6462AF5CAF3C81984 /* Pods-Wakey.release.xcconfig */,
+				04ACD239AA6617FDEBCE8984 /* Pods-Wakey.debug.xcconfig */,
+				46997CB0AA9203E7B7FF97E0 /* Pods-Wakey.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		A298A727EDF5996D90BEBC44 /* Frameworks */ = {
+		942EB8F14DDC428076349A03 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				929832688EDAD5C7BC150533 /* Pods_Wakey.framework */,
+				AEEBE4227D4E8BFD5BB2A99B /* Pods_Wakey.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -516,11 +537,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2081FE8B245C07A700BAF268 /* Build configuration list for PBXNativeTarget "Wakey" */;
 			buildPhases = (
-				C8C0EB1EA7747DF8E0CCCC9F /* [CP] Check Pods Manifest.lock */,
+				8418773CC8A0A159782910AE /* [CP] Check Pods Manifest.lock */,
 				2081FE70245C07A300BAF268 /* Sources */,
 				2081FE71245C07A300BAF268 /* Frameworks */,
 				2081FE72245C07A300BAF268 /* Resources */,
-				6F5A28CBFABB25BB634F2CF6 /* [CP] Embed Pods Frameworks */,
+				F4C846B6EB95D60A3A2FAE19 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -580,6 +601,7 @@
 				200A23C724A8496F005B2630 /* connectFacebookCell.xib in Resources */,
 				200E5575246BF60700B6D8FE /* nextAlarmSound.m4a in Resources */,
 				200E555F2469BEA200B6D8FE /* playAlarmCell.xib in Resources */,
+				20C90CDE2591EF65004EF593 /* radar_alarm.m4a in Resources */,
 				20DE97A22475D4F30058C57F /* searchCell.xib in Resources */,
 				2048A38824615F7E002AEA61 /* buttonStartClick.m4a in Resources */,
 				2048A38A246161CB002AEA61 /* messageSent.m4a in Resources */,
@@ -597,11 +619,15 @@
 				2081FEAA245DE01C00BAF268 /* seperatorCell.xib in Resources */,
 				2087538E2468817200445EBA /* goToSleepCell.xib in Resources */,
 				20C1B3E02580B5D0009AD3FA /* likedAlarmDescriptionView.xib in Resources */,
+				20C90CDC2591EF65004EF593 /* fire_alarm.m4a in Resources */,
 				2081FE9E245DD5C500BAF268 /* recipientCell.xib in Resources */,
 				20C3880A247700E100E599B1 /* ReactionsView.xib in Resources */,
 				2081FEB6245EB94100BAF268 /* profileHeaderCellCollectionViewCell.xib in Resources */,
 				2048A38524615A4C002AEA61 /* buttonEndClick.m4a in Resources */,
 				2087538A24687FBA00445EBA /* setTimeCell.xib in Resources */,
+				20C90CDD2591EF65004EF593 /* hip_ringtone.m4a in Resources */,
+				20C90CE22591F23D004EF593 /* wakeyProfilePic.png in Resources */,
+				20C90CDF2591EF65004EF593 /* marimba_alarm.m4a in Resources */,
 				2087539424696DBC00445EBA /* lockSound.m4a in Resources */,
 				200E556F246BF08200B6D8FE /* wakeyAssistant_3.m4a in Resources */,
 				2048A39024644CA0002AEA61 /* regularClick.m4a in Resources */,
@@ -618,24 +644,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		6F5A28CBFABB25BB634F2CF6 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Wakey/Pods-Wakey-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Wakey/Pods-Wakey-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Wakey/Pods-Wakey-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C8C0EB1EA7747DF8E0CCCC9F /* [CP] Check Pods Manifest.lock */ = {
+		8418773CC8A0A159782910AE /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -657,6 +666,23 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		F4C846B6EB95D60A3A2FAE19 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Wakey/Pods-Wakey-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Wakey/Pods-Wakey-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Wakey/Pods-Wakey-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -664,6 +690,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2042C9BC2597345C00786463 /* viewRequestsVC.swift in Sources */,
 				205D44622493F3A600644B4E /* StandardWalkThroughContentVC.swift in Sources */,
 				2077B5FA24807CF8008492C4 /* CreateAlarm.swift in Sources */,
 				2001C7A12576EA0C00BDC021 /* curateAlarmVC.swift in Sources */,
@@ -738,6 +765,7 @@
 				205D44682494545B00644B4E /* ReminderWalkThroughContentVC.swift in Sources */,
 				200A23CB24A85408005B2630 /* connectContactsCellSC.swift in Sources */,
 				205D44642493F4CB00644B4E /* WalkThroughPageVC.swift in Sources */,
+				2042C9B92597344700786463 /* searchFriendsVC.swift in Sources */,
 				2087538D2468817200445EBA /* goToSleepCell.swift in Sources */,
 				20F5930F249853E400D7EAEE /* wakeyConversationCell.swift in Sources */,
 				2081FE82245C07A300BAF268 /* Wakey.xcdatamodeld in Sources */,
@@ -882,7 +910,7 @@
 		};
 		2081FE8C245C07A700BAF268 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 83C566C2B9D484546B7B5FFB /* Pods-Wakey.debug.xcconfig */;
+			baseConfigurationReference = 04ACD239AA6617FDEBCE8984 /* Pods-Wakey.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Wakey/Wakey.entitlements;
@@ -899,7 +927,7 @@
 				MARKETING_VERSION = 1.27;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rowanmockler.Wakey;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "Wakey App Development Profile with Critical Alerts";
+				PROVISIONING_PROFILE_SPECIFIER = "Wakey Critical Alerts + Push Notifications Profile";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -907,7 +935,7 @@
 		};
 		2081FE8D245C07A700BAF268 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C8279BC6462AF5CAF3C81984 /* Pods-Wakey.release.xcconfig */;
+			baseConfigurationReference = 46997CB0AA9203E7B7FF97E0 /* Pods-Wakey.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Wakey/WakeyRelease.entitlements;
@@ -924,7 +952,7 @@
 				MARKETING_VERSION = 1.27;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rowanmockler.Wakey;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "Wakey App Development Profile with Critical Alerts";
+				PROVISIONING_PROFILE_SPECIFIER = "Wakey Critical Alerts + Push Notifications Profile";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

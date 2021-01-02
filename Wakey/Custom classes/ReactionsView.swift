@@ -57,6 +57,7 @@ class ReactionsView: UIView {
     
     
     @IBAction func reactionPressed(_ sender: UIButton, event: UIEvent) {
+        //["heart_reaction", "rofl_face", "party_face", "clap_reaction", "blowing_up_face", "crazy_face"]
         var imageName = ""
         switch sender {
         case reaction1:

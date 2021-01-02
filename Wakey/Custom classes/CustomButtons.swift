@@ -111,7 +111,7 @@ class SendToRecipientsButton: UIButton {
         self.layer.shadowOffset = CGSize(width: 0.0, height: 3.0)
         self.layer.shadowOpacity = 0.5
         self.layer.shadowRadius = 1.0
-        self.backgroundColor = UIColor.init(named: "AppGreenColor")
+        self.backgroundColor = UIColor.init(named: "AppRedColor")
         
         
         let height = CGFloat(self.bounds.width * 0.4)

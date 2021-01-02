@@ -23,6 +23,19 @@ func getAudios(fetchedAlarms: [receivedAlarm], timeToFire: Date,settingAlarmProg
     let downloadGroup = DispatchGroup()
     for (index, alarm) in fetchedAlarms.enumerated() {
         downloadGroup.enter()
+        //check to see if this is a default alarm (default already has local audio url)
+        //if default, we don't need to download anything
+        if let alreadyStoredLocalUrl = alarm.localAudioUrl {
+            let audioDuration = AVURLAsset(url: alreadyStoredLocalUrl, options: nil).duration.seconds
+            let defaultImgUrl = Bundle.main.url(forResource: "wakeyProfilePic", withExtension: "png")
+           
+            notificationsArray[index] = scheduleLocalNotification(forAlarm: fetchedAlarms[index], audioLength: audioDuration, totalAlarms: fetchedAlarms.count, index: index + 1, localImageUrl: defaultImgUrl)
+            downloadGroup.leave()
+            continue
+        }
+        
+        
+        
         FirebaseManager.shared.downloadAudioFile(withUrl: alarm.audioUrl, pathPrefix: String(index)) { (error, localUrl) in
             if let error = error {
                 //print(error)
@@ -33,12 +46,9 @@ func getAudios(fetchedAlarms: [receivedAlarm], timeToFire: Date,settingAlarmProg
                 downloadGroup.leave()
                 return
             }
-            //75 = remaining progress to go, 0.8/count = addition prog as a ration of the alarms
-            let additionalProg1 = 0.8/CGFloat(fetchedAlarms.count)*75.0
-            currProgress += additionalProg1
-            settingAlarmProgressLabel.text = "Setting your alarm: \(Int(currProgress))%"
             
             fetchedAlarms[index].localAudioUrl = localUrl
+            
             FirebaseManager.shared.downloadImageToLocalUrl(withUrl: fetchedAlarms[index].sender.profilePicUrl, pathPrefix: String(index)) { (imageError, imageLocalUrl) in
                 if let imageError = imageError {
                     //print(imageError)
@@ -47,19 +57,15 @@ func getAudios(fetchedAlarms: [receivedAlarm], timeToFire: Date,settingAlarmProg
                     downloadGroup.leave()
                     return
                 }
-                //updateProg
-                let additionalProg2 = 0.2/CGFloat(fetchedAlarms.count)*70.0
-                currProgress += additionalProg2
-                settingAlarmProgressLabel.text = "Setting your alarm: \(Int(currProgress))%"
                 
                 //Record in local data that these notifications have been set
                 let asset = AVURLAsset(url: localUrl, options: nil)
                 let audioDuration = asset.duration.seconds
                 
                 
-                notificationsArray[index] = scheduleLocalNotification(forAlarm: fetchedAlarms[index], timeToFire: updatedWhenToFire, totalAlarms: fetchedAlarms.count, index: index + 1, localImageUrl: imageLocalUrl)
+                notificationsArray[index] = scheduleLocalNotification(forAlarm: fetchedAlarms[index], audioLength: audioDuration, totalAlarms: fetchedAlarms.count, index: index + 1, localImageUrl: imageLocalUrl)
                 
-                updatedWhenToFire = Calendar.current.date(byAdding: .second, value: Int(audioDuration + 1), to: updatedWhenToFire)!
+                //updatedWhenToFire = Calendar.current.date(byAdding: .second, value: Int(audioDuration + 1), to: updatedWhenToFire)!
                 
                 downloadGroup.leave()
             }
@@ -73,7 +79,10 @@ func getAudios(fetchedAlarms: [receivedAlarm], timeToFire: Date,settingAlarmProg
 }
 
 
-func scheduleLocalNotification(forAlarm: receivedAlarm, timeToFire: Date, totalAlarms: Int, index: Int, localImageUrl: URL?) -> UNNotificationContent {
+
+
+
+func scheduleLocalNotification(forAlarm: receivedAlarm, audioLength: Double, totalAlarms: Int, index: Int, localImageUrl: URL?) -> UNNotificationContent {
      var audioLengthString = ""
     if let length = forAlarm.audioLength {
         audioLengthString = " (" + String(Int(length)) + "s)"
@@ -97,7 +106,7 @@ func scheduleLocalNotification(forAlarm: receivedAlarm, timeToFire: Date, totalA
     let crit = UNNotificationSound.criticalSoundNamed(UNNotificationSoundName(rawValue: audioDirectoryArray.last!))
     //content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: audioDirectoryArray.last!))
     content.sound = crit
-    content.userInfo = [constants.scheduledAlarms.audioIDKey: forAlarm.audioID, constants.scheduledAlarms.whenToFireKey: timeToFire, constants.scheduledAlarms.localAudioUrlKey: forAlarm.localAudioUrl?.absoluteString as Any, constants.scheduledAlarms.senderIDKey: forAlarm.sender.userID, constants.scheduledAlarms.senderUsernameKey: forAlarm.sender.username, constants.scheduledAlarms.senderProfilePicUrlKey: forAlarm.sender.profilePicUrl, constants.scheduledAlarms.timeSentKey: forAlarm.timeSent, constants.scheduledAlarms.alarmCanBeLikedKey: forAlarm.canBeLiked, constants.scheduledAlarms.alarmHasBeeenLikedKey: forAlarm.hasBeenLiked]
+    content.userInfo = [constants.scheduledAlarms.audioIDKey: forAlarm.audioID, constants.scheduledAlarms.alarmLengthKey: audioLength, constants.scheduledAlarms.localAudioUrlKey: forAlarm.localAudioUrl?.absoluteString as Any, constants.scheduledAlarms.senderIDKey: forAlarm.sender.userID, constants.scheduledAlarms.senderUsernameKey: forAlarm.sender.username, constants.scheduledAlarms.senderProfilePicUrlKey: forAlarm.sender.profilePicUrl, constants.scheduledAlarms.timeSentKey: forAlarm.timeSent, constants.scheduledAlarms.alarmCanBeLikedKey: forAlarm.canBeLiked, constants.scheduledAlarms.alarmHasBeeenLikedKey: forAlarm.hasBeenLiked]
     return content
 }
 

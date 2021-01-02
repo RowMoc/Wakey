@@ -37,15 +37,9 @@ class connectContactsCellSC: ListSectionController, connectContactsCellDelegate 
     public override func didSelectItem(at index: Int) {
     }
     
-    func connectPressed() {
-        self.requestForAccess { (accessGranted) -> Void in
-            if accessGranted {
-                print("ACCESS GRANTED")
-                self.searchForContactUsingPhoneNumber(phoneNumber: "")
-            } else {
-                print("ACCESS NOT GRANTED")
-            }
-        }
+    func connectPressed(cell: connectContactsCell) {
+        print("ACCESS GRANTED")
+        self.downloadContacts(cell: cell)
     }
     
     // MARK: - App Logic
@@ -79,7 +73,7 @@ class connectContactsCellSC: ListSectionController, connectContactsCellDelegate 
                 else {
                     if authorizationStatus == CNAuthorizationStatus.denied {
                         DispatchQueue.main.async {
-                            let message = "\(accessError!.localizedDescription)\n\nPlease allow the app to access your contacts through the Settings."
+                            let message = "\(accessError!.localizedDescription)\n\nPlease allow Wakey to access your contacts through Settings."
                             self.showMessage(message: message)
                         }
                     }
@@ -90,43 +84,33 @@ class connectContactsCellSC: ListSectionController, connectContactsCellDelegate 
         }
     }
 
-    @IBAction func findContactInfoForPhoneNumber(sender: UIButton) {
-        self.searchForContactUsingPhoneNumber(phoneNumber: "(888)555-1212)")
-    }
-
-    func searchForContactUsingPhoneNumber(phoneNumber: String) {
+    func downloadContacts(cell: connectContactsCell) {
         DispatchQueue.main.async {
             self.requestForAccess { (accessGranted) -> Void in
                 if accessGranted {
+                    cell.beginLoadingView()
                     let keys = [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactImageDataKey, CNContactPhoneNumbersKey]
                     var contacts = [CNContact]()
+                    var sanitizedPhoneNums = [String]()
                     var message: String!
-
+                    
                     let contactsStore = CNContactStore()
                     do {
                         try contactsStore.enumerateContacts(with: CNContactFetchRequest(keysToFetch: keys as [CNKeyDescriptor])) {
                             (contact, cursor) -> Void in
-                            if (!contact.phoneNumbers.isEmpty) {
-                                print("CONTACT INFO HERE:", contact)
-//                                let phoneNumberToCompareAgainst = phoneNumber.componentsSeparatedByCharactersInSet(NSCharacterSet.decimalDigitCharacterSet().invertedSet).joinWithSeparator("")
-//                                for phoneNumber in contact.phoneNumbers {
-//                                    if let phoneNumberStruct = phoneNumber.value as? CNPhoneNumber {
-//                                        let phoneNumberString = phoneNumberStruct.stringValue
-//                                        let phoneNumberToCompare = phoneNumberString.componentsSeparatedByCharactersInSet(NSCharacterSet.decimalDigitCharacterSet().invertedSet).joinWithSeparator("")
-//                                        if phoneNumberToCompare == phoneNumberToCompareAgainst {
-//                                            contacts.append(contact)
-//                                        }
-//                                    }
-//                                }
+                            if !contact.phoneNumbers.isEmpty {
+                                let firstNum = contact.phoneNumbers[0] as CNLabeledValue<CNPhoneNumber>
+                                let phoneNumberStruct = firstNum.value as CNPhoneNumber
+                                let phoneNumberString = phoneNumberStruct.stringValue
+                                let name = contact.givenName + " " + contact.familyName
+                                let sanitizedNum = phoneNumberString.components(separatedBy: CharacterSet.decimalDigits.inverted).joined(separator: "")
+                                let lastNineSanNum = String(sanitizedNum.suffix(9))
+                                sanitizedPhoneNums.append(lastNineSanNum)
                             }
-                        }
-
-                        if contacts.count == 0 {
-                            message = "No contacts were found matching the given phone number."
                         }
                     }
                     catch {
-                        message = "Unable to fetch contacts."
+                        message = "Unable to fetch contacts"
                     }
 
                     if message != nil {
@@ -135,23 +119,9 @@ class connectContactsCellSC: ListSectionController, connectContactsCellDelegate 
                         }
                     } else {
                         // Success
+                        cell.stopLoadingView(titleText: "Contacts found")
                         DispatchQueue.main.async {
-                            // Do someting with the contacts in the main queue, for example
-                            /*
-                             self.delegate.didFetchContacts(contacts) <= which extracts the required info and puts it in a tableview
-                             */
-                            print(contacts) // Will print all contact info for each contact (multiple line is, for example, there are multiple phone numbers or email addresses)
-                            let contact = contacts[0] // For just the first contact (if two contacts had the same phone number)
-                            print(contact.givenName) // Print the "first" name
-                            print(contact.familyName) // Print the "last" name
-                            if contact.isKeyAvailable(CNContactImageDataKey) {
-                                if let contactImageData = contact.imageData {
-                                    print(UIImage(data: contactImageData)) // Print the image set on the contact
-                                }
-                            } else {
-                                // No Image available
-
-                            }
+                            self.findUsersFromContacts(numbers: sanitizedPhoneNums, cell: cell)
                         }
                     }
                 }
@@ -159,5 +129,23 @@ class connectContactsCellSC: ListSectionController, connectContactsCellDelegate 
         }
     }
     
+    
+    func findUsersFromContacts(numbers: [String], cell: connectContactsCell) {
+        FirebaseManager.shared.findFriendsFromContacts(numbersToSearchFor: numbers) { (error, foundUsers) in
+            guard let vc = self.viewController as? searchFriendsVC else {
+                return
+            }
+            if error != nil {
+                vc.askToConnectContacts = false
+                vc.foundUsersInContacts = false
+                vc.adapter.performUpdates(animated: true)
+            } else {
+                vc.askToConnectContacts = false
+                vc.foundUsersInContacts = true
+                vc.foundInContacts = foundUsers
+                vc.adapter.performUpdates(animated: true)
+            }
+        }
+    }
     
 }

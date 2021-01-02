@@ -67,8 +67,6 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //
-        
         recordingTimeLabel.adjustsFontSizeToFitWidth = true
         centerVC.delegate = self
         minProgress = CGFloat(minRecordingLength)/CGFloat(maxRecordingLength) * 100.00
@@ -77,8 +75,6 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
         self.addBackgroundListeners()
         self.configureConstraints()
         self.configureAlarmButton()
-
-        FirebaseManager.shared.sendPushNotification(receiverDeviceId: "dSqTOm5RH0WMtLzOa7N1PT:APA91bGvKcHvYtCXz3i80351w4lDr7iL8QlZIcr1HAy5spVGxmnGbpz9yaWMQKXS5yqtS60v01n4waS1V1rXpuhdhFmbffhcEZT_zUj_H6R1XCn1tM-BuxrruosS6DiS0HdurJTqOkfP", messageTitle: "Test 👀", messageBody: "Testing a push notification 🚀")
     }
     
     
@@ -121,14 +117,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
     func configSharedAudioSession() -> Bool {
         do {
             try recordingSession.setCategory(.playAndRecord, mode: .default, options: [.mixWithOthers])
-            print("Hits thiss")
             try recordingSession.overrideOutputAudioPort(AVAudioSession.PortOverride.speaker)
-            print("Hits thisss")
-            
-            print("Hits thissss")
-            //try recordingSession.setCategory(AVAudioSession.Category.ambient)
-            //try recordingSession.setCategory(.playback, mode: .default, options: [.mixWithOthers])
-            print("Hits thisssss")
             try recordingSession.setActive(true)
         } catch let error {
             self.microphoneNotAllowed()
@@ -482,7 +471,6 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
         
         //if audioRecorder.isRecording {
         let isRec = audioRecorder.isRecording
-            print(audioRecorder.isRecording)
             let sec = CGFloat(audioRecorder.currentTime)
             if (sec <= CGFloat(maxRecordingLength)) {
                 let totalTimeString = String(format: "%.1f", arguments: [sec]) + " s"
@@ -698,6 +686,8 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
         } else {
             options = [.alert, .badge, .sound]
         }
+        //remove all delivered nbotifications
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
         center.requestAuthorization(options: [options]) { (granted, error) in
             // Enable or disable features based on authorization.
             if error != nil {
@@ -726,12 +716,10 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
     func checkIfAlarmHasBeenSet(alarmPlayedWhileAppInForeground: Bool) {
         //Do this with core data instead of notification history
         if let scheduledAlarmDictionary = UserDefaults.standard.array(forKey: constants.scheduledAlarms.scheduledAlarmDictionaryKey) as? [[String: Any]] {
-            print("In Part 4: an alarm has been set")
             
             //user has set an alarm. Check if it has been played
             checkIfSetAlarmHasPlayed(scheduledAlarmArray: scheduledAlarmDictionary)
         } else {
-            print("In Part 4: no alarm has been set")
             //Alarm has not been set
             self.configButtonWithNoAlarm()
         }
@@ -749,16 +737,19 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
                 self.prepareScreenForWakeyMessagePresentation(wakeyMessages: convertDictionariesToReceivedAlarms(wakeyMessages: scheduledAlarmArray))
             } else {
                 //alarm is yet to go off. Configure the alarm button with the correct time.
-                self.alarmIsSet = true
-                print("In Part 5: Alarm yet to go off")
-                self.alarmFireDate = alarmFireTime
-                self.setAlarmButtonWithDate()
+                self.alarmHasBeenSet(alarmFireTimeDate: alarmFireTime)
             }
         } else {
             //Can't find alarm fire time
         }
     }
     
+    //used from setAlarmvC
+    func alarmHasBeenSet(alarmFireTimeDate: Date) {
+        self.alarmIsSet = true
+        self.alarmFireDate = alarmFireTimeDate
+        self.setAlarmButtonWithDate()
+    }
     
     
     //Part 5: Helper method
@@ -788,25 +779,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
     
     //Part 6: Play wakey messages while app is in foreground if alarm fire sate has passed
     func prepareScreenForWakeyMessagePresentation(wakeyMessages: [receivedAlarm]) {
-//        DispatchQueue.main.async {
-//            self.clearNotifications()
-//        }
-        print("In part 6; here are the alarms:")
-        print(wakeyMessages)
-        
-        
         self.displayWakeyMessages(wakeyMessages: wakeyMessages)
-        //check if pop up is here; if it is, dismiss it.
-//        if let currPopUp = popUpVC {
-//            print("NIB NAME: ", currPopUp.nibName)
-//            (currPopUp as UIViewController).dismiss(animated: true) {
-//
-//                self.displayWakeyMessages(wakeyMessages: wakeyMessages)
-//               //self.popUpVC = nil
-//            }
-//        } else {
-//            displayWakeyMessages(wakeyMessages: wakeyMessages)
-//        }
     }
     
     func displayWakeyMessages(wakeyMessages: [receivedAlarm]) {
@@ -816,12 +789,12 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
         UserDefaults.standard.synchronize()
         
         if wakeyMessages.isEmpty {return}
-        let sortedWakeyMessages = wakeyMessages.sorted {$0.timeSent < $1.timeSent}
+        //let sortedWakeyMessages = wakeyMessages.sorted {$0.timeSent < $1.timeSent}
         //segue to playAlarm
         self.configButtonWithNoAlarm()
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let nextVC = storyboard.instantiateViewController(withIdentifier: "playAlarmVC") as! playAlarmVC
-        nextVC.alarms = sortedWakeyMessages
+        nextVC.alarms = wakeyMessages
         nextVC.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
         
         //present the alarm over the VC the user is currently on
@@ -842,19 +815,22 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
     
     
     func clearNotifications() {
-        //TO DO: Don't remove daily reminder to set alarm/ push notifications
-        
         //Delete local record of alarm
         UserDefaults.standard.removeObject(forKey: constants.scheduledAlarms.alarmSetForTimeKey)
         UserDefaults.standard.removeObject(forKey: constants.scheduledAlarms.scheduledAlarmDictionaryKey)
         UserDefaults.standard.synchronize()
-        
-        //Delete upcoiming notifications fopr alarm
+        //Delete delivered notifications for alarms
         UNUserNotificationCenter.current().removeAllDeliveredNotifications()
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-        
-        
-        
+        //delete alarm notifications that are yet to be sent
+        UNUserNotificationCenter.current().getPendingNotificationRequests { (notificationRequests) in
+           var identifiers: [String] = []
+           for notification:UNNotificationRequest in notificationRequests {
+            if notification.identifier.contains(constants.wakeyMessageNotificationIdentifier) {
+                  identifiers.append(notification.identifier)
+               }
+           }
+           UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: identifiers)
+        }
     }
     
     
@@ -909,6 +885,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
     @objc func alarmCountdownTick() {
         let interval = alarmFireDate.timeIntervalSince(Date())
         if interval.isLess(than: 0.0) {
+            FirebaseManager.shared.setAsleepProperty(asleepBool: false) { (error) in}
             configButtonWithNoAlarm()
             if let wakeyMessages = UserDefaults.standard.array(forKey: constants.scheduledAlarms.scheduledAlarmDictionaryKey) as? [[String: Any]] {
                 
@@ -979,6 +956,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
         configButtonWithNoAlarm()
         alarmSet = false
         shakeAlarmImage()
+        FirebaseManager.shared.setAsleepProperty(asleepBool: false) { (error) in}
     }
     
     func shakeAlarmImage() {
@@ -1031,7 +1009,6 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
         } else {
             self.presentSetTimeVC()
         }
-
     }
     
     func presentSetTimeVC() {
@@ -1041,15 +1018,13 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
         popUpShadeView.alpha = 0.0
         self.centerVC.view.addSubview(popUpShadeView)
         UIView.animate(withDuration: 0.25, animations: {
-            self.popUpShadeView.alpha = 0.25
+            self.popUpShadeView.alpha = 0.5
         })
-        
         //segue
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let nextVC = storyboard.instantiateViewController(withIdentifier: "setTimeVC") as! setTimeVC
         nextVC.homeVC = self
         nextVC.modalPresentationStyle = .overFullScreen
-        print("TRYING HARD")
         self.present(nextVC, animated: true)
     }
     
@@ -1066,147 +1041,12 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
     
     
     
-    
     func beginAlarmCountdown() {
         if alarmCountdownTimer != nil {
             alarmCountdownTimer.invalidate()
         }
         self.alarmCountdownTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector:#selector(self.alarmCountdownTick) , userInfo: nil, repeats: true)
     }
-    
-    func didSetAlarmSuccessfully() {
-        self.alarmCountdownLabel.text = "Setting your alarm: 100%"
-        self.explainHowAlarmWorks()
-        setAlarmButtonWithDate()
-    }
-    
-    
-    func animateLoadingAlarm() {
-        loadingAlarmIndicator = NVActivityIndicatorView(frame: goToSleepButton.bounds, type: .lineScale, color: .white ,padding: 15)
-        loadingAlarmIndicator.startAnimating()
-        self.goToSleepButton.addSubview(loadingAlarmIndicator)
-        self.goToSleepButton.setAttributedTitle(NSAttributedString(string: ""), for: .normal)
-        self.goToSleepButton.isEnabled = false
-    }
-    
-    
-    func scheduleAlarms() {
-        //insert setting alarm activity indicator
-        animateLoadingAlarm()
-        //track progress
-        self.alarmCountdownLabel.text = "Setting your alarm: 0%"
-        
-        
-        //FirebaseManager.shared.fetchAllAlarmsReceived { (error, alarms) in
-        print("CALLING YOUR FUNC NOW ROWDAWGGGG")
-        FirebaseManager.shared.fetchUnopenedMessages { (error, alarms) in
-            if let error = error {
-                self.alarmCountdownLabel.text = "Setting your alarm: 25%"
-                self.prepareAlarms(fetchedAlarms: [], timeToFire: self.alarmFireDate)
-                return
-            } else {
-                //self.alarmCountdownLabel.text = "Setting your alarm: 25%"
-                self.alarmCountdownLabel.text = "Setting your alarm: 25%"
-                self.prepareAlarms(fetchedAlarms: alarms, timeToFire: self.alarmFireDate)
-            }
-        }
-    }
-    
-    func prepareAlarms(fetchedAlarms: [receivedAlarm], timeToFire: Date) {
-        if fetchedAlarms.isEmpty {
-            //PLAY THE DEFAULT
-            DispatchQueue.main.async {
-                FirebaseManager.shared.getCurrentUser { (error, user) in
-                    if let user = user {
-                        Analytics.logEvent("wake_up_with_default_alarm", parameters: [ "username": user.username])
-                    }
-                }
-            }
-            let defaultAlarm = receivedAlarm(alarm: (["created_at": Date(), "audio_file_url": "", "audio_id": "defaultAlarmSound"] as [String: Any]), sender: userModel(user: ["username": "george_burnzzz", "profile_img_url": ""]), localAudioUrl: URL(fileURLWithPath: Bundle.main.path(forResource: "defaultAlarmSound", ofType: "m4a")!))
-            //get local image as image URL ref
-            var localImageUrl: URL?
-            if let resourcePath = Bundle.main.resourcePath {
-                let imgName = "wakeyProfilePic"
-                localImageUrl = URL(fileURLWithPath:resourcePath + "/" + imgName)
-            }
-            let notificationContent = scheduleLocalNotification(forAlarm: defaultAlarm, timeToFire: timeToFire, totalAlarms: 1, index: 1, localImageUrl: localImageUrl)
-            //add notification of standard alarm
-            prepareToAddNotifications(fetchedAlarms: [defaultAlarm], timeToFire: timeToFire, notificationsContent: [notificationContent])
-        } else {
-            //Get the audios
-            scheduleNotifications(fetchedAlarms: fetchedAlarms, timeToFire: timeToFire)
-        }
-    }
-    
-    func scheduleNotifications(fetchedAlarms: [receivedAlarm], timeToFire: Date) {
-        getAudios(fetchedAlarms: fetchedAlarms, timeToFire: timeToFire, settingAlarmProgress: 25.0, settingAlarmProgressLabel: alarmCountdownLabel) { (error, notificationsContent) in
-            //Add default first alarm to front and back of array
-            let defaultAlarm = receivedAlarm(alarm: (["created_at": Date(), "audio_file_url": "", "audio_id": "defaultAlarmSound"] as [String: Any]), sender: userModel(user: ["username": "george_burnzzz", "profile_img_url": ""]), localAudioUrl: URL(fileURLWithPath: Bundle.main.path(forResource: "defaultAlarmSound", ofType: "m4a")!))
-            //get local image as image URL ref
-            var localImageUrl: URL?
-            if let resourcePath = Bundle.main.resourcePath {
-                let imgName = "wakeyProfilePic"
-                localImageUrl = URL(fileURLWithPath:resourcePath + "/" + imgName)
-            }
-            let notificationContent = scheduleLocalNotification(forAlarm: defaultAlarm, timeToFire: timeToFire, totalAlarms: 1, index: 1, localImageUrl: localImageUrl)
-            
-            
-            //add alarms to local storage
-            self.prepareToAddNotifications(fetchedAlarms: fetchedAlarms, timeToFire: timeToFire, notificationsContent: notificationsContent as! [UNNotificationContent])
-        }
-    }
-    
-    
-    //Save alarm details (audio local urls, user profile pics, names, etc) locally
-    func prepareToAddNotifications(fetchedAlarms: [receivedAlarm], timeToFire: Date, notificationsContent: [UNNotificationContent]) {
-        UserDefaults.standard.removeObject(forKey: constants.scheduledAlarms.alarmSetForTimeKey)
-        UserDefaults.standard.removeObject(forKey: constants.scheduledAlarms.scheduledAlarmDictionaryKey)
-        UserDefaults.standard.synchronize()
-        let localAlarmArray = self.addNotifications(fetchedAlarms: fetchedAlarms, timeToFire: timeToFire, notificationsContent: notificationsContent)
-        print("This is the array that we're stroing:")
-        print(localAlarmArray)
-        //Set fire time in user defaults
-        UserDefaults.standard.set(timeToFire, forKey: constants.scheduledAlarms.alarmSetForTimeKey)
-        //store alarms in user defaults
-        UserDefaults.standard.set(localAlarmArray, forKey: constants.scheduledAlarms.scheduledAlarmDictionaryKey)
-        UserDefaults.standard.synchronize()
-        self.didSetAlarmSuccessfully()
-    }
-    
-    
-    func addNotifications(fetchedAlarms: [receivedAlarm], timeToFire: Date, notificationsContent: [UNNotificationContent]) ->  [[String: Any]]{
-        var localAlarmArray: [[String: Any]] = []
-        var updatedTimeToFire = timeToFire
-        for (index, content) in (notificationsContent).enumerated() {
-            let alarm = fetchedAlarms[index]
-            let info = content.userInfo
-            let audioID = info[constants.scheduledAlarms.audioIDKey] as? String ?? ""
-            //Maybe make defualt value the defaunlt alarm audio path?
-            let localAudioUrl = info[constants.scheduledAlarms.localAudioUrlKey] as? String ?? ""
-            let senderID = info[constants.scheduledAlarms.senderIDKey] as? String ?? ""
-            let username = info[constants.scheduledAlarms.senderUsernameKey] as? String ?? ""
-            let profilePicUrl = info[constants.scheduledAlarms.senderProfilePicUrlKey] as? String ?? ""
-            let timeSent = info[constants.scheduledAlarms.timeSentKey] as? Date ?? Date()
-            localAlarmArray.append([constants.scheduledAlarms.audioIDKey: audioID, constants.scheduledAlarms.localAudioUrlKey: localAudioUrl, constants.scheduledAlarms.senderIDKey: senderID, constants.scheduledAlarms.senderUsernameKey: username, constants.scheduledAlarms.senderProfilePicUrlKey: profilePicUrl, constants.scheduledAlarms.timeSentKey: timeSent])
-            let triggerDate = Calendar.current.dateComponents([.year,.month, .day, .hour, .minute, .second], from: updatedTimeToFire)
-            let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: false)
-            let request = UNNotificationRequest(identifier: alarm.audioID, content: content, trigger: trigger)
-            UNUserNotificationCenter.current().delegate = self
-            UNUserNotificationCenter.current().add(request) { (error) in
-                if (error == nil){
-                    //add alarm to array that will be stored in user defaults
-                    
-                }
-            }
-            let asset = AVURLAsset(url: alarm.localAudioUrl!, options: nil)
-            let audioDuration = asset.duration.seconds
-            updatedTimeToFire = Calendar.current.date(byAdding: .second, value: Int(audioDuration + 1), to: updatedTimeToFire)!
-        }
-        return localAlarmArray
-    }
-    
-    
-    //SETTING YOUR ALARM SECTION END
   
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -1240,7 +1080,6 @@ extension ViewController: EasyTipViewDelegate {
     }
     
     func easyTipViewDidDismiss(_ tipView: EasyTipView) {
-        
         switch currHelper {
         case constants.homeScreenHelpers.recordHelper:
             currHelper = constants.homeScreenHelpers.profileHelper

@@ -12,7 +12,7 @@ class searchCell: UICollectionViewCell {
 
     lazy var searchBar: UISearchBar = {
         let view = UISearchBar()
-        view.placeholder = "Search by username..."
+        view.placeholder = "Search by name or username..."
         view.barTintColor = UIColor.clear
         view.backgroundColor = UIColor.clear
         view.isTranslucent = true
