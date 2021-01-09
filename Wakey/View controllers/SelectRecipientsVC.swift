@@ -22,9 +22,11 @@ class SelectRecipientsVC: UIViewController, AVAudioPlayerDelegate {
     @IBOutlet weak var sendButton: SendToRecipientsButton!
     @IBOutlet weak var recipientsListButton: UIButton!
     
+    //just URL if its a recorded wakey message; otheriwse, soundbite is not nil
     var audioURL: URL!
-    //privacy toggle of the message
+    var soundBite: soundBite!
     
+    //privacy toggle of the message
     var recipientsCanFavorite = true
     
     lazy var adapter: ListAdapter = {
@@ -32,8 +34,8 @@ class SelectRecipientsVC: UIViewController, AVAudioPlayerDelegate {
     }()
     
     var allArray = [Any]()
-    var awakeArray = [Any]()
-    var asleepArray = [Any]()
+//    var awakeArray = [Any]()
+//    var asleepArray = [Any]()
     var filteredAllArray = [Any]()
     var fetchingData = false
     var homeViewController: ViewController!
@@ -83,11 +85,11 @@ class SelectRecipientsVC: UIViewController, AVAudioPlayerDelegate {
             DispatchQueue.main.async {
                 for user in friendsArray {
                     let recipient = recipientModel(user: user, isSelected: false)
-                    if user.isAsleep {
-                        self.asleepArray.append(recipient)
-                    } else {
-                        self.awakeArray.append(recipient)
-                    }
+//                    if user.isAsleep {
+//                        self.asleepArray.append(recipient)
+//                    } else {
+//                        self.awakeArray.append(recipient)
+//                    }
                     self.allArray.append(recipient)
                 }
                 self.fetchingData = false
@@ -184,20 +186,35 @@ class SelectRecipientsVC: UIViewController, AVAudioPlayerDelegate {
     
     @IBAction func sendPressed(_ sender: Any) {
         sendButtonAudio.play()
-        
-        //determine length of audio of alarm
-        let asset = AVURLAsset(url: self.audioURL, options: nil)
-        let audioDuration = asset.duration.seconds
-        DispatchQueue.main.async {
-            FirebaseManager.shared.sendWakeyMessage(audioFileUrl: self.audioURL, audioLength: audioDuration, recipientsCanFavorite: self.recipientsCanFavorite, recipients: self.mapUserToReceiver(receivers: self.selectedRecipients)) { (error) in
-                if let error = error {
-                    //didn't work
-                    print(error)
-                } else {
-                    print("MESSAGES WERE SENT SHEEESH")
+        if soundBite == nil {
+            //if we're sending a recorded wakey
+            let asset = AVURLAsset(url: self.audioURL, options: nil)
+            let audioDuration = asset.duration.seconds
+            DispatchQueue.main.async {
+                FirebaseManager.shared.sendWakeyMessage(audioFileUrl: self.audioURL, audioLength: audioDuration, recipientsCanFavorite: self.recipientsCanFavorite, recipients: self.mapUserToReceiver(receivers: self.selectedRecipients)) { (error) in
+                    if let error = error {
+                        //didn't work
+                        print(error)
+                    } else {
+                        print("MESSAGES WERE SENT SHEEESH")
+                    }
+                }
+            }
+        } else {
+            DispatchQueue.main.async {
+                FirebaseManager.shared.sendSoundBite(soundBite: self.soundBite, recipients: self.mapUserToReceiver(receivers: self.selectedRecipients)) { (error) in
+                    if let error = error {
+                        //didn't work
+                        print(error)
+                    } else {
+                        print("MESSAGES WERE SENT SHEEESH")
+                    }
                 }
             }
         }
+    
+        
+        
         //ANALYTICS
         DispatchQueue.main.async {
             FirebaseManager.shared.getCurrentUser { (error, user) in
@@ -308,13 +325,19 @@ class SelectRecipientsVC: UIViewController, AVAudioPlayerDelegate {
         label.textAlignment = .center
         self.view.addSubview(label)
         //upload
-        let seconds = 1.0
+        var seconds = 1.0
+        if soundBite == nil {
+            seconds = 3.0
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
             // Put your code which should be executed with a delay here
             self.sendClickAudio.play()
-            label.attributedText = NSAttributedString(string: "Sent!", attributes: myAttributes)
+            label.attributedText = NSAttributedString(string: "It's on its way!", attributes: myAttributes)
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.homeViewController.loadRecordingUI()
+                if self.soundBite == nil {
+                    //sent a recorded message so now we must update the centreVC
+                    self.homeViewController.loadRecordingUI()
+                }
                 self.dismiss(animated: true)
             }
         }
@@ -344,7 +367,6 @@ class SelectRecipientsVC: UIViewController, AVAudioPlayerDelegate {
         self.dismiss(animated: true)
     }
     
-    
     var isSearching = false
 
 }
@@ -364,15 +386,7 @@ extension SelectRecipientsVC: ListAdapterDataSource{
                 }
             } else {
                 screenItems = [self.friendsLabelCell, self.searchBar, self.togglePrivacyCell] as [ListDiffable]
-                if !awakeArray.isEmpty {
-                    screenItems += [self.awakeSeperator,self.awakeSeperatorDescription] as [ListDiffable]
-                    screenItems += self.awakeArray as! [ListDiffable]
-                }
-                if !asleepArray.isEmpty {
-                    screenItems += [self.asleepSeperator,self.asleepSeperatorDescription] as [ListDiffable]
-                    screenItems += self.asleepArray as! [ListDiffable]
-                }
-            
+                screenItems += self.allArray as! [ListDiffable]
             }
         }
         return screenItems
@@ -462,8 +476,6 @@ extension SelectRecipientsVC: searchSCDelegate {
             self.adapter.performUpdates(animated: true)
         }
     }
-    
-    
 }
 
 

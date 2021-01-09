@@ -29,6 +29,8 @@
 		200E5571246BF08200B6D8FE /* wakeyAssistant_6.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 200E556A246BF08200B6D8FE /* wakeyAssistant_6.m4a */; };
 		200E5572246BF08200B6D8FE /* wakeyAssistant_2.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 200E556B246BF08200B6D8FE /* wakeyAssistant_2.m4a */; };
 		200E5575246BF60700B6D8FE /* nextAlarmSound.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 200E5574246BF60700B6D8FE /* nextAlarmSound.m4a */; };
+		2016130525A1A191001743BB /* soundBiteFeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2016130325A1A190001743BB /* soundBiteFeedCell.swift */; };
+		2016130625A1A191001743BB /* soundBiteFeedCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2016130425A1A190001743BB /* soundBiteFeedCell.xib */; };
 		202129812474104A00BC27EF /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202129802474104A00BC27EF /* Constants.swift */; };
 		202129832475353800BC27EF /* GlobalMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202129822475353800BC27EF /* GlobalMethods.swift */; };
 		2042C9B92597344700786463 /* searchFriendsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2042C9B82597344700786463 /* searchFriendsVC.swift */; };
@@ -44,6 +46,8 @@
 		205D44642493F4CB00644B4E /* WalkThroughPageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205D44632493F4CB00644B4E /* WalkThroughPageVC.swift */; };
 		205D4466249400E200644B4E /* WalkThroughVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205D4465249400E200644B4E /* WalkThroughVC.swift */; };
 		205D44682494545B00644B4E /* ReminderWalkThroughContentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205D44672494545B00644B4E /* ReminderWalkThroughContentVC.swift */; };
+		2070471F25A4E90100717712 /* soundBitesFeedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2070471E25A4E90100717712 /* soundBitesFeedVC.swift */; };
+		2070472225A4EE2800717712 /* soundBiteFeedCellSC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2070472125A4EE2800717712 /* soundBiteFeedCellSC.swift */; };
 		2072624E257E4FED00BA34AF /* toggleMessagePrivacyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2072624C257E4FED00BA34AF /* toggleMessagePrivacyCell.swift */; };
 		2072624F257E4FED00BA34AF /* toggleMessagePrivacyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2072624D257E4FED00BA34AF /* toggleMessagePrivacyCell.xib */; };
 		20726252257E51C000BA34AF /* toggleMessagePrivacySC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20726251257E51C000BA34AF /* toggleMessagePrivacySC.swift */; };
@@ -161,6 +165,8 @@
 		200E556A246BF08200B6D8FE /* wakeyAssistant_6.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = wakeyAssistant_6.m4a; sourceTree = "<group>"; };
 		200E556B246BF08200B6D8FE /* wakeyAssistant_2.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = wakeyAssistant_2.m4a; sourceTree = "<group>"; };
 		200E5574246BF60700B6D8FE /* nextAlarmSound.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = nextAlarmSound.m4a; sourceTree = "<group>"; };
+		2016130325A1A190001743BB /* soundBiteFeedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = soundBiteFeedCell.swift; sourceTree = "<group>"; };
+		2016130425A1A190001743BB /* soundBiteFeedCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = soundBiteFeedCell.xib; sourceTree = "<group>"; };
 		202129802474104A00BC27EF /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		202129822475353800BC27EF /* GlobalMethods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalMethods.swift; sourceTree = "<group>"; };
 		2042C9B82597344700786463 /* searchFriendsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = searchFriendsVC.swift; sourceTree = "<group>"; };
@@ -177,6 +183,8 @@
 		205D44632493F4CB00644B4E /* WalkThroughPageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkThroughPageVC.swift; sourceTree = "<group>"; };
 		205D4465249400E200644B4E /* WalkThroughVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkThroughVC.swift; sourceTree = "<group>"; };
 		205D44672494545B00644B4E /* ReminderWalkThroughContentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderWalkThroughContentVC.swift; sourceTree = "<group>"; };
+		2070471E25A4E90100717712 /* soundBitesFeedVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = soundBitesFeedVC.swift; sourceTree = "<group>"; };
+		2070472125A4EE2800717712 /* soundBiteFeedCellSC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = soundBiteFeedCellSC.swift; sourceTree = "<group>"; };
 		2072624C257E4FED00BA34AF /* toggleMessagePrivacyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = toggleMessagePrivacyCell.swift; sourceTree = "<group>"; };
 		2072624D257E4FED00BA34AF /* toggleMessagePrivacyCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = toggleMessagePrivacyCell.xib; sourceTree = "<group>"; };
 		20726251257E51C000BA34AF /* toggleMessagePrivacySC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = toggleMessagePrivacySC.swift; sourceTree = "<group>"; };
@@ -419,6 +427,7 @@
 				20DE979B2475D2A80058C57F /* addFriendsMainVC.swift */,
 				2042C9B82597344700786463 /* searchFriendsVC.swift */,
 				2042C9BB2597345C00786463 /* viewRequestsVC.swift */,
+				2070471E25A4E90100717712 /* soundBitesFeedVC.swift */,
 			);
 			path = "View controllers";
 			sourceTree = "<group>";
@@ -464,6 +473,8 @@
 				20A26CE52578E86E00EF428D /* curateAlarmCell.xib */,
 				2072624C257E4FED00BA34AF /* toggleMessagePrivacyCell.swift */,
 				2072624D257E4FED00BA34AF /* toggleMessagePrivacyCell.xib */,
+				2016130325A1A190001743BB /* soundBiteFeedCell.swift */,
+				2016130425A1A190001743BB /* soundBiteFeedCell.xib */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -497,6 +508,7 @@
 				20F4138B24B37550004261DC /* dailyReiminderTimeCellSC.swift */,
 				20A26CE925790C3F00EF428D /* curateAlarmSC.swift */,
 				20726251257E51C000BA34AF /* toggleMessagePrivacySC.swift */,
+				2070472125A4EE2800717712 /* soundBiteFeedCellSC.swift */,
 			);
 			path = "Section controllers";
 			sourceTree = "<group>";
@@ -591,6 +603,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				205D445F2493EF1D00644B4E /* Onboarding.storyboard in Resources */,
+				2016130625A1A191001743BB /* soundBiteFeedCell.xib in Resources */,
 				20B7D5FC2477FDD7006607BC /* defaultAlarmSound.m4a in Resources */,
 				200E556E246BF08200B6D8FE /* wakeyAssistant_4.m4a in Resources */,
 				2048A38C24642552002AEA61 /* whooshSound.m4a in Resources */,
@@ -705,6 +718,7 @@
 				20742F4E2499AA31005BD3DD /* finishSignUpVC.swift in Sources */,
 				200A23C924A84A23005B2630 /* connectFacebookCellSC.swift in Sources */,
 				2081FEA0245DD78A00BAF268 /* customImageView.swift in Sources */,
+				2070471F25A4E90100717712 /* soundBitesFeedVC.swift in Sources */,
 				20A7804A2479D26400410652 /* UIScrollView.swift in Sources */,
 				20DE97A52475D8400058C57F /* addFriendCell.swift in Sources */,
 				2081FE92245DCAE400BAF268 /* CustomButtons.swift in Sources */,
@@ -757,6 +771,7 @@
 				2081FEB0245E0DBE00BAF268 /* loginVC.swift in Sources */,
 				20726252257E51C000BA34AF /* toggleMessagePrivacySC.swift in Sources */,
 				20830BC7246977BE000DDE2D /* loadingViewCell.swift in Sources */,
+				2016130525A1A191001743BB /* soundBiteFeedCell.swift in Sources */,
 				2081FEA9245DE01C00BAF268 /* seperatorCell.swift in Sources */,
 				20F59315249862DF00D7EAEE /* wakeyMessageCell.swift in Sources */,
 				20C1B4102580C3E4009AD3FA /* likedAlarmDescriptionVC.swift in Sources */,
@@ -769,6 +784,7 @@
 				2087538D2468817200445EBA /* goToSleepCell.swift in Sources */,
 				20F5930F249853E400D7EAEE /* wakeyConversationCell.swift in Sources */,
 				2081FE82245C07A300BAF268 /* Wakey.xcdatamodeld in Sources */,
+				2070472225A4EE2800717712 /* soundBiteFeedCellSC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

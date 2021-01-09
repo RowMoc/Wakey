@@ -8,6 +8,7 @@
 
 import Foundation
 import IGListKit
+import Firebase
 
 
 
@@ -33,7 +34,7 @@ extension wakeyConversation: ListDiffable{
             return false
         }
         
-        return (self.other_user.isEqual(toDiffableObject: object.other_user) && self.conversationID == object.conversationID && self.messages.count == object.messages.count && self.messages.last?.messageID == object.messages.last?.messageID && self.messages.last?.timeSent == object.messages.last?.timeSent)
+        return (self.other_user.isEqual(toDiffableObject: object.other_user) && self.conversationID == object.conversationID && self.messages.count == object.messages.count && self.messages.last?.messageID == object.messages.last?.messageID && self.messages.last?.timeSent == object.messages.last?.timeSent && self.messages.last?.timeHeard == object.messages.last?.timeHeard)
     }
     
     public func diffIdentifier()-> NSObjectProtocol{
@@ -99,9 +100,9 @@ class curateListAlarm {
     var isQueued: Bool
     var canBeLiked: Bool
     var hasBeenLiked: Bool
+    var soundBite: soundBite?
     
-    
-    init(associatedProfile: userModel, timeReceived: Date, audioFileUrl: URL?, audioLength: Double, description: String, messageId: String, curateListCategory: String, isQueued: Bool, canBeLiked: Bool, hasBeenLiked: Bool) {
+    init(associatedProfile: userModel, timeReceived: Date, audioFileUrl: URL?, audioLength: Double, description: String, messageId: String, curateListCategory: String, isQueued: Bool, canBeLiked: Bool, hasBeenLiked: Bool, soundBite: soundBite? = nil) {
         self.associatedProfile = associatedProfile
         self.timeReceived = timeReceived
         self.audioFileUrl = audioFileUrl
@@ -112,11 +113,12 @@ class curateListAlarm {
         self.isQueued = isQueued
         self.canBeLiked = canBeLiked
         self.hasBeenLiked = hasBeenLiked
+        self.soundBite = soundBite
     }
 }
 extension curateListAlarm: Equatable{
     static public func == (rhs: curateListAlarm, lhs: curateListAlarm)-> Bool{
-        return rhs.messageId == lhs.messageId && rhs.audioFileUrl == lhs.audioFileUrl && rhs.isQueued == lhs.isQueued && rhs.canBeLiked == lhs.canBeLiked && rhs.hasBeenLiked == lhs.hasBeenLiked
+        return rhs.messageId == lhs.messageId && rhs.audioFileUrl == lhs.audioFileUrl && rhs.isQueued == lhs.isQueued && rhs.canBeLiked == lhs.canBeLiked && rhs.hasBeenLiked == lhs.hasBeenLiked && lhs.soundBite == rhs.soundBite
     }
 }
 extension curateListAlarm: ListDiffable{
@@ -124,7 +126,7 @@ extension curateListAlarm: ListDiffable{
         guard let object = object as? curateListAlarm else{
             return false
         }
-        return (self.messageId == object.messageId && self.audioFileUrl == object.audioFileUrl && self.timeReceived == object.timeReceived && self.associatedProfile.isEqual(toDiffableObject: object.associatedProfile) && self.isQueued == object.isQueued && self.canBeLiked == object.canBeLiked && self.hasBeenLiked == object.hasBeenLiked)
+        return (self.messageId == object.messageId && self.audioFileUrl == object.audioFileUrl && self.timeReceived == object.timeReceived && self.associatedProfile.isEqual(toDiffableObject: object.associatedProfile) && self.isQueued == object.isQueued && self.canBeLiked == object.canBeLiked && self.hasBeenLiked == object.hasBeenLiked && object.soundBite == self.soundBite)
     }
     
     public func diffIdentifier()-> NSObjectProtocol{
@@ -276,8 +278,9 @@ class receivedAlarm: NSObject {
     var canBeLiked: Bool
     var hasBeenLiked: Bool
     var msgDescription: String
+    var soundBite: soundBite?
     
-    init(alarm: [String: Any], sender: userModel, localAudioUrl: URL?) {
+    init(alarm: [String: Any], sender: userModel, localAudioUrl: URL?, soundBite: soundBite? = nil) {
         self.sender = sender
         self.timeSent = alarm["created_at"] as? Date ?? Date()
         self.audioUrl = alarm["audio_file_url"] as? String ?? ""
@@ -287,10 +290,11 @@ class receivedAlarm: NSObject {
         self.hasBeenLiked = alarm["has_been_liked"] as? Bool ?? false
         self.msgDescription = alarm["description"] as? String ?? ""
         self.localAudioUrl = localAudioUrl
+        self.soundBite = soundBite
     }
     
     static func ==(lhs: receivedAlarm, rhs: receivedAlarm) -> Bool {
-        return rhs.sender.userID == lhs.sender.userID && rhs.audioUrl == lhs.audioUrl && rhs.audioID == lhs.audioID && rhs.timePlayed == lhs.timePlayed && rhs.numTimesPlayed == lhs.numTimesPlayed && rhs.hasBeenLiked == lhs.hasBeenLiked && rhs.msgDescription == lhs.msgDescription
+        return rhs.sender.userID == lhs.sender.userID && rhs.audioUrl == lhs.audioUrl && rhs.audioID == lhs.audioID && rhs.timePlayed == lhs.timePlayed && rhs.numTimesPlayed == lhs.numTimesPlayed && rhs.hasBeenLiked == lhs.hasBeenLiked && rhs.msgDescription == lhs.msgDescription && lhs.soundBite == rhs.soundBite
     }
 }
 extension receivedAlarm: ListDiffable{
@@ -298,11 +302,95 @@ extension receivedAlarm: ListDiffable{
         guard let object = object as? receivedAlarm else{
             return false
         }
-        return self.sender.isEqual(toDiffableObject: object.sender) && self.audioUrl == object.audioUrl && self.audioID == object.audioID && self.timePlayed == object.timePlayed && self.numTimesPlayed == object.numTimesPlayed && self.canBeLiked == object.canBeLiked && self.hasBeenLiked == object.hasBeenLiked && self.msgDescription == object.msgDescription
+        return self.sender.isEqual(toDiffableObject: object.sender) && self.audioUrl == object.audioUrl && self.audioID == object.audioID && self.timePlayed == object.timePlayed && self.numTimesPlayed == object.numTimesPlayed && self.canBeLiked == object.canBeLiked && self.hasBeenLiked == object.hasBeenLiked && self.msgDescription == object.msgDescription && object.soundBite == self.soundBite
     }
     
     public func diffIdentifier()-> NSObjectProtocol{
         return ((self.sender.userID + "_" + self.audioUrl + "_" + self.audioID)  as NSObjectProtocol)
+    }
+}
+
+
+class sentSoundBite: NSObject {
+    
+    let sender: userModel
+    let timeSent: Date
+    let soundBite: soundBite
+    
+    init(sender: userModel, timeSent: Date, soundBite: soundBite) {
+        self.sender = sender
+        self.timeSent = timeSent
+        self.soundBite = soundBite
+    }
+    
+    static func ==(lhs: sentSoundBite, rhs: sentSoundBite) -> Bool {
+        return rhs.sender.isEqual(toDiffableObject: lhs.sender) && rhs.soundBite.isEqual(lhs.soundBite)  && rhs.timeSent == lhs.timeSent
+    }
+}
+extension sentSoundBite: ListDiffable{
+    public func isEqual(toDiffableObject object: ListDiffable?) -> Bool {
+        guard let object = object as? sentSoundBite else{
+            return false
+        }
+        return self.sender.isEqual(toDiffableObject: object.sender) && self.soundBite.isEqual(object.soundBite)  && self.timeSent == object.timeSent
+    }
+    
+    public func diffIdentifier()-> NSObjectProtocol{
+        return ((self.sender.userID + "_" + self.soundBite.objectID + "_" + self.timeSent.description)  as NSObjectProtocol)
+    }
+}
+
+
+
+
+
+class soundBite: NSObject {
+    
+//    let sender: userModel
+    let audioUrl: String
+    var localAudioUrl: URL?
+    let objectID: String
+    var audioLength: Int?
+    var createdAt: Date
+    let title: String
+    let transcript: String
+    let category: String
+    var associatedProfile: userModel
+    let imageUrl: String
+    var timesSent: Int
+    let explicit: Bool
+    
+    
+    init(soundBite: [String: Any], associatedProfile: userModel, localAudioUrl: URL?) {
+        self.audioUrl = soundBite["audio_url"] as? String ?? ""
+        self.audioLength = soundBite["audio_length"] as? Int
+        self.objectID = soundBite["object_id"] as? String ?? ""
+        self.transcript = soundBite["transcript"] as? String ?? ""
+        self.category = soundBite["category"] as? String ?? ""
+        self.title = soundBite["title"] as? String ?? ""
+        self.createdAt = (soundBite["created_at"] as? Timestamp ?? Timestamp(date: Date())).dateValue()
+        self.imageUrl = soundBite["image_url"] as? String ?? ""
+        self.timesSent = soundBite["times_sent"] as? Int ?? 0
+        self.explicit = soundBite["explicit"] as? Bool ?? false
+        self.localAudioUrl = localAudioUrl
+        self.associatedProfile = associatedProfile
+        
+    }
+    
+    static func ==(lhs: soundBite, rhs: soundBite) -> Bool {
+        return rhs.associatedProfile.isEqual(toDiffableObject: lhs.associatedProfile) && rhs.audioUrl == lhs.audioUrl && rhs.objectID == lhs.objectID && rhs.createdAt == lhs.createdAt && rhs.title == lhs.title && rhs.category == lhs.category && rhs.transcript == lhs.transcript && lhs.localAudioUrl == rhs.localAudioUrl && lhs.timesSent == rhs.timesSent
+    }
+}
+extension soundBite: ListDiffable{
+    public func isEqual(toDiffableObject object: ListDiffable?) -> Bool {
+        guard let object = object as? soundBite else{
+            return false
+        }
+        return self.associatedProfile.isEqual(toDiffableObject: object.associatedProfile) && self.audioUrl == object.audioUrl && self.objectID == object.objectID && self.createdAt == object.createdAt && self.audioLength == object.audioLength && self.title == object.title && self.transcript == object.transcript
+    }
+    
+    public func diffIdentifier()-> NSObjectProtocol{
+        return ((self.associatedProfile.userID + "_" + self.audioUrl + "_" + self.objectID)  as NSObjectProtocol)
     }
 }
 

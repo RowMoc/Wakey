@@ -214,6 +214,8 @@ class loginVC: UIViewController, UITextFieldDelegate, UINavigationControllerDele
     
     var loading: NVActivityIndicatorView?
     var centreLogo: UIImageView?
+    
+    
     override func viewDidAppear(_ animated: Bool) {
         setupKeyboardObservers()
         if !didUnwind {
@@ -225,8 +227,8 @@ class loginVC: UIViewController, UITextFieldDelegate, UINavigationControllerDele
             view.addSubview(loading!)
             loading!.startAnimating()
             let user = Auth.auth().currentUser
-            if user != nil {
-                self.determineSegueAway(signedUpWithFB: true)
+            if let user = user {
+                self.determineSegueAway(signedUpWithFB: true, user: user)
                 return
             } else {
                 //                if let token = AccessToken.current,!token.isExpired {
@@ -412,7 +414,7 @@ class loginVC: UIViewController, UITextFieldDelegate, UINavigationControllerDele
             } else {
                 if authResult?.user != nil {
                     DispatchQueue.main.async {
-                        self.determineSegueAway(signedUpWithFB: false)
+                        self.determineSegueAway(signedUpWithFB: false, user: authResult?.user)
                     }
                 }
             }
@@ -438,16 +440,34 @@ class loginVC: UIViewController, UITextFieldDelegate, UINavigationControllerDele
                 }
             } else {
                 DispatchQueue.main.async {
-                    self.determineSegueAway(signedUpWithFB: false)
+                    let user = Auth.auth().currentUser
+                    self.determineSegueAway(signedUpWithFB: false, user: user)
                 }
             }
         }
     }
     
-    func determineSegueAway(signedUpWithFB: Bool) {
+    func determineSegueAway(signedUpWithFB: Bool, user: User?) {
         //check if signed in user has created a user document. If they have, take them to home screen
         //If they haven't, take them to finishSignUpVC
+        
+        
         print("CHECKING COMPLETED SIGN UP!!!!! ")
+        
+        
+        let hasCreatedDocBool = UserDefaults.standard.bool(forKey: constants.isLoggedInKeys.userDocumentHasBeenCreated)
+        if hasCreatedDocBool {
+            let userDocCreatedID = UserDefaults.standard.string(forKey: constants.isLoggedInKeys.userDocumentID)
+            if let uid = user?.uid as? String, uid == userDocCreatedID {
+                //segue to home
+                self.view.isUserInteractionEnabled = true
+                self.segueToHomeVC()
+                return
+            }
+        }
+        //if you make it this far, we must check if you've got a user document.
+        
+        
         FirebaseManager.shared.checkIfUserHasCompletedSignUp { (err, hasCompleted) in
             self.loading?.stopAnimating()
             self.loading?.removeFromSuperview()
@@ -656,7 +676,7 @@ extension loginVC: LoginButtonDelegate {
             
             DispatchQueue.main.async {
                 self.topLabel.text = ""
-                self.determineSegueAway(signedUpWithFB: true)
+                self.determineSegueAway(signedUpWithFB: true, user: authResult?.user)
             }
             return
         }

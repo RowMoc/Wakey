@@ -36,7 +36,7 @@ func getAudios(fetchedAlarms: [receivedAlarm], timeToFire: Date,settingAlarmProg
         
         
         
-        FirebaseManager.shared.downloadAudioFile(withUrl: alarm.audioUrl, pathPrefix: String(index)) { (error, localUrl) in
+        FirebaseManager.shared.downloadAudioFile(withUrl: alarm.audioUrl, isMp3: (alarm.soundBite != nil), pathPrefix: String(index)) { (error, localUrl) in
             if let error = error {
                 //print(error)
                 downloadGroup.leave()
@@ -106,8 +106,34 @@ func scheduleLocalNotification(forAlarm: receivedAlarm, audioLength: Double, tot
     let crit = UNNotificationSound.criticalSoundNamed(UNNotificationSoundName(rawValue: audioDirectoryArray.last!))
     //content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: audioDirectoryArray.last!))
     content.sound = crit
-    content.userInfo = [constants.scheduledAlarms.audioIDKey: forAlarm.audioID, constants.scheduledAlarms.alarmLengthKey: audioLength, constants.scheduledAlarms.localAudioUrlKey: forAlarm.localAudioUrl?.absoluteString as Any, constants.scheduledAlarms.senderIDKey: forAlarm.sender.userID, constants.scheduledAlarms.senderUsernameKey: forAlarm.sender.username, constants.scheduledAlarms.senderProfilePicUrlKey: forAlarm.sender.profilePicUrl, constants.scheduledAlarms.timeSentKey: forAlarm.timeSent, constants.scheduledAlarms.alarmCanBeLikedKey: forAlarm.canBeLiked, constants.scheduledAlarms.alarmHasBeeenLikedKey: forAlarm.hasBeenLiked]
+    if let soundBite = forAlarm.soundBite {
+        content.userInfo = [constants.scheduledAlarms.audioIDKey: forAlarm.audioID, constants.scheduledAlarms.alarmLengthKey: audioLength, constants.scheduledAlarms.localAudioUrlKey: forAlarm.localAudioUrl?.absoluteString as Any, constants.scheduledAlarms.senderIDKey: forAlarm.sender.userID, constants.scheduledAlarms.senderUsernameKey: forAlarm.sender.username, constants.scheduledAlarms.senderProfilePicUrlKey: forAlarm.sender.profilePicUrl, constants.scheduledAlarms.timeSentKey: forAlarm.timeSent, constants.scheduledAlarms.alarmCanBeLikedKey: forAlarm.canBeLiked, constants.scheduledAlarms.alarmHasBeeenLikedKey: forAlarm.hasBeenLiked, constants.scheduledAlarms.hasSoundBiteKey: true, constants.scheduledAlarms.soundBiteIDKey: soundBite.objectID, constants.scheduledAlarms.soundBiteTitleKey: soundBite.title, constants.scheduledAlarms.soundBiteCategoryKey: soundBite.category, constants.scheduledAlarms.soundBiteImageUrlKey: soundBite.imageUrl, constants.scheduledAlarms.soundBiteIsExplicitKey: soundBite.explicit]
+    } else {
+        content.userInfo = [constants.scheduledAlarms.audioIDKey: forAlarm.audioID, constants.scheduledAlarms.alarmLengthKey: audioLength, constants.scheduledAlarms.localAudioUrlKey: forAlarm.localAudioUrl?.absoluteString as Any, constants.scheduledAlarms.senderIDKey: forAlarm.sender.userID, constants.scheduledAlarms.senderUsernameKey: forAlarm.sender.username, constants.scheduledAlarms.senderProfilePicUrlKey: forAlarm.sender.profilePicUrl, constants.scheduledAlarms.timeSentKey: forAlarm.timeSent, constants.scheduledAlarms.alarmCanBeLikedKey: forAlarm.canBeLiked, constants.scheduledAlarms.alarmHasBeeenLikedKey: forAlarm.hasBeenLiked, constants.scheduledAlarms.hasSoundBiteKey: false]
+    }
     return content
 }
 
+
+
+func tryDownloadFromInternetSite() {
+    let urlString = "http://www.moviesoundclips.net/movies1/getsmart/bomb.mp3"
+
+    let destination: DownloadRequest.Destination = { _, _ in
+        let fileUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("bombp.mp3")
+        return (fileUrl, [.removePreviousFile, .createIntermediateDirectories])
+    }
+
+    AF.download(urlString, to: destination).response { response in
+        print(response)
+        
+        if let destinationUrl = response.fileURL {
+            //print("downloaded VN successfully with local url:")
+            //print(destinationUrl)
+            print(destinationUrl.absoluteString)
+        } else {
+            print("Failed to download audio")
+        }
+    }
+}
 

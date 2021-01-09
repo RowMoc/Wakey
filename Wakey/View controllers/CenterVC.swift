@@ -273,6 +273,7 @@ extension CenterVC: PanControllerDelegate {
 
 extension CenterVC: UIScrollViewDelegate {
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         shouldAnimate = true
     }
     

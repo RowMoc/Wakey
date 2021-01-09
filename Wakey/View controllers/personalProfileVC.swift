@@ -45,10 +45,6 @@ class personalProfileVC: UIViewController, UIScrollViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         //setupUI()
-        searchBar.barTintColor = UIColor.clear
-        searchBar.backgroundColor = UIColor.clear
-        searchBar.isTranslucent = true
-        searchBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
         //collection view stuff
         self.collectionView.backgroundColor = .clear
         self.view.backgroundColor = .clear
@@ -71,6 +67,14 @@ class personalProfileVC: UIViewController, UIScrollViewDelegate {
         searchBar.backgroundColor = UIColor.clear
         searchBar.isTranslucent = true
         searchBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
+        
+        // SearchBar text
+        let textFieldInsideUISearchBar = searchBar.value(forKey: "searchField") as? UITextField
+        textFieldInsideUISearchBar?.font = UIFont(name: "Avenir-medium", size: 17)
+
+        // SearchBar placeholder
+        let labelInsideUISearchBar = textFieldInsideUISearchBar!.value(forKey: "placeholderLabel") as? UILabel
+        labelInsideUISearchBar?.font = UIFont(name: "Avenir-book", size: 17)
         
         
         DispatchQueue.main.async {
@@ -176,7 +180,10 @@ class personalProfileVC: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        print("SCROLL VIEW WILL BEGIN DRAGGING")
+        self.view.endEditing(true)
+    }
     
     
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset:UnsafeMutablePointer<CGPoint>) {

@@ -29,7 +29,7 @@ class toggleMessagePrivacySC: ListSectionController {
             cell.sectionController = self
             cell.privacySwitch.isOn = canFavorite
             if canFavorite {
-                cell.label.text = "Recipients will be able to favorite this wakey"
+                cell.label.text = "Recipients will be able to like this wakey"
             } else {
                 cell.label.text = "Recipients will only hear this wakey once"
             }

@@ -48,7 +48,11 @@ class curateAlarmSC: ListSectionController {
             
             switch alarm.curateListCategory {
             case constants.curateAlarmListHeadings.unopenedMessage:
-                middleLabelText += "  •  Unopened"
+                if (alarm!.soundBite != nil) {
+                    middleLabelText += "  •  Unopened " + alarm!.soundBite!.category.lowercased()  + " sound bite"
+                } else {
+                    middleLabelText += "  •  Unopened message"
+                }
             case constants.curateAlarmListHeadings.likedMessage:
                 middleLabelText += "  •  Liked"
             case constants.curateAlarmListHeadings.defaultAlarm:

@@ -288,12 +288,21 @@ class finishSignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavig
                 self.completeSignUpButton.isHidden = false
                 self.activityIndicator.stopAnimating()
                 self.view.isUserInteractionEnabled = true
+                //clear user default login values
+                UserDefaults.standard.removeObject(forKey: constants.isLoggedInKeys.userDocumentHasBeenCreated)
+                UserDefaults.standard.removeObject(forKey: constants.isLoggedInKeys.userDocumentID)
+                UserDefaults.standard.synchronize()
             } else {
                 if proPicUploadSuccesfully {
                     print("Pro pic uploaded succesfully")
                 } else {
                     print("Pro pic didn't upload succesfully")
                 }
+                //set these in core data so that we can check them upon a user logging instead of making a query for the document
+                UserDefaults.standard.set(true, forKey: constants.isLoggedInKeys.userDocumentHasBeenCreated)
+                UserDefaults.standard.set(currAuthUser.uid, forKey: constants.isLoggedInKeys.userDocumentID)
+                UserDefaults.standard.synchronize()
+                
                 self.view.isUserInteractionEnabled = true
                 self.errorLabel.text = ""
                 self.activityIndicator.stopAnimating()

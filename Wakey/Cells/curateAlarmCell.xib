@@ -41,7 +41,7 @@
                             </label>
                         </subviews>
                     </stackView>
-                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="y7i-rq-4vD" customClass="RoundedProfilePic" customModule="Wakey" customModuleProvider="target">
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="y7i-rq-4vD" customClass="RoundedProfilePic" customModule="Wakey" customModuleProvider="target">
                         <rect key="frame" x="15" y="17" width="80" height="80"/>
                         <constraints>
                             <constraint firstAttribute="width" secondItem="y7i-rq-4vD" secondAttribute="height" multiplier="1:1" id="6EG-f5-TKs"/>

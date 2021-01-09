@@ -40,16 +40,19 @@ class playAlarmCell: UICollectionViewCell, UIGestureRecognizerDelegate{
     
     var backgroundImageView: UIImageView!
     
+    @IBOutlet weak var soundBiteShadowView: UIView!
+    @IBOutlet weak var soundBiteDetailsView: UIView!
+    
+    @IBOutlet weak var sbImageView: UIImageView!
+    @IBOutlet weak var sbTitle: UILabel!
+    
+    @IBOutlet weak var sbCategory: UILabel!
+    
+    
+    @IBOutlet weak var soundBiteImageView: UIImageView!
     override func awakeFromNib() {
         super.awakeFromNib()
-        
-        // Initialization code
         activityIndicator.startAnimating()
-//        pullIndicator.layer.cornerRadius = 4
-//        pullIndicator.layer.shadowColor = UIColor.black.cgColor
-//        pullIndicator.layer.shadowOpacity = 0.7
-//        pullIndicator.layer.shadowOffset = CGSize(width: 0, height: 1)
-//        pullIndicator.layer.shadowRadius = 2
         pausePlayButton.layer.cornerRadius = 8
         
         let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(swipedUp))
@@ -62,6 +65,9 @@ class playAlarmCell: UICollectionViewCell, UIGestureRecognizerDelegate{
         swipeForReactView.isUserInteractionEnabled = true
         self.swipeForReactView.addGestureRecognizer(swipeUp)
         swipeUp.delegate = self
+        sbImageView.layer.cornerRadius = 7
+        sbImageView.clipsToBounds = true
+        configureShadow()
         
     }
     
@@ -90,6 +96,13 @@ class playAlarmCell: UICollectionViewCell, UIGestureRecognizerDelegate{
         
     }
     
+    private func configureShadow() {
+        soundBiteShadowView.backgroundColor = UIColor.clear
+        soundBiteShadowView.layer.shadowColor = UIColor.black.cgColor
+        soundBiteShadowView.layer.shadowOffset = CGSize(width: 1, height: 3)
+        soundBiteShadowView.layer.shadowOpacity = 0.3
+        soundBiteShadowView.layer.shadowRadius = 3.0
+    }
     
     var blurEffectView: UIVisualEffectView!
     var reactionView: ReactionsView!

@@ -50,7 +50,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
     let restartRecording = "restartPlayer"
     let playAnimation = "playAnimation"
     
-    let minRecordingLength = 1
+    let minRecordingLength = 3
     let maxRecordingLength = 30
     var minProgress: CGFloat!
     
@@ -75,6 +75,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
         self.addBackgroundListeners()
         self.configureConstraints()
         self.configureAlarmButton()
+        //tryDownloadFromInternetSite()
     }
     
     
@@ -489,13 +490,13 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
     
     
     func performPressAnimation() {
-        UIButton.animate(withDuration: 0.05,
+        UIButton.animate(withDuration: 0.05, delay: 0, options: [.allowUserInteraction],
                          animations: {
                             self.centerVC.centerButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
                             //self.recordButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
         },
                          completion: { finish in
-                            UIButton.animate(withDuration: 0.05, animations: {
+                            UIButton.animate(withDuration: 0.05, delay: 0, options: [.allowUserInteraction], animations: {
                                 //self.recordButton.transform = CGAffineTransform.identity
                                 self.centerVC.centerButton.transform = CGAffineTransform.identity
                             })
@@ -768,7 +769,23 @@ class ViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDe
             let timeSent = wakeyMessage[constants.scheduledAlarms.timeSentKey] as? Date ?? Date()
             let canBeLiked = wakeyMessage[constants.scheduledAlarms.alarmCanBeLikedKey] as? Bool ?? false
             let hasBeenLiked = wakeyMessage[constants.scheduledAlarms.alarmHasBeeenLikedKey] as? Bool ?? false
-            alarms.append(receivedAlarm(alarm: ["created_at" : timeSent, "audio_id": audioID, "has_been_liked": hasBeenLiked, "can_be_liked": canBeLiked], sender: userModel(user: ["user_id" : senderID, "username": username, "profile_img_url": profilePicUrl]), localAudioUrl: localAudioUrl))
+            
+            
+            var soundBiteObj: soundBite? = nil
+            if let hasSoundBite = wakeyMessage[constants.scheduledAlarms.hasSoundBiteKey] as? Bool, hasSoundBite {
+                
+                let sbID = wakeyMessage[constants.scheduledAlarms.soundBiteIDKey] as? String ?? ""
+                let sbTitle = wakeyMessage[constants.scheduledAlarms.soundBiteTitleKey] as? String ?? ""
+                let sbCategory = wakeyMessage[constants.scheduledAlarms.soundBiteCategoryKey] as? String ?? ""
+                let sbImageUrl = wakeyMessage[constants.scheduledAlarms.soundBiteImageUrlKey] as? String ?? ""
+                let isExplicit = wakeyMessage[constants.scheduledAlarms.soundBiteIsExplicitKey] as? Bool ?? false
+                let sbDict = ["object_id": sbID, "image_url": sbImageUrl, "title": sbTitle, "category": sbCategory, "explicit": isExplicit] as [String : Any]
+                
+                soundBiteObj = soundBite(soundBite: sbDict, associatedProfile: userModel(user: [:]), localAudioUrl: nil)
+            }
+            
+            
+            alarms.append(receivedAlarm(alarm: ["created_at" : timeSent, "audio_id": audioID, "has_been_liked": hasBeenLiked, "can_be_liked": canBeLiked], sender: userModel(user: ["user_id" : senderID, "username": username, "profile_img_url": profilePicUrl]), localAudioUrl: localAudioUrl, soundBite: soundBiteObj))
         }
         return alarms
     }

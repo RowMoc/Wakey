@@ -88,7 +88,9 @@ class connectContactsCellSC: ListSectionController, connectContactsCellDelegate 
         DispatchQueue.main.async {
             self.requestForAccess { (accessGranted) -> Void in
                 if accessGranted {
-                    cell.beginLoadingView()
+                    DispatchQueue.main.async {
+                        cell.beginLoadingView()
+                    }
                     let keys = [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactImageDataKey, CNContactPhoneNumbersKey]
                     var contacts = [CNContact]()
                     var sanitizedPhoneNums = [String]()
@@ -119,7 +121,6 @@ class connectContactsCellSC: ListSectionController, connectContactsCellDelegate 
                         }
                     } else {
                         // Success
-                        cell.stopLoadingView(titleText: "Contacts found")
                         DispatchQueue.main.async {
                             self.findUsersFromContacts(numbers: sanitizedPhoneNums, cell: cell)
                         }

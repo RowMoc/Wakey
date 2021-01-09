@@ -211,7 +211,7 @@ class FirebaseManager {
                         "Authorization": "Bearer " + token,
                         "Accept": "application/json"
                     ]
-                    let params = ["receivers": recipients,"audio_file_url": webHostedurl, "audio_length": audioLength, "can_be_liked": recipientsCanFavorite, "sender_username": currUser!.username, "sender_full_name": currUser!.fullName, "sender_profile_img_url": currUser!.profilePicUrl ] as [String : Any]
+                    let params = ["receivers": recipients,"audio_file_url": webHostedurl, "audio_length": round(audioLength), "can_be_liked": recipientsCanFavorite, "sender_username": currUser!.username, "sender_full_name": currUser!.fullName, "sender_profile_img_url": currUser!.profilePicUrl ] as [String : Any]
                     //AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/send_message", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
                     AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/send_message", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
                         //debugprint(response)
@@ -223,6 +223,34 @@ class FirebaseManager {
                         }
                         completion(response.error)
                     }
+                }
+            }
+        }
+    }
+    
+    
+    func sendSoundBite(soundBite: soundBite, recipients: [[String: Any]], completion: @escaping (Error?) -> ()) {
+        self.getCurrentUser { (err, currUser) in
+            if err != nil {
+                completion(err)
+            }
+            //once we've uplaoded the file, send the messages
+            self.fetchToken { (token) in
+                let headers: HTTPHeaders = [
+                    "Authorization": "Bearer " + token,
+                    "Accept": "application/json"
+                ]
+                let params = ["receivers": recipients, "explicit": soundBite.explicit ,"audio_file_url": soundBite.audioUrl, "title": soundBite.title, "sound_bite_category": soundBite.category , "sound_bite_img_url": soundBite.imageUrl,"sound_bite_id": soundBite.objectID,"sender_username": currUser!.username, "sender_full_name": currUser!.fullName, "sender_profile_img_url": currUser!.profilePicUrl ] as [String : Any]
+                //AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/send_message", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
+                AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/send_sound_bite", method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
+                    //debugprint(response)
+                    if let result = response.response?.statusCode {
+                        if result == 200 {
+                            completion(nil)
+                            return
+                        }
+                    }
+                    completion(response.error)
                 }
             }
         }
@@ -536,6 +564,11 @@ class FirebaseManager {
                         if let dict = try JSONSerialization.jsonObject(with: response.data!, options: []) as? [String:Any] {
                             let thisUser = userModel(user: dict)
                             FirebaseManager.shared.currentUser = thisUser
+                            
+                            //set user defaults to show that user doc does exist
+                            UserDefaults.standard.set(true, forKey: constants.isLoggedInKeys.userDocumentHasBeenCreated)
+                            UserDefaults.standard.set(thisUser.userID, forKey: constants.isLoggedInKeys.userDocumentID)
+                            UserDefaults.standard.synchronize()
                             completion(nil, true)
                             return
                         }
@@ -710,7 +743,7 @@ class FirebaseManager {
         
     }
     
-    func downloadAudioFile(withUrl: String,pathPrefix: String, completion: @escaping (Error?, URL?) -> ()) {
+    func downloadAudioFile(withUrl: String, isMp3: Bool ,pathPrefix: String, completion: @escaping (Error?, URL?) -> ()) {
         let destination: DownloadRequest.Destination = { _, _ in
             //let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             //let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -723,11 +756,17 @@ class FirebaseManager {
                 //print("COULDNT CREATE DIRECTORY")
                 //print("Error: \(error.localizedDescription)")
             }
+            var fileURL: URL? = nil
+            if isMp3 {
+                 fileURL = soundsDirectoryURL.appendingPathComponent("wakey_message_sent_" + pathPrefix + ".mp3")
+            } else {
+                 fileURL = soundsDirectoryURL.appendingPathComponent("wakey_message_sent_" + pathPrefix + ".m4a")
+            }
             
-            //let fileURL = documentsURL.appendingPathComponent("wakey_message_sent_" + pathPrefix + ".m4a")
-            let fileURL = soundsDirectoryURL.appendingPathComponent("wakey_message_sent_" + pathPrefix + ".m4a")
+            //let suffix = withUrl.suffix(from: withUrl.lastIndex(of: ".")!)
+            //let fileURL = soundsDirectoryURL.appendingPathComponent("wakey_message_sent_" + pathPrefix + suffix)
             
-            return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
+            return (fileURL!, [.removePreviousFile, .createIntermediateDirectories])
         }
         
         
@@ -839,8 +878,17 @@ class FirebaseManager {
                                     let alarmProps = ["audio_id": messageDetails["message_id"] as Any,"audio_file_url": messageDetails["audio_file_url"] as Any, "created_at": jsonDateToDate(jsonStr: messageDetails["sent_at"] as? String ?? ""), "audio_length": messageDetails["audio_length"] as Any, "can_be_liked": messageDetails["can_be_liked"] as Any, "has_been_liked": messageDetails["has_been_liked"] as Any] as [String:Any]
                                     let userDict = ["user_id": senderDetails["sender_id"] as Any, "username": senderDetails["username"] as Any, "profile_img_url": senderDetails["profile_img_url"] as Any, "asleep": false, "created_at": Date()] as [String : Any]
                                     
+                                    
+                                    
+                                    var soundBiteObj: soundBite? = nil
+                                    if let soundBiteID = messageDetails["sound_bite_id"] {
+                                        let soundBiteDetails = ["object_id": soundBiteID, "image_url": messageDetails["sound_bite_img_url"] as Any, "title": messageDetails["title"] as Any, "category": messageDetails["sound_bite_category"] as Any, "explicit": messageDetails["explicit"] as Any] as [String : Any]
+                                        
+                                        soundBiteObj = soundBite(soundBite: soundBiteDetails, associatedProfile: userModel(user: [:]), localAudioUrl: nil)
+                                    }
+                                    
                                     let user = userModel(user: userDict)
-                                    let alarm = receivedAlarm(alarm: alarmProps, sender: user, localAudioUrl: nil)
+                                    let alarm = receivedAlarm(alarm: alarmProps, sender: user, localAudioUrl: nil, soundBite: soundBiteObj)
                                     alarms.append(alarm)
                                     print("HERES A MESSAGE:")
                                     print(alarmProps)
@@ -886,8 +934,9 @@ class FirebaseManager {
                                     let profileImgUrl = frnd["profile_img_url"]! as String
                                     let userID = frnd["user_id"]! as String
                                     let username = frnd["username"]! as String
+                                    let asleepBool = frnd["asleep"] as? Bool  ?? false
                                     let connectedAt = jsonDateToDate(jsonStr: frnd["connected_at"] ?? "")
-                                    let userDict = ["user_id": userID, "username": username, "profile_img_url": profileImgUrl, "became_friends": connectedAt, "friendship_status": constants.friendConditions.areFriends, "frienship_id": requestId] as [String : Any]
+                                    let userDict = ["user_id": userID, "username": username, "profile_img_url": profileImgUrl, "became_friends": connectedAt, "friendship_status": constants.friendConditions.areFriends, "frienship_id": requestId, "asleep": asleepBool] as [String : Any]
                                     let user = userModel(user: userDict)
                                     friends.append(user)
                                 }
@@ -1146,15 +1195,6 @@ class FirebaseManager {
                 "Accept": "application/json"
             ]
             AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/check_friends_found_from_contacts", headers: headers).responseJSON { response in
-                if let result = response.response?.statusCode {
-                    if result == 500 {
-                        completion(wakeyError.unknownError, false,[])
-                        return
-                    } else if result == 400 {
-                        completion(wakeyError.unknownError, false,[])
-                        return
-                    }
-                }
                 do {
                     if response.data != nil {
                         if let parseJSON = try JSONSerialization.jsonObject(with: response.data!, options: []) as? NSDictionary {
@@ -1168,7 +1208,7 @@ class FirebaseManager {
                                 for friend in foundFriends {
                                     foundFriendsModels.append(userModel(user: friend))
                                 }
-                                completion(wakeyError.unknownError, true, foundFriendsModels)
+                                completion(nil, true, foundFriendsModels)
                                 return
                                 
                             } else {
@@ -1186,6 +1226,67 @@ class FirebaseManager {
                     }
                 } catch let parseError {
                     completion(wakeyError.unknownError, false,[])
+                    return
+                }
+            }
+        }
+    }
+    
+    
+    
+    //
+    //SOUND BITES ENDPOINTS
+    //
+    
+    //returns (error?, soundBites, cursorID)
+    func fetchSoundBites(cursorID: String?, limit: Int, completion: @escaping (Error?, [soundBite], String?) -> ()) {
+        self.fetchToken { (token) in
+            let headers: HTTPHeaders = [
+                "Authorization": "Bearer " + token,
+                "Accept": "application/json"
+            ]
+            var params: [String: Any] = [:]
+            if let cursorID = cursorID, cursorID != "" {
+                params = ["limit": limit, "cursor_id": cursorID, "has_cursor": "true"]
+            } else {
+                params = ["limit": limit]
+            }
+            AF.request("https://us-central1-wakey-3bf93.cloudfunctions.net/api/fetch_sound_bites_feed", method: .get, parameters: params, headers: headers).responseJSON { response in
+                if let result = response.response?.statusCode {
+                    if result == 500 {
+                        completion(wakeyError.unknownError, [], nil)
+                        return
+                    } else if result == 400 {
+                        completion(wakeyError.unknownError, [], nil)
+                        return
+                    }
+                }
+                do {
+                    if response.data != nil {
+                        if let parseJSON = try JSONSerialization.jsonObject(with: response.data!, options: []) as? NSDictionary {
+                            if let soundBites = parseJSON["sound_bites"] as? [[String: Any]] {
+                                var soundBitesArr: [soundBite] = []
+                                for sb in soundBites {
+                                    let associatedUser = userModel(user: (sb["associated_profile"] as? [String:String] ?? [:]))
+                                    soundBitesArr.append(soundBite(soundBite: sb, associatedProfile: associatedUser, localAudioUrl: nil))
+                                }
+                                if let lastDocId = parseJSON["last_doc_id"] as? String {
+                                    completion(nil, soundBitesArr, lastDocId)
+                                } else {
+                                    completion(nil, soundBitesArr, nil)
+                                }
+                                return
+                            }
+                        } else {
+                            completion(wakeyError.unknownError, [], nil)
+                            return
+                        }
+                    } else {
+                        completion(wakeyError.unknownError, [], nil)
+                        return
+                    }
+                } catch let parseError {
+                    completion(wakeyError.unknownError, [], nil)
                     return
                 }
             }

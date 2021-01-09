@@ -78,6 +78,12 @@ class logOutSettingsCellSC: ListSectionController, settingsDefaultCellDelegate {
                 if let centerVC = vc as? CenterVC {
                     centerVC.delegate?.userDidLogOut()
                 }
+                //clear user default login values
+                UserDefaults.standard.removeObject(forKey: constants.isLoggedInKeys.userDocumentHasBeenCreated)
+                UserDefaults.standard.removeObject(forKey: constants.isLoggedInKeys.userDocumentID)
+                UserDefaults.standard.synchronize()
+                
+                
                 while vc?.presentingViewController != nil {
                     vc = vc?.presentingViewController
                     if let centerVC = vc as? CenterVC {

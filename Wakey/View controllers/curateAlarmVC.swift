@@ -50,8 +50,8 @@ class curateAlarmVC: UIViewController  {
     let queuedmessagesLabel = "Queued"
     let availableMessagesLabel = "Available wakeys"
     let unopenedMessagesLabel = "Unopened"
-    let likedMessagesLabel = "Favorited"
-    let defaultMessagesLabel = "Default"
+    let likedMessagesLabel = "Liked"
+    let defaultMessagesLabel = "Offline defaults"
     let emptyAlarmLabel = "Create your alarm by choosing from the available wakeys below! 🎙🔊🚨"
     
     
@@ -113,7 +113,7 @@ class curateAlarmVC: UIViewController  {
                 return
             } else {
                 for alarm in alarms {
-                    let curatedAlarm = curateListAlarm(associatedProfile: alarm.sender, timeReceived: alarm.timeSent, audioFileUrl: URL(string: alarm.audioUrl)!, audioLength: alarm.audioLength ?? 15.0, description: "", messageId: alarm.audioID, curateListCategory: constants.curateAlarmListHeadings.unopenedMessage, isQueued: true, canBeLiked: alarm.canBeLiked, hasBeenLiked: alarm.hasBeenLiked)
+                    let curatedAlarm = curateListAlarm(associatedProfile: alarm.sender, timeReceived: alarm.timeSent, audioFileUrl: URL(string: alarm.audioUrl)!, audioLength: alarm.audioLength ?? 15.0, description: "", messageId: alarm.audioID, curateListCategory: constants.curateAlarmListHeadings.unopenedMessage, isQueued: true, canBeLiked: alarm.canBeLiked, hasBeenLiked: alarm.hasBeenLiked, soundBite: alarm.soundBite)
                     self.queuedAlarms.append(curatedAlarm)
                 }
                 self.ensureAlarmNotEmpty()
@@ -287,19 +287,20 @@ extension curateAlarmVC: ListAdapterDataSource{
             } else if ((object as! String).contains(availableMessagesLabel) || object as! String == queuedmessagesLabel) {
                 let sc = seperatorCellSC()
                 sc.labelText = (object as! String)
-                sc.fontSize = 16
+                sc.fontSize = 18
+                sc.fontColour = UIColor(named: "AppRedColor")
                 return sc
             } else if (object as! String == emptyAlarmLabel) {
                 let sc = seperatorCellSC()
                 sc.labelText = (object as! String)
                 sc.lightText = true
-                sc.fontSize = 14
+                sc.fontSize = 15
                 return sc
             } else {
                 let sc = seperatorCellSC()
                 sc.labelText = (object as! String)
                 sc.lightText = false
-                sc.fontSize = 14
+                sc.fontSize = 15
                 return sc
             }
         }

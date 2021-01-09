@@ -14,6 +14,8 @@ class seperatorCellSC: ListSectionController {
     
     var fontSize: CGFloat = 35
     
+    var fontColour: UIColor? = nil
+    
     var showHelper = false
     
     var helperText = ""
@@ -61,6 +63,11 @@ class seperatorCellSC: ListSectionController {
                 cell.seperatorLabel.font = UIFont(name: "Avenir-book", size: fontSize)
             } else {
                 cell.seperatorLabel.font = UIFont(name: "Avenir-heavy", size: fontSize)
+            }
+            if let fontColour = fontColour {
+                cell.seperatorLabel.textColor = fontColour
+            } else {
+                cell.seperatorLabel.textColor = UIColor.init(named: "defaultTextColor")!
             }
             
             if showHelper {

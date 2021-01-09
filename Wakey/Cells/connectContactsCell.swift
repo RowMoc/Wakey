@@ -48,9 +48,10 @@ class connectContactsCell: UICollectionViewCell {
     
     func beginLoadingView() {
         self.connectButton.setTitle("", for: .normal)
-        activityIndicator = NVActivityIndicatorView(frame: connectButton.frame, type: .lineScale, color: .white, padding: 7)
+        
+        activityIndicator = NVActivityIndicatorView(frame: connectButton.bounds, type: .lineScale, color: .white, padding: 8)
         activityIndicator?.startAnimating()
-        self.addSubview(activityIndicator!)
+        self.connectButton.addSubview(activityIndicator!)
     }
     
     func stopLoadingView(titleText: String) {

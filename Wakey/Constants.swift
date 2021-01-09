@@ -35,6 +35,20 @@ class constants {
         static let senderUsernameKey = "senderUsernameKey"
         static let senderProfilePicUrlKey = "senderProfilePicUrlKey"
         static let timeSentKey = "timeSentKey"
+        
+        static let hasSoundBiteKey = "hasSoundBiteKey"
+        static let soundBiteIDKey = "soundBiteID"
+        static let soundBiteTitleKey = "soundBiteTitle"
+        static let soundBiteCategoryKey = "soundBiteCategory"
+        static let soundBiteImageUrlKey = "soundBiteImageUrl"
+        static let soundBiteIsExplicitKey = "soundBiteIsExplicit"
+        
+        
+    }
+    
+    struct isLoggedInKeys {
+        static let userDocumentHasBeenCreated = "userDocumentHasBeenCreated"
+        static let userDocumentID = "userDocumentID"
     }
     
     

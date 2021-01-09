@@ -50,7 +50,8 @@ class SendButton: UIButton {
         let inset = (CGFloat(self.bounds.width) - height)/2.0
         let frame = CGRect(x: inset, y: inset,width:height, height: height)
         imageViewElem = UIImageView(frame: frame)
-        imageViewElem!.image = UIImage(systemName: "paperplane")!.withTintColor(UIColor(named: "AppGreenColor")!)
+        //imageViewElem!.image = UIImage(systemName: "paperplane")!.withTintColor(UIColor(named: "AppGreenColor")!)
+        imageViewElem!.image = UIImage(systemName: "person.badge.plus")!.withTintColor(UIColor(named: "AppGreenColor")!)
         self.addSubview(imageViewElem!)
         //add shadow
         let shadowColor = UIColor.black

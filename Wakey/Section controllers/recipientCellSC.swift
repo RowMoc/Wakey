@@ -26,11 +26,11 @@ class recipientCellSC: ListSectionController {
             
             cell.profilePic.sd_setImage(with: URL(string: self.user.user.profilePicUrl))
             let fontToUse = cell.sleepingStatusLabel.font
-            if self.user.user.isAsleep {
-                cell.sleepingStatusLabel.attributedText = createStringWithEmoji(text: "", fontSize: fontToUse?.pointSize ?? 40, emojiName: "asleep_face", textColor: .black, font: "Avenir-heavy")
-            } else {
-                cell.sleepingStatusLabel.attributedText = createStringWithEmoji(text: "", fontSize: fontToUse?.pointSize ?? 40, emojiName: "awake_face", textColor: .black, font: "Avenir-heavy")
-            }
+//            if self.user.user.isAsleep {
+//                cell.sleepingStatusLabel.attributedText = createStringWithEmoji(text: "", fontSize: fontToUse?.pointSize ?? 40, emojiName: "asleep_face", textColor: .black, font: "Avenir-heavy")
+//            } else {
+//                cell.sleepingStatusLabel.attributedText = createStringWithEmoji(text: "", fontSize: fontToUse?.pointSize ?? 40, emojiName: "awake_face", textColor: .black, font: "Avenir-heavy")
+//            }
             
             if self.user.isSelected {
                 cell.cellBackgroundView.backgroundColor = UIColor(named: "AppRedColor")!.withAlphaComponent(0.75)

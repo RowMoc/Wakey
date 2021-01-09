@@ -56,7 +56,7 @@ class playAlarmCellSC: ListSectionController {
             
             if (alarm.sender.profilePicUrl != "") {
                 cell.profilePicImage.sd_setImage(with: URL(string: alarm.sender.profilePicUrl), placeholderImage: nil, options: []) { (proPic, error, cacheType, url) in
-                    if let proPic = proPic {
+                    if let proPic = proPic, self.alarm.soundBite == nil {
                         proPic.getColors { colors in
                             guard let colors = colors else {
                                 return
@@ -77,6 +77,28 @@ class playAlarmCellSC: ListSectionController {
                                      text: "Swipe up to send a reaction back to " +  self.alarm.sender.username)
                 }
             }
+            
+            
+            if let sb = alarm.soundBite {
+                
+                cell.soundBiteImageView.sd_setImage(with: URL(string: sb.imageUrl)) { (pic, errer, cache, url) in
+                    if let pic = pic {
+                        cell.soundBiteDetailsView.isHidden = false
+                        cell.sbTitle.text = "Sound bite from " + sb.title
+                        cell.sbCategory.text = sb.category
+                        pic.getColors { colors in
+                            guard let colors = colors else {
+                                return
+                            }
+                            cell.tintBackgroundImage(color: colors.detail, animate: true)
+                        }
+                        
+                    }
+                }
+            } else {
+                cell.soundBiteDetailsView.isHidden = true
+            }
+            
             (self.viewController as! playAlarmVC).configAndPlay(localAudioUrl: alarm.localAudioUrl!, alarmAudioID: alarm.audioID, cell: cell)
             
         }

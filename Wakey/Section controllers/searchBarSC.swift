@@ -34,6 +34,12 @@ final class searchBarSC: ListSectionController, UISearchBarDelegate, ListScrollD
         if let placeholderText = placeholderText {
             cell.searchBar.placeholder = placeholderText
         }
+        // SearchBar text
+        let textFieldInsideUISearchBar = cell.searchBar.value(forKey: "searchField") as? UITextField
+        textFieldInsideUISearchBar?.font = UIFont(name: "Avenir-medium", size: 17)
+        // SearchBar placeholder
+        let labelInsideUISearchBar = textFieldInsideUISearchBar!.value(forKey: "placeholderLabel") as? UILabel
+        labelInsideUISearchBar?.font = UIFont(name: "Avenir-book", size: 17)
         //viewController?.hideKeyboardWhenTappedAround()
         cell.searchBar.delegate = self
         return cell

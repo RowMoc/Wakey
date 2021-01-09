@@ -16,6 +16,7 @@ class RoundedProfilePic: UIImageView {
         //self.layer.borderColor = UIColor(named: "AppRedColor")!.cgColor
         self.layer.cornerRadius = self.bounds.height/2
         self.clipsToBounds = true
+        self.contentMode = .scaleAspectFill
     }
     
     override func  awakeFromNib() {

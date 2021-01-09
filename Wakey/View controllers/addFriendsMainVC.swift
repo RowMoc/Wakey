@@ -26,10 +26,11 @@ class addFriendsMainVC: UIViewController {
     
     var centerVC: CenterVC!
     //var segments = ["Search", "Friends", "Requests"]
-    var segments = ["Search", "Requests"]
+    var segments = ["Search", "Requests", "Sound Bites"]
     //must match above
     var searchUserSegment = "Search"
     var requestsSegment = "Requests"
+    var soundBitesSegment = "Sound Bites"
     
     private lazy var searchVC: searchFriendsVC = {
         // Load Storyboard
@@ -49,6 +50,19 @@ class addFriendsMainVC: UIViewController {
 
         // Instantiate View Controller
         var viewController = storyboard.instantiateViewController(withIdentifier: "viewRequestsVC") as! viewRequestsVC
+
+        // Add View Controller as Child View Controller
+        self.add(asChildViewController: viewController)
+
+        return viewController
+    }()
+    
+    private lazy var soundBitesVC: soundBitesFeedVC = {
+        // Load Storyboard
+        let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
+
+        // Instantiate View Controller
+        var viewController = storyboard.instantiateViewController(withIdentifier: "soundBitesFeedVC") as! soundBitesFeedVC
 
         // Add View Controller as Child View Controller
         self.add(asChildViewController: viewController)
@@ -101,10 +115,16 @@ class addFriendsMainVC: UIViewController {
     private func updateView() {
         if segmentControl.selectedSegmentIndex == 0 {
             remove(asChildViewController: requestsVC)
+            remove(asChildViewController: soundBitesVC)
             add(asChildViewController: searchVC)
+        } else if segmentControl.selectedSegmentIndex == 1 {
+            remove(asChildViewController: searchVC)
+            remove(asChildViewController: soundBitesVC)
+            add(asChildViewController: requestsVC)
         } else {
             remove(asChildViewController: searchVC)
-            add(asChildViewController: requestsVC)
+            remove(asChildViewController: requestsVC)
+            add(asChildViewController: soundBitesVC)
         }
     }
     

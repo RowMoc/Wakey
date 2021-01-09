@@ -50,6 +50,7 @@ class searchFriendsVC: UIViewController {
         self.collectionView.collectionViewLayout = layout
         self.collectionView.alwaysBounceVertical = true
         self.collectionView.showsVerticalScrollIndicator = false
+        self.hideKeyboardWhenTappedAround()
         // Do any additional setup after loading the view.
     }
     
@@ -94,7 +95,7 @@ class searchFriendsVC: UIViewController {
         switch authorizationStatus {
         case .authorized:
             askToConnectContacts = false
-            
+            self.checkIfContactsWereQueried()
             break
         case .denied, .notDetermined:
             askToConnectContacts = true
